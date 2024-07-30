@@ -1,0 +1,29 @@
+
+application {
+  config {
+    baseName myApp
+    applicationType monolith
+    packageName com.myapp
+    authenticationType jwt
+    prodDatabaseType mysql
+    clientFramework angularX
+  }
+  entities *
+}
+
+entity Annotation {
+	videoId String required
+}
+
+entity AnnotationElement {
+	startSec Integer required
+    text String required
+}
+
+relationship OneToMany {
+  User to Annotation
+}
+
+relationship OneToMany {
+  Annotation to AnnotationElement
+}
