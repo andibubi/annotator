@@ -1,0 +1,31 @@
+{
+  "annotations": {
+    "changelogDate": "20240730103500"
+  },
+  "applications": ["annotator"],
+  "fields": [
+    {
+      "fieldName": "videoId",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "Annotation",
+  "relationships": [
+    {
+      "otherEntityName": "annotationElement",
+      "otherEntityRelationshipName": "annotation",
+      "relationshipName": "annotationElement",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "user",
+      "relationshipName": "user",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipWithBuiltInEntity": true
+    }
+  ],
+  "searchEngine": "no"
+}

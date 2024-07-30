@@ -1,11 +1,11 @@
 
 application {
   config {
-    baseName myApp
+    baseName annotator
     applicationType monolith
-    packageName com.myapp
+    packageName de.andreasbubolz.annotator
     authenticationType jwt
-    prodDatabaseType mysql
+    prodDatabaseType postgresql
     clientFramework angularX
   }
   entities *
@@ -20,8 +20,8 @@ entity AnnotationElement {
     text String required
 }
 
-relationship OneToMany {
-  User to Annotation
+relationship ManyToOne {
+  Annotation{user} to User with builtInEntity
 }
 
 relationship OneToMany {
