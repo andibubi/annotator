@@ -1,17 +1,10 @@
 <div class="dialog-container">
   <div class="mb-3">
-    <label class="form-label" for="videoId">Video-ID</label>
-    <input
-      id="videoId"
-      class="form-control"
-      type="text"
-      [(ngModel)]="videoId"
-      placeholder="Geben Sie die YouTube-Video-ID ein"
-      (input)="validateVideoIdPattern()"
-    />
+    <label class="form-label" for="videoId">Url oder ID des Youtube-Videos</label>
+    <input id="videoId" class="form-control" type="text" [(ngModel)]="videoIdOrUrl" (input)="validateVideoIdOrUrlPattern()" />
     <br />
-    <span class="form-text text-danger" *ngIf="invalidVideoId">Ungültige YouTube-Video-ID</span>
+    <span class="form-text text-danger" *ngIf="invalidVideoIdOrUrl">Ungültige Url oder ID</span>
     <br />
-    <button class="btn btn-primary" (click)="videoIdEntered()" [disabled]="invalidVideoId">Weiter</button>
+    <button class="btn btn-primary" (click)="videoIdOrUrlEntered()" [disabled]="invalidVideoIdOrUrl">Weiter</button>
   </div>
 </div>

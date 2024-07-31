@@ -25,7 +25,11 @@ export class Step2Component implements OnInit {
   yOffset: number = 0;
 
   ngOnInit() {
-    this.loadYouTubeAPI();
+    if (!(window as any).YT) {
+      this.loadYouTubeAPI();
+    } else {
+      this.initPlayer();
+    }
   }
 
   loadYouTubeAPI() {
@@ -35,16 +39,19 @@ export class Step2Component implements OnInit {
     firstScriptTag!.parentNode!.insertBefore(tag, firstScriptTag);
 
     (window as any).onYouTubeIframeAPIReady = () => {
-      debugger;
-      this.player = new (window as any).YT.Player('youtube-player', {
-        height: '100%',
-        width: '100%',
-        videoId: this.videoId,
-        events: {
-          onReady: this.onPlayerReady.bind(this),
-        },
-      });
+      this.initPlayer();
     };
+  }
+
+  initPlayer() {
+    this.player = new (window as any).YT.Player('youtube-player', {
+      height: '100%',
+      width: '100%',
+      videoId: this.videoId,
+      events: {
+        onReady: this.onPlayerReady.bind(this),
+      },
+    });
   }
 
   onPlayerReady(event: any) {
