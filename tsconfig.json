@@ -18,7 +18,7 @@
     "useDefineForClassFields": false,
     "target": "es2022",
     "module": "es2020",
-    "types": [],
+    "types": ["node"],
     "lib": ["es2018", "es2020", "dom"]
   },
   "references": [

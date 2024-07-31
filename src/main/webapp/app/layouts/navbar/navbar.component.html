@@ -29,6 +29,14 @@
         </li>
         <!-- jhipster-needle-add-element-to-menu - JHipster will add new menu items here -->
         @if (account() !== null) {
+          <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <a class="nav-link" routerLink="/create-annotation" (click)="collapseNavbar()">
+              <span>
+                <fa-icon icon="video"></fa-icon>
+                <span>kommentieren</span>
+              </span>
+            </a>
+          </li>
           <li
             ngbDropdown
             class="nav-item dropdown pointer"

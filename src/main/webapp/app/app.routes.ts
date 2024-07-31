@@ -7,12 +7,13 @@ import { errorRoute } from './layouts/error/error.route';
 import HomeComponent from './home/home.component';
 import NavbarComponent from './layouts/navbar/navbar.component';
 import LoginComponent from './login/login.component';
+import CreateAnnotationComponent from './create-annotation/create-annotation.component';
 
 const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
-    title: 'home.title',
+    title: 'Annotator',
   },
   {
     path: '',
@@ -39,6 +40,11 @@ const routes: Routes = [
   {
     path: '',
     loadChildren: () => import(`./entities/entity.routes`),
+  },
+  {
+    path: 'create-annotation',
+    component: CreateAnnotationComponent,
+    title: 'create-annotation.title',
   },
   ...errorRoute,
 ];
