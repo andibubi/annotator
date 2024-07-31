@@ -1,1 +1,17 @@
-<p>step2 works!</p>
+<div id="video-container">
+  <div id="youtube-player"></div>
+  <div id="custom-subtitles"></div>
+</div>
+
+<div id="draggable-overlay">
+  <button id="menu-button">Menü</button>
+  <ul id="context-menu">
+    <li (click)="startComment()">Kommentar starten</li>
+    <li (click)="stopComment()">Kommentar beenden</li>
+  </ul>
+</div>
+
+<div id="subtitle-input-container" [style.display]="showSubtitleInput ? 'block' : 'none'">
+  <input type="text" id="subtitle-input" placeholder="Neuer Untertitel" [(ngModel)]="newSubtitleText" />
+  <button id="save-subtitle" (click)="saveSubtitle()">Speichern</button>
+</div>

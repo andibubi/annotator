@@ -1,20 +1,6 @@
 <div class="wizard-container">
   <h1>Ein Video annotieren</h1>
 
-  <div class="wizard-step" *ngIf="currentStep === 1">
-    <h2>Schritt 1</h2>
-    <p>Geben Sie eine YouTube-Video-ID ein</p>
-    <input [(ngModel)]="step1Input" placeholder="Geben Sie eine YouTube-Video-ID ein" (input)="validateVideoId()" />
-    <br />
-    <span *ngIf="!isValidVideoId && step1Input">Ungültige YouTube-Video-ID</span>
-    <br />
-    <button (click)="checkVideoExists()" [disabled]="!isValidVideoId">Weiter</button>
-  </div>
-  <app-step2 *ngIf="currentStep === 2" (next)="nextStep()" (prev)="prevStep()"></app-step2>
-  <div class="wizard-step" *ngIf="currentStep === 3">
-    <h2>Schritt 3</h2>
-    <p>Inhalt für Schritt 3</p>
-    <button (click)="prevStep()">Zurück</button>
-    <button (click)="finish()">Fertig</button>
-  </div>
+  <app-video-id-dialog *ngIf="videoId === ''" (validVideoIdEntered)="handleVideoId($event)"></app-video-id-dialog>
+  <app-step2 *ngIf="videoId !== ''" [videoId]="videoId"></app-step2>
 </div>
