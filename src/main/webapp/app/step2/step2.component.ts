@@ -1,8 +1,9 @@
 import { Component, OnInit, HostListener, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  imports: [FormsModule],
+  imports: [CommonModule, FormsModule],
   selector: 'app-step2',
   standalone: true,
   templateUrl: './step2.component.html',
@@ -15,6 +16,7 @@ export class Step2Component implements OnInit {
     { time: 5, text: 'Dies ist ein Beispieltext.' },
     { time: 10, text: 'Weitere Informationen folgen.' },
   ];
+  actSubtitle: any = undefined;
   newSubtitleText: string = '';
   showSubtitleInput: boolean = false;
   player: any;
@@ -30,6 +32,11 @@ export class Step2Component implements OnInit {
     } else {
       this.initPlayer();
     }
+  }
+  isFullscreen: boolean = false;
+
+  setFullscreen(fullscreen: boolean) {
+    this.isFullscreen = fullscreen;
   }
 
   loadYouTubeAPI() {
@@ -62,11 +69,15 @@ export class Step2Component implements OnInit {
   }
 
   updateSubtitles(currentTime: number) {
-    const subtitleDiv = document.getElementById('custom-subtitles');
+    var nearestSubtitle = undefined;
     for (const subtitle of this.subtitles) {
-      if (currentTime >= subtitle.time) {
-        subtitleDiv!.innerHTML = subtitle.text;
+      if (subtitle.time <= currentTime && (!nearestSubtitle || nearestSubtitle.time < subtitle.time)) {
+        nearestSubtitle = subtitle;
       }
+    }
+    if (nearestSubtitle && nearestSubtitle != this.actSubtitle) {
+      document.getElementById('custom-subtitles')!.innerHTML = nearestSubtitle.text;
+      this.actSubtitle = nearestSubtitle;
     }
   }
 

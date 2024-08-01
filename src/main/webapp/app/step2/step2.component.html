@@ -1,17 +1,20 @@
-<div id="video-container">
-  <div id="youtube-player"></div>
-  <div id="custom-subtitles"></div>
+<div [ngClass]="{ fullscreen: isFullscreen }">
+  <div id="video-container">
+    <div id="youtube-player"></div>
+    <div id="custom-subtitles"></div>
+  </div>
+  @if (isFullscreen) {
+    <div id="draggable-overlay">
+      <button id="menu-button" (click)="setFullscreen(false)">Menü</button>
+    </div>
+  }
+  <div id="subtitle-input-container" [style.display]="showSubtitleInput ? 'block' : 'none'">
+    <input type="text" id="subtitle-input" placeholder="Neuer Untertitel" [(ngModel)]="newSubtitleText" />
+    <button id="save-subtitle" (click)="saveSubtitle()">Speichern</button>
+  </div>
 </div>
-
-<div id="draggable-overlay">
-  <button id="menu-button">Menü</button>
-  <ul id="context-menu">
-    <li (click)="startComment()">Kommentar starten</li>
-    <li (click)="stopComment()">Kommentar beenden</li>
-  </ul>
-</div>
-
-<div id="subtitle-input-container" [style.display]="showSubtitleInput ? 'block' : 'none'">
-  <input type="text" id="subtitle-input" placeholder="Neuer Untertitel" [(ngModel)]="newSubtitleText" />
-  <button id="save-subtitle" (click)="saveSubtitle()">Speichern</button>
-</div>
+@if (!isFullscreen) {
+  <button class="btn btn-primary" (click)="setFullscreen(true)">Fullscreen</button>
+  <button class="btn btn-primary" (click)="startComment()">Kommentar starten</button>
+  <button class="btn btn-primary" (click)="stopComment()">Kommentar ausblenden</button>
+}
