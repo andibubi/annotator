@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, Input } from '@angular/core';
+import { Component, OnInit, HostListener, Input, ElementRef, Renderer2 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -26,6 +26,20 @@ export class Step2Component implements OnInit {
 
   youtubePlayer: any;
   annotationYoutubePlayer: any;
+
+  draggedElement: HTMLElement | null = null;
+  dragInfos: Map<HTMLElement, any> = new Map();
+
+  resizingElement: HTMLElement | null = null;
+  resizeStartWidth: number = 0;
+  resizeStartHeight: number = 0;
+  resizeStartX: number = 0;
+  resizeStartY: number = 0;
+
+  constructor(
+    private elRef: ElementRef,
+    private renderer: Renderer2,
+  ) {}
 
   ngOnInit() {
     if (!(window as any).YT) {
@@ -113,28 +127,39 @@ export class Step2Component implements OnInit {
     //this.showTextAnnotationTextInput = true;
   }
 
-  draggedElement: HTMLElement | null = null;
-  dragInfos: Map<HTMLElement, any> = new Map();
-
   @HostListener('document:mousedown', ['$event'])
   onMouseDown(event: MouseEvent) {
     const target = event.target as HTMLElement;
     if (target instanceof HTMLElement && target.classList.contains('draggable')) {
       event.preventDefault();
-      var dragInfo = this.dragInfos.get(target);
-      if (!dragInfo) {
-        dragInfo = { x: 0, dx: 0, y: 0, dy: 0 };
-        this.dragInfos.set(target, dragInfo);
+      if (target.classList.contains('resizable') && event.offsetX > target.offsetWidth - 10 && event.offsetY > target.offsetHeight - 10) {
+        this.resizingElement = target;
+        this.resizeStartWidth = target.offsetWidth;
+        this.resizeStartHeight = target.offsetHeight;
+        this.resizeStartX = event.clientX;
+        this.resizeStartY = event.clientY;
+      } else {
+        var dragInfo = this.dragInfos.get(target);
+        if (!dragInfo) {
+          dragInfo = { x: 0, dx: 0, y: 0, dy: 0 };
+          this.dragInfos.set(target, dragInfo);
+        }
+        dragInfo.x = event.clientX - dragInfo.dx;
+        dragInfo.y = event.clientY - dragInfo.dy;
+        this.draggedElement = target;
       }
-      dragInfo.x = event.clientX - dragInfo.dx;
-      dragInfo.y = event.clientY - dragInfo.dy;
-      this.draggedElement = target;
     }
   }
 
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent) {
-    if (this.draggedElement) {
+    if (this.resizingElement) {
+      event.preventDefault();
+      const newWidth = this.resizeStartWidth + (event.clientX - this.resizeStartX);
+      const newHeight = this.resizeStartHeight + (event.clientY - this.resizeStartY);
+      this.resizingElement.style.width = `${newWidth}px`;
+      this.resizingElement.style.height = `${newHeight}px`;
+    } else if (this.draggedElement) {
       event.preventDefault();
       var dragInfo = this.dragInfos.get(this.draggedElement);
 
@@ -148,5 +173,19 @@ export class Step2Component implements OnInit {
   @HostListener('document:mouseup', ['$event'])
   onMouseUp(event: MouseEvent) {
     this.draggedElement = null;
+    if (this.resizingElement) {
+      this.resizeYoutubePlayer();
+      this.resizingElement = null;
+    }
+  }
+  resizeYoutubePlayer() {
+    if (this.annotationYoutubePlayer) {
+      const overlay = document.getElementById('video-overlay');
+      if (overlay) {
+        const newWidth = overlay.clientWidth;
+        const newHeight = overlay.clientHeight;
+        this.annotationYoutubePlayer.setSize(newWidth, newHeight);
+      }
+    }
   }
 }

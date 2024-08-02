@@ -90,6 +90,11 @@ iframe {
   overflow: hidden;
 }
 
+.resizable {
+  resize: both;
+  overflow: auto;
+}
+
 #menu-button {
   background-color: #007bff;
   color: white;

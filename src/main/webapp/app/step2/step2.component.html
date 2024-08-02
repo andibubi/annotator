@@ -6,12 +6,18 @@
   <div id="menu-overlay" [style.display]="isFullscreen ? 'block' : 'none'" class="draggable">
     <button id="menu-button" (click)="setFullscreen(false)">Menü</button>
   </div>
-  <div id="video-overlay" class="draggable" style="left: 100px">
+  <div id="video-overlay" class="draggable resizable" style="left: 100px; position: absolute">
     <div id="annotation-youtube-player"></div>
   </div>
 
   <div id="text-annotation-input-container" [style.display]="showTextAnnotationTextInput ? 'block' : 'none'">
-    <input type="text" id="text-annotation-input" placeholder="Neuer Textkommentar" [(ngModel)]="newTextAnnotationText" />
+    <input
+      type="text"
+      id="text-annotation-input"
+      placeholder="Neuer Textkommentar"
+      [(ngModel)]="newTextAnnotationText"
+      (keyup.enter)="saveTextAnnotation()"
+    />
     <button id="save-subtitle" (click)="saveTextAnnotation()">Speichern</button>
   </div>
 </div>
