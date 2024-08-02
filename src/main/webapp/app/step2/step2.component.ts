@@ -11,125 +11,142 @@ import { CommonModule } from '@angular/common';
 })
 export class Step2Component implements OnInit {
   @Input() videoId: string = '';
-  subtitles = [
-    { time: 0, text: 'Hallo und willkommen!' },
-    { time: 5, text: 'Dies ist ein Beispieltext.' },
-    { time: 10, text: 'Weitere Informationen folgen.' },
+
+  textAnnotations = [
+    { timeSec: 0, text: 'Hallo und willkommen!' },
+    { timeSec: 5, text: 'Dies ist ein Beispieltext.' },
+    { timeSec: 10, text: 'Weitere Informationen folgen.' },
   ];
-  actSubtitle: any = undefined;
-  newSubtitleText: string = '';
-  showSubtitleInput: boolean = false;
-  player: any;
-  isDragging: boolean = false;
-  initialX: number = 0;
-  initialY: number = 0;
-  xOffset: number = 0;
-  yOffset: number = 0;
+  actTextAnnotation: any = undefined;
+  newTextAnnotationText: string = '';
+  showTextAnnotationTextInput: boolean = false;
+  isFullscreen: boolean = false;
+
+  videoAnnotations = [{ timeSec: 0, videoId: 'nqRtzQOf0Xk', videoTimeSec: 10 }];
+
+  youtubePlayer: any;
+  annotationYoutubePlayer: any;
 
   ngOnInit() {
     if (!(window as any).YT) {
-      this.loadYouTubeAPI();
+      this.loadYoutubeAPI();
     } else {
-      this.initPlayer();
+      this.initYoutubePlayers();
     }
   }
-  isFullscreen: boolean = false;
 
   setFullscreen(fullscreen: boolean) {
     this.isFullscreen = fullscreen;
   }
 
-  loadYouTubeAPI() {
+  loadYoutubeAPI() {
     const tag = document.createElement('script');
     tag.src = 'https://www.youtube.com/iframe_api';
     const firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag!.parentNode!.insertBefore(tag, firstScriptTag);
 
     (window as any).onYouTubeIframeAPIReady = () => {
-      this.initPlayer();
+      this.initYoutubePlayers();
     };
   }
 
-  initPlayer() {
-    this.player = new (window as any).YT.Player('youtube-player', {
+  initYoutubePlayers() {
+    this.youtubePlayer = new (window as any).YT.Player('youtube-player', {
       height: '100%',
       width: '100%',
       videoId: this.videoId,
       events: {
-        onReady: this.onPlayerReady.bind(this),
+        onReady: this.onYoutubePlayerReady.bind(this),
+      },
+    });
+
+    this.annotationYoutubePlayer = new (window as any).YT.Player('annotation-youtube-player', {
+      height: '10%',
+      width: '100%',
+      videoId: 'nqRtzQOf0Xk',
+      events: {
+        onReady: this.onAnnotationYoutubePlayerReady.bind(this),
       },
     });
   }
 
-  onPlayerReady(event: any) {
+  onYoutubePlayerReady(event: any) {
     setInterval(() => {
-      const currentTime = this.player.getCurrentTime();
-      this.updateSubtitles(currentTime);
+      const currentTimeSec = this.youtubePlayer.getCurrentTime();
+      this.updateTextAnnotations(currentTimeSec);
     }, 1000);
   }
 
-  updateSubtitles(currentTime: number) {
-    var nearestSubtitle = undefined;
-    for (const subtitle of this.subtitles) {
-      if (subtitle.time <= currentTime && (!nearestSubtitle || nearestSubtitle.time < subtitle.time)) {
-        nearestSubtitle = subtitle;
-      }
-    }
-    if (nearestSubtitle && nearestSubtitle != this.actSubtitle) {
-      document.getElementById('custom-subtitles')!.innerHTML = nearestSubtitle.text;
-      this.actSubtitle = nearestSubtitle;
-    }
+  onAnnotationYoutubePlayerReady(event: any) {
+    setInterval(() => {}, 1000);
   }
 
-  startComment() {
-    this.showSubtitleInput = true;
+  startTextAnnotation() {
+    this.showTextAnnotationTextInput = true;
   }
 
-  stopComment() {
+  stopTextAnnotation() {
     alert('Kommentar beendet!');
   }
 
-  saveSubtitle() {
-    const currentTime = this.player.getCurrentTime();
-    this.subtitles.push({ time: currentTime, text: this.newSubtitleText });
-    this.newSubtitleText = '';
-    this.showSubtitleInput = false;
-    alert('Neuer Untertitel hinzugefügt!');
+  saveTextAnnotation() {
+    const currentTimeSec = this.youtubePlayer.getCurrentTime();
+    this.textAnnotations.push({ timeSec: currentTimeSec, text: this.newTextAnnotationText });
+    this.newTextAnnotationText = '';
+    this.showTextAnnotationTextInput = false;
   }
+
+  updateTextAnnotations(currentTimeSec: number) {
+    var nearestTextAnnotation = undefined;
+    for (const textAnnotation of this.textAnnotations) {
+      if (textAnnotation.timeSec <= currentTimeSec && (!nearestTextAnnotation || nearestTextAnnotation.timeSec < textAnnotation.timeSec)) {
+        nearestTextAnnotation = textAnnotation;
+      }
+    }
+    if (nearestTextAnnotation && nearestTextAnnotation != this.actTextAnnotation) {
+      document.getElementById('text-annotations')!.innerHTML = nearestTextAnnotation.text;
+      this.actTextAnnotation = nearestTextAnnotation;
+    }
+  }
+
+  startVideoAnnotation() {
+    //this.showTextAnnotationTextInput = true;
+  }
+
+  draggedElement: HTMLElement | null = null;
+  dragInfos: Map<HTMLElement, any> = new Map();
 
   @HostListener('document:mousedown', ['$event'])
   onMouseDown(event: MouseEvent) {
-    if (event.target === document.getElementById('draggable-overlay')) {
-      this.isDragging = true;
-      this.initialX = event.clientX - this.xOffset;
-      this.initialY = event.clientY - this.yOffset;
+    const target = event.target as HTMLElement;
+    if (target instanceof HTMLElement && target.classList.contains('draggable')) {
+      event.preventDefault();
+      var dragInfo = this.dragInfos.get(target);
+      if (!dragInfo) {
+        dragInfo = { x: 0, dx: 0, y: 0, dy: 0 };
+        this.dragInfos.set(target, dragInfo);
+      }
+      dragInfo.x = event.clientX - dragInfo.dx;
+      dragInfo.y = event.clientY - dragInfo.dy;
+      this.draggedElement = target;
     }
   }
 
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent) {
-    if (this.isDragging) {
+    if (this.draggedElement) {
       event.preventDefault();
+      var dragInfo = this.dragInfos.get(this.draggedElement);
 
-      const currentX = event.clientX - this.initialX;
-      const currentY = event.clientY - this.initialY;
+      dragInfo.dx = event.clientX - dragInfo.x;
+      dragInfo.dy = event.clientY - dragInfo.y;
 
-      this.xOffset = currentX;
-      this.yOffset = currentY;
-
-      const draggableOverlay = document.getElementById('draggable-overlay');
-      this.setTranslate(this.xOffset, this.yOffset, draggableOverlay);
+      this.draggedElement.style.transform = `translate3d(${dragInfo.dx}px, ${dragInfo.dy}px, 0)`;
     }
   }
 
   @HostListener('document:mouseup', ['$event'])
   onMouseUp(event: MouseEvent) {
-    this.isDragging = false;
-  }
-
-  setTranslate(xPos: number, yPos: number, el: HTMLElement | null) {
-    if (el) {
-      el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
-    }
+    this.draggedElement = null;
   }
 }
