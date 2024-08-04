@@ -1,13 +1,13 @@
 <div [ngClass]="{ fullscreen: isFullscreen }">
   <div id="video-container">
     <div id="youtube-player"></div>
-    <div id="text-annotations"></div>
+    <div id="text-annotations" class="draggable resizable"></div>
+    <div id="video-overlay" class="draggable resizable">
+      <div id="annotation-youtube-player"></div>
+    </div>
   </div>
   <div id="menu-overlay" [style.display]="isFullscreen ? 'block' : 'none'" class="draggable">
     <button id="menu-button" (click)="setFullscreen(false)">Menü</button>
-  </div>
-  <div id="video-overlay" class="draggable resizable" style="left: 100px; position: absolute">
-    <div id="annotation-youtube-player"></div>
   </div>
 
   <div id="text-annotation-input-container" [style.display]="showTextAnnotationTextInput ? 'block' : 'none'">

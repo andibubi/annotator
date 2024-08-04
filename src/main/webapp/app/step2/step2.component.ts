@@ -28,7 +28,7 @@ export class Step2Component implements OnInit {
   youtubePlayer: any;
   annotationYoutubePlayer: any;
 
-  draggedElement: HTMLElement | null = null;
+  draggingElement: HTMLElement | null = null;
   dragInfos: Map<HTMLElement, any> = new Map();
 
   resizingElement: HTMLElement | null = null;
@@ -169,7 +169,7 @@ export class Step2Component implements OnInit {
         }
         dragInfo.x = event.clientX - dragInfo.dx;
         dragInfo.y = event.clientY - dragInfo.dy;
-        this.draggedElement = target;
+        this.draggingElement = target;
       }
     }
   }
@@ -182,22 +182,22 @@ export class Step2Component implements OnInit {
       const newHeight = this.resizeStartHeight + (event.clientY - this.resizeStartY);
       this.resizingElement.style.width = `${newWidth}px`;
       this.resizingElement.style.height = `${newHeight}px`;
-    } else if (this.draggedElement) {
+    } else if (this.draggingElement) {
       event.preventDefault();
-      var dragInfo = this.dragInfos.get(this.draggedElement);
+      var dragInfo = this.dragInfos.get(this.draggingElement);
 
       dragInfo.dx = event.clientX - dragInfo.x;
       dragInfo.dy = event.clientY - dragInfo.y;
 
-      this.draggedElement.style.transform = `translate3d(${dragInfo.dx}px, ${dragInfo.dy}px, 0)`;
+      this.draggingElement.style.transform = `translate3d(${dragInfo.dx}px, ${dragInfo.dy}px, 0)`;
     }
   }
 
   @HostListener('document:mouseup', ['$event'])
   onMouseUp(event: MouseEvent) {
-    this.draggedElement = null;
+    this.draggingElement = null;
     if (this.resizingElement) {
-      this.resizeYoutubePlayer();
+      if (this.resizingElement.id === 'video-overlay') this.resizeYoutubePlayer();
       this.resizingElement = null;
     }
   }
