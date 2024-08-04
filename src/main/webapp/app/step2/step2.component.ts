@@ -1,6 +1,11 @@
 import { Component, OnInit, HostListener, Input, ElementRef, Renderer2 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { IAnnotationElement } from '../entities/annotation-element/annotation-element.model';
+import { IAnnotation } from '../entities/annotation/annotation.model';
+import { AnnotationElementService } from '../entities/annotation-element/service/annotation-element.service';
+import { Observable } from 'rxjs';
+import { HttpResponse } from '@angular/common/http';
 
 @Component({
   imports: [CommonModule, FormsModule],
@@ -10,19 +15,15 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./step2.component.scss'],
 })
 export class Step2Component implements OnInit {
-  @Input() videoId: string = '';
+  @Input() annotation: IAnnotation | null = null;
 
-  textAnnotations = [
-    { timeSec: 0, text: 'Hallo und willkommen!' },
-    { timeSec: 5, text: 'Dies ist ein Beispieltext.' },
-    { timeSec: 10, text: 'Weitere Informationen folgen.' },
-  ];
+  textAnnotations = new Array<IAnnotationElement>();
   actTextAnnotation: any = undefined;
   newTextAnnotationText: string = '';
   showTextAnnotationTextInput: boolean = false;
   isFullscreen: boolean = false;
 
-  videoAnnotations = [{ timeSec: 0, videoId: 'nqRtzQOf0Xk', videoTimeSec: 10 }];
+  videoAnnotations = [{ startSec: 0, videoId: 'nqRtzQOf0Xk', videostartSec: 10 }];
 
   youtubePlayer: any;
   annotationYoutubePlayer: any;
@@ -36,10 +37,7 @@ export class Step2Component implements OnInit {
   resizeStartX: number = 0;
   resizeStartY: number = 0;
 
-  constructor(
-    private elRef: ElementRef,
-    private renderer: Renderer2,
-  ) {}
+  constructor(private annotationElementService: AnnotationElementService) {}
 
   ngOnInit() {
     if (!(window as any).YT) {
@@ -68,7 +66,7 @@ export class Step2Component implements OnInit {
     this.youtubePlayer = new (window as any).YT.Player('youtube-player', {
       height: '100%',
       width: '100%',
-      videoId: this.videoId,
+      videoId: this.annotation!.videoId,
       events: {
         onReady: this.onYoutubePlayerReady.bind(this),
       },
@@ -86,8 +84,8 @@ export class Step2Component implements OnInit {
 
   onYoutubePlayerReady(event: any) {
     setInterval(() => {
-      const currentTimeSec = this.youtubePlayer.getCurrentTime();
-      this.updateTextAnnotations(currentTimeSec);
+      const currentstartSec = this.youtubePlayer.getCurrentTime();
+      this.updateTextAnnotations(currentstartSec);
     }, 1000);
   }
 
@@ -104,21 +102,46 @@ export class Step2Component implements OnInit {
   }
 
   saveTextAnnotation() {
-    const currentTimeSec = this.youtubePlayer.getCurrentTime();
-    this.textAnnotations.push({ timeSec: currentTimeSec, text: this.newTextAnnotationText });
+    this.subscribeToSaveResponse(
+      this.annotationElementService.create({
+        id: null,
+        startSec: this.youtubePlayer.getCurrentTime(),
+        text: this.newTextAnnotationText,
+        annotation: this.annotation,
+      }),
+    );
+  }
+
+  private subscribeToSaveResponse(result: Observable<HttpResponse<IAnnotationElement>>): void {
+    result.subscribe(
+      (res: HttpResponse<IAnnotationElement>) => this.onSaveSuccess(res),
+      (res: HttpResponse<any>) => this.onSaveError(),
+    );
+  }
+
+  private onSaveSuccess(response: HttpResponse<IAnnotationElement>): void {
+    this.textAnnotations.push(response.body!);
     this.newTextAnnotationText = '';
     this.showTextAnnotationTextInput = false;
   }
 
-  updateTextAnnotations(currentTimeSec: number) {
+  private onSaveError(): void {
+    // Handle save error, e.g., show an error message
+    console.error('There was an error creating the entity');
+  }
+
+  updateTextAnnotations(currentstartSec: number) {
     var nearestTextAnnotation = undefined;
     for (const textAnnotation of this.textAnnotations) {
-      if (textAnnotation.timeSec <= currentTimeSec && (!nearestTextAnnotation || nearestTextAnnotation.timeSec < textAnnotation.timeSec)) {
+      if (
+        textAnnotation.startSec! <= currentstartSec &&
+        (!nearestTextAnnotation || nearestTextAnnotation.startSec! < textAnnotation.startSec!)
+      ) {
         nearestTextAnnotation = textAnnotation;
       }
     }
     if (nearestTextAnnotation && nearestTextAnnotation != this.actTextAnnotation) {
-      document.getElementById('text-annotations')!.innerHTML = nearestTextAnnotation.text;
+      document.getElementById('text-annotations')!.innerHTML = nearestTextAnnotation.text!;
       this.actTextAnnotation = nearestTextAnnotation;
     }
   }

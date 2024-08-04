@@ -1,6 +1,6 @@
 <div>
   <h1>Ein Video annotieren</h1>
 
-  <app-video-id-dialog *ngIf="videoId === ''" (validVideoIdEntered)="handleVideoId($event)"></app-video-id-dialog>
-  <app-step2 *ngIf="videoId !== ''" [videoId]="videoId"></app-step2>
+  <app-video-id-dialog *ngIf="!annotation" (validVideoIdEntered)="handleVideoId($event)"></app-video-id-dialog>
+  <app-step2 *ngIf="annotation" [annotation]="annotation"></app-step2>
 </div>

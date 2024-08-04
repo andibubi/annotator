@@ -35,9 +35,11 @@ public class AnnotationResource {
     private String applicationName;
 
     private final AnnotationRepository annotationRepository;
+    private final UserUtil userUtil;
 
-    public AnnotationResource(AnnotationRepository annotationRepository) {
+    public AnnotationResource(AnnotationRepository annotationRepository, UserUtil userUtil) {
         this.annotationRepository = annotationRepository;
+        this.userUtil = userUtil;
     }
 
     /**
@@ -50,6 +52,11 @@ public class AnnotationResource {
     @PostMapping("")
     public ResponseEntity<Annotation> createAnnotation(@Valid @RequestBody Annotation annotation) throws URISyntaxException {
         log.debug("REST request to save Annotation : {}", annotation);
+        var currentUser = userUtil.getCurrentUser();
+        if (currentUser == null) {
+            throw new BadRequestAlertException("A new annotation cannot be created anonymouslyalready have an ID", ENTITY_NAME, "idexists");
+        }
+        annotation.setUser(currentUser);
         if (annotation.getId() != null) {
             throw new BadRequestAlertException("A new annotation cannot already have an ID", ENTITY_NAME, "idexists");
         }
