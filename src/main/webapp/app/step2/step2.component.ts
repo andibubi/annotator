@@ -19,11 +19,14 @@ export class Step2Component implements OnInit {
 
   textAnnotations = new Array<IAnnotationElement>();
   actTextAnnotation: any = undefined;
+  actVideoAnnotation: any = undefined;
   newTextAnnotationText: string = '';
+  newVideoAnnotationUrl: string = '';
   showTextAnnotationTextInput: boolean = false;
+  showVideoAnnotationUrlInput: boolean = false;
   isFullscreen: boolean = false;
 
-  videoAnnotations = [{ startSec: 0, videoId: 'nqRtzQOf0Xk', videostartSec: 10 }];
+  videoAnnotations = [{ startSec: 5, stopSec: 8, videoId: 'nqRtzQOf0Xk', videoStartSec: 100 }];
 
   youtubePlayer: any;
   annotationYoutubePlayer: any;
@@ -75,7 +78,7 @@ export class Step2Component implements OnInit {
     this.annotationYoutubePlayer = new (window as any).YT.Player('annotation-youtube-player', {
       height: '10%',
       width: '100%',
-      videoId: 'nqRtzQOf0Xk',
+      //videoId: 'nqRtzQOf0Xk',
       events: {
         onReady: this.onAnnotationYoutubePlayerReady.bind(this),
       },
@@ -85,7 +88,7 @@ export class Step2Component implements OnInit {
   onYoutubePlayerReady(event: any) {
     setInterval(() => {
       const currentstartSec = this.youtubePlayer.getCurrentTime();
-      this.updateTextAnnotations(currentstartSec);
+      this.updateAnnotations(currentstartSec);
     }, 1000);
   }
 
@@ -97,26 +100,48 @@ export class Step2Component implements OnInit {
     this.showTextAnnotationTextInput = true;
   }
 
+  startVideoAnnotation() {
+    this.showVideoAnnotationUrlInput = true;
+  }
+
   stopTextAnnotation() {
-    alert('Kommentar beendet!');
+    alert('Das tut noch nichts!');
   }
 
   saveTextAnnotation() {
-    this.subscribeToSaveResponse(
-      this.annotationElementService.create({
+    this.annotationElementService
+      .create({
         id: null,
         startSec: this.youtubePlayer.getCurrentTime(),
         text: this.newTextAnnotationText,
         annotation: this.annotation,
-      }),
-    );
+      })
+      .subscribe(
+        (response: HttpResponse<IAnnotationElement>) => {
+          this.textAnnotations.push(response.body!);
+          this.newTextAnnotationText = '';
+          this.showTextAnnotationTextInput = false;
+        },
+        (res: HttpResponse<any>) => this.onSaveError(),
+      );
   }
 
-  private subscribeToSaveResponse(result: Observable<HttpResponse<IAnnotationElement>>): void {
-    result.subscribe(
-      (res: HttpResponse<IAnnotationElement>) => this.onSaveSuccess(res),
+  saveVideoAnnotation() {
+    /*
+    this.annotationElementService.create({
+      id: null,
+      startSec: this.youtubePlayer.getCurrentTime(),
+      text: this.newTextAnnotationText,
+      annotation: this.annotation,
+    }).subscribe(
+      (response: HttpResponse<IAnnotationElement>) => {*/
+    //this.videoAnnotations.push(response.body!);
+    this.videoAnnotations.push({ startSec: 5, stopSec: 8, videoId: 'nqRtzQOf0Xk', videoStartSec: 100 });
+    this.showVideoAnnotationUrlInput = false;
+    /* },
       (res: HttpResponse<any>) => this.onSaveError(),
     );
+    */
   }
 
   private onSaveSuccess(response: HttpResponse<IAnnotationElement>): void {
@@ -130,24 +155,29 @@ export class Step2Component implements OnInit {
     console.error('There was an error creating the entity');
   }
 
-  updateTextAnnotations(currentstartSec: number) {
+  updateAnnotations(actSec: number) {
     var nearestTextAnnotation = undefined;
-    for (const textAnnotation of this.textAnnotations) {
-      if (
-        textAnnotation.startSec! <= currentstartSec &&
-        (!nearestTextAnnotation || nearestTextAnnotation.startSec! < textAnnotation.startSec!)
-      ) {
+    for (const textAnnotation of this.textAnnotations)
+      if (textAnnotation.startSec! <= actSec && (!nearestTextAnnotation || nearestTextAnnotation.startSec! < textAnnotation.startSec!))
         nearestTextAnnotation = textAnnotation;
-      }
-    }
+
     if (nearestTextAnnotation && nearestTextAnnotation != this.actTextAnnotation) {
       document.getElementById('text-annotations')!.innerHTML = nearestTextAnnotation.text!;
       this.actTextAnnotation = nearestTextAnnotation;
     }
-  }
+    var nearestVideoAnnotation = undefined;
+    for (const videoAnnotation of this.videoAnnotations)
+      if (actSec >= videoAnnotation.startSec! && actSec < videoAnnotation.stopSec!) nearestVideoAnnotation = videoAnnotation;
 
-  startVideoAnnotation() {
-    //this.showTextAnnotationTextInput = true;
+    if (nearestVideoAnnotation && nearestVideoAnnotation != this.actVideoAnnotation) {
+      console.log('1 !!!!!!!!!!!!!!!!!!');
+      this.annotationYoutubePlayer.loadVideoById(nearestVideoAnnotation.videoId, nearestVideoAnnotation.videoStartSec, 'large');
+      this.actVideoAnnotation = nearestVideoAnnotation;
+    } else if (!nearestVideoAnnotation && this.actVideoAnnotation) {
+      console.log('2 !!!!!!!!!!!!!!!!!!');
+      this.annotationYoutubePlayer.stopVideo();
+      this.actVideoAnnotation = null;
+    }
   }
 
   @HostListener('document:mousedown', ['$event'])

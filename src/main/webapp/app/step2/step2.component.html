@@ -2,7 +2,7 @@
   <div id="video-container">
     <div id="youtube-player"></div>
     <div id="text-annotations" class="draggable resizable"></div>
-    <div id="video-overlay" class="draggable resizable">
+    <div id="video-overlay" class="draggable resizable" [style.display]="actVideoAnnotation ? 'flex' : 'none'">
       <div id="annotation-youtube-player"></div>
     </div>
   </div>
@@ -19,6 +19,17 @@
       (keyup.enter)="saveTextAnnotation()"
     />
     <button id="save-subtitle" (click)="saveTextAnnotation()">Speichern</button>
+  </div>
+
+  <div id="video-annotation-input-container" [style.display]="showVideoAnnotationUrlInput ? 'block' : 'none'">
+    <input
+      type="text"
+      id="video-annotation-url.input"
+      placeholder="Eine Url oder ine Video-Id"
+      [(ngModel)]="newVideoAnnotationUrl"
+      (keyup.enter)="saveVideoAnnotation()"
+    />
+    <button id="saveVideoAnnotation" (click)="saveVideoAnnotation()">Speichern</button>
   </div>
 </div>
 @if (!isFullscreen) {
