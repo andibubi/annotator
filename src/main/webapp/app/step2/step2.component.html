@@ -10,10 +10,10 @@
     <button id="menu-button" (click)="setFullscreen(false)">Menü</button>
   </div>
 
-  <div id="text-annotation-input-container" [style.display]="showTextAnnotationTextInput ? 'block' : 'none'">
+  <div class="annotation-input-container" [style.display]="showTextAnnotationTextInput ? 'block' : 'none'">
     <input
       type="text"
-      id="text-annotation-input"
+      class="annotation-input"
       placeholder="Neuer Textkommentar"
       [(ngModel)]="newTextAnnotationText"
       (keyup.enter)="saveTextAnnotation()"
@@ -21,11 +21,31 @@
     <button id="save-subtitle" (click)="saveTextAnnotation()">Speichern</button>
   </div>
 
-  <div id="video-annotation-input-container" [style.display]="showVideoAnnotationUrlInput ? 'block' : 'none'">
+  <div class="annotation-input-container" [style.display]="showVideoAnnotationUrlInput ? 'block' : 'none'">
+    <label class="username-label" for="annotation-url">URL oder Id</label>
     <input
+      id="annotation-url"
       type="text"
-      id="video-annotation-url.input"
-      placeholder="Eine Url oder ine Video-Id"
+      class="annotationinput"
+      placeholder="Eine Url oder eine Video-Id"
+      [(ngModel)]="newVideoAnnotationUrl"
+      (keyup.enter)="saveVideoAnnotation()"
+    />
+    <label class="username-label" for="annotation-start-sec">Start Sec</label>
+    <input
+      id="annotation-start-sec"
+      type="text"
+      class="annotation.input"
+      placeholder="startSec"
+      [(ngModel)]="newVideoAnnotationUrl"
+      (keyup.enter)="saveVideoAnnotation()"
+    />
+    <label class="username-label" for="annotation-stop-sec">Stop Sec</label>
+    <input
+      id="annotation-stop-sec"
+      type="text"
+      class="annotation.input"
+      placeholder="startSec"
       [(ngModel)]="newVideoAnnotationUrl"
       (keyup.enter)="saveVideoAnnotation()"
     />
