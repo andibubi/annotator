@@ -1,0 +1,48 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (textAnnotationElement()) {
+      <div>
+        <h2 data-cy="textAnnotationElementDetailsHeading"><span>Text Annotation Element</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span>ID</span></dt>
+          <dd>
+            <span>{{ textAnnotationElement()!.id }}</span>
+          </dd>
+          <dt><span>Start Sec</span></dt>
+          <dd>
+            <span>{{ textAnnotationElement()!.startSec }}</span>
+          </dd>
+          <dt><span>Text</span></dt>
+          <dd>
+            <span>{{ textAnnotationElement()!.text }}</span>
+          </dd>
+          <dt><span>Annotation</span></dt>
+          <dd>
+            @if (textAnnotationElement()!.annotation) {
+              <div>
+                <a [routerLink]="['/annotation', textAnnotationElement()!.annotation?.id, 'view']">{{
+                  textAnnotationElement()!.annotation?.id
+                }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/text-annotation-element', textAnnotationElement()!.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

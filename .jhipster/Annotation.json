@@ -13,9 +13,9 @@
   "name": "Annotation",
   "relationships": [
     {
-      "otherEntityName": "annotationElement",
+      "otherEntityName": "textAnnotationElement",
       "otherEntityRelationshipName": "annotation",
-      "relationshipName": "annotationElement",
+      "relationshipName": "textAnnotationElement",
       "relationshipSide": "left",
       "relationshipType": "one-to-many"
     },

@@ -12,9 +12,14 @@ const routes: Routes = [
     loadChildren: () => import('./annotation/annotation.routes'),
   },
   {
-    path: 'annotation-element',
-    data: { pageTitle: 'AnnotationElements' },
-    loadChildren: () => import('./annotation-element/annotation-element.routes'),
+    path: 'text-annotation-element',
+    data: { pageTitle: 'TextAnnotationElements' },
+    loadChildren: () => import('./text-annotation-element/text-annotation-element.routes'),
+  },
+  {
+    path: 'video-annotation-element',
+    data: { pageTitle: 'VideoAnnotationElements' },
+    loadChildren: () => import('./video-annotation-element/video-annotation-element.routes'),
   },
   /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
 ];

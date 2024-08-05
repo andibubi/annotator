@@ -33,7 +33,12 @@ public class Annotation implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "annotation")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "annotation" }, allowSetters = true)
-    private Set<AnnotationElement> annotationElements = new HashSet<>();
+    private Set<TextAnnotationElement> textAnnotationElements = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "annotation")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "annotation" }, allowSetters = true)
+    private Set<VideoAnnotationElement> videoAnnotationElements = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
@@ -66,34 +71,65 @@ public class Annotation implements Serializable {
         this.videoId = videoId;
     }
 
-    public Set<AnnotationElement> getAnnotationElements() {
-        return this.annotationElements;
+    public Set<TextAnnotationElement> getTextAnnotationElements() {
+        return this.textAnnotationElements;
     }
 
-    public void setAnnotationElements(Set<AnnotationElement> annotationElements) {
-        if (this.annotationElements != null) {
-            this.annotationElements.forEach(i -> i.setAnnotation(null));
+    public void setTextAnnotationElements(Set<TextAnnotationElement> textAnnotationElements) {
+        if (this.textAnnotationElements != null) {
+            this.textAnnotationElements.forEach(i -> i.setAnnotation(null));
         }
-        if (annotationElements != null) {
-            annotationElements.forEach(i -> i.setAnnotation(this));
+        if (textAnnotationElements != null) {
+            textAnnotationElements.forEach(i -> i.setAnnotation(this));
         }
-        this.annotationElements = annotationElements;
+        this.textAnnotationElements = textAnnotationElements;
     }
 
-    public Annotation annotationElements(Set<AnnotationElement> annotationElements) {
-        this.setAnnotationElements(annotationElements);
+    public Annotation textAnnotationElements(Set<TextAnnotationElement> textAnnotationElements) {
+        this.setTextAnnotationElements(textAnnotationElements);
         return this;
     }
 
-    public Annotation addAnnotationElement(AnnotationElement annotationElement) {
-        this.annotationElements.add(annotationElement);
-        annotationElement.setAnnotation(this);
+    public Annotation addTextAnnotationElement(TextAnnotationElement textAnnotationElement) {
+        this.textAnnotationElements.add(textAnnotationElement);
+        textAnnotationElement.setAnnotation(this);
         return this;
     }
 
-    public Annotation removeAnnotationElement(AnnotationElement annotationElement) {
-        this.annotationElements.remove(annotationElement);
-        annotationElement.setAnnotation(null);
+    public Annotation removeTextAnnotationElement(TextAnnotationElement textAnnotationElement) {
+        this.textAnnotationElements.remove(textAnnotationElement);
+        textAnnotationElement.setAnnotation(null);
+        return this;
+    }
+
+    public Set<VideoAnnotationElement> getVideoAnnotationElements() {
+        return this.videoAnnotationElements;
+    }
+
+    public void setVideoAnnotationElements(Set<VideoAnnotationElement> videoAnnotationElements) {
+        if (this.videoAnnotationElements != null) {
+            this.videoAnnotationElements.forEach(i -> i.setAnnotation(null));
+        }
+        if (videoAnnotationElements != null) {
+            videoAnnotationElements.forEach(i -> i.setAnnotation(this));
+        }
+        this.videoAnnotationElements = videoAnnotationElements;
+    }
+
+    public Annotation videoAnnotationElements(Set<VideoAnnotationElement> videoAnnotationElements) {
+        this.setVideoAnnotationElements(videoAnnotationElements);
+        return this;
+    }
+
+    public Annotation addVideoAnnotationElement(VideoAnnotationElement videoAnnotationElement) {
+        this.videoAnnotationElements.add(videoAnnotationElement);
+        videoAnnotationElement.setAnnotation(this);
+        return this;
+    }
+
+    public Annotation removeVideoAnnotationElement(VideoAnnotationElement videoAnnotationElement) {
+        this.videoAnnotationElements.remove(videoAnnotationElement);
+        videoAnnotationElement.setAnnotation(null);
         return this;
     }
 

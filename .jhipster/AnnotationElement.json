@@ -15,11 +15,11 @@
       "fieldValidateRules": ["required"]
     }
   ],
-  "name": "AnnotationElement",
+  "name": "TextAnnotationElement",
   "relationships": [
     {
       "otherEntityName": "annotation",
-      "otherEntityRelationshipName": "annotationElement",
+      "otherEntityRelationshipName": "textAnnotationElement",
       "relationshipName": "annotation",
       "relationshipSide": "right",
       "relationshipType": "many-to-one"

@@ -15,9 +15,16 @@ entity Annotation {
 	videoId String required
 }
 
-entity AnnotationElement {
+entity TextAnnotationElement {
 	startSec Integer required
     text String required
+}
+
+entity VideoAnnotationElement {
+	startSec Integer required
+	stopSec Integer required
+	videoId String required
+	videoStartSec Integer required
 }
 
 relationship ManyToOne {
@@ -25,5 +32,9 @@ relationship ManyToOne {
 }
 
 relationship OneToMany {
-  Annotation to AnnotationElement
+  Annotation to TextAnnotationElement
+}
+
+relationship OneToMany {
+  Annotation to VideoAnnotationElement
 }

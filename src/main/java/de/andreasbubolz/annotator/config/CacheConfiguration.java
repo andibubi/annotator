@@ -51,8 +51,9 @@ public class CacheConfiguration {
             createCache(cm, de.andreasbubolz.annotator.domain.Authority.class.getName());
             createCache(cm, de.andreasbubolz.annotator.domain.User.class.getName() + ".authorities");
             createCache(cm, de.andreasbubolz.annotator.domain.Annotation.class.getName());
-            createCache(cm, de.andreasbubolz.annotator.domain.Annotation.class.getName() + ".annotationElements");
-            createCache(cm, de.andreasbubolz.annotator.domain.AnnotationElement.class.getName());
+            createCache(cm, de.andreasbubolz.annotator.domain.Annotation.class.getName() + ".textAnnotationElements");
+            createCache(cm, de.andreasbubolz.annotator.domain.TextAnnotationElement.class.getName());
+            createCache(cm, de.andreasbubolz.annotator.domain.VideoAnnotationElement.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

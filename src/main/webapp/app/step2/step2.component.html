@@ -10,7 +10,7 @@
     <button id="menu-button" (click)="setFullscreen(false)">Menü</button>
   </div>
 
-  <div class="annotation-input-container" [style.display]="showTextAnnotationTextInput ? 'block' : 'none'">
+  <div class="annotation-input-container" [style.display]="showTextAnnotationDialog ? 'block' : 'none'">
     <input
       type="text"
       class="annotation-input"
@@ -21,12 +21,12 @@
     <button id="save-subtitle" (click)="saveTextAnnotation()">Speichern</button>
   </div>
 
-  <div class="annotation-input-container" [style.display]="showVideoAnnotationUrlInput ? 'block' : 'none'">
+  <div class="annotation-input-container" [style.display]="showVideoAnnotationDialog ? 'block' : 'none'">
     <label class="username-label" for="annotation-url">URL oder Id</label>
     <input
       id="annotation-url"
       type="text"
-      class="annotationinput"
+      class="annotation-input"
       placeholder="Eine Url oder eine Video-Id"
       [(ngModel)]="newVideoAnnotationUrl"
       (keyup.enter)="saveVideoAnnotation()"
@@ -37,7 +37,7 @@
       type="text"
       class="annotation.input"
       placeholder="startSec"
-      [(ngModel)]="newVideoAnnotationUrl"
+      [(ngModel)]="newVideoAnnotationStartSec"
       (keyup.enter)="saveVideoAnnotation()"
     />
     <label class="username-label" for="annotation-stop-sec">Stop Sec</label>
@@ -45,8 +45,8 @@
       id="annotation-stop-sec"
       type="text"
       class="annotation.input"
-      placeholder="startSec"
-      [(ngModel)]="newVideoAnnotationUrl"
+      placeholder="stopSec"
+      [(ngModel)]="newVideoAnnotationStopSec"
       (keyup.enter)="saveVideoAnnotation()"
     />
     <button id="saveVideoAnnotation" (click)="saveVideoAnnotation()">Speichern</button>
@@ -54,7 +54,7 @@
 </div>
 @if (!isFullscreen) {
   <button class="btn btn-primary" (click)="setFullscreen(true)">Fullscreen</button>
-  <button class="btn btn-primary" (click)="startTextAnnotation()">Kommentar starten</button>
-  <button class="btn btn-primary" (click)="startVideoAnnotation()">Videokommentar starten</button>
-  <button class="btn btn-primary" (click)="stopTextAnnotation()">Kommentar ausblenden</button>
+  <button class="btn btn-primary" (click)="startTextAnnotation()">Textannotation</button>
+  <button class="btn btn-primary" (click)="startVideoAnnotation()">Videoannotation</button>
+  <button class="btn btn-primary" (click)="createUrl()">URL erzeugen</button>
 }

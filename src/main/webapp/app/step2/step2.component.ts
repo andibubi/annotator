@@ -1,9 +1,11 @@
 import { Component, OnInit, HostListener, Input, ElementRef, Renderer2 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { IAnnotationElement } from '../entities/annotation-element/annotation-element.model';
+import { ITextAnnotationElement } from '../entities/text-annotation-element/text-annotation-element.model';
+import { IVideoAnnotationElement } from '../entities/video-annotation-element/video-annotation-element.model';
 import { IAnnotation } from '../entities/annotation/annotation.model';
-import { AnnotationElementService } from '../entities/annotation-element/service/annotation-element.service';
+import { TextAnnotationElementService } from '../entities/text-annotation-element/service/text-annotation-element.service';
+import { VideoAnnotationElementService } from '../entities/video-annotation-element/service/video-annotation-element.service';
 import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 
@@ -17,16 +19,21 @@ import { HttpResponse } from '@angular/common/http';
 export class Step2Component implements OnInit {
   @Input() annotation: IAnnotation | null = null;
 
-  textAnnotations = new Array<IAnnotationElement>();
+  textAnnotations = new Array<ITextAnnotationElement>();
   actTextAnnotation: any = undefined;
-  actVideoAnnotation: any = undefined;
-  newTextAnnotationText: string = '';
-  newVideoAnnotationUrl: string = '';
-  showTextAnnotationTextInput: boolean = false;
-  showVideoAnnotationUrlInput: boolean = false;
-  isFullscreen: boolean = false;
 
-  videoAnnotations = [{ startSec: 5, stopSec: 8, videoId: 'nqRtzQOf0Xk', videoStartSec: 100 }];
+  showTextAnnotationDialog: boolean = false;
+  newTextAnnotationText: string = '';
+
+  videoAnnotations = new Array<IVideoAnnotationElement>();
+  actVideoAnnotation: any = undefined;
+
+  showVideoAnnotationDialog: boolean = false;
+  newVideoAnnotationUrl: string = '';
+  newVideoAnnotationStartSec: number = 0;
+  newVideoAnnotationStopSec: number = 1000;
+
+  isFullscreen: boolean = false;
 
   youtubePlayer: any;
   annotationYoutubePlayer: any;
@@ -40,7 +47,10 @@ export class Step2Component implements OnInit {
   resizeStartX: number = 0;
   resizeStartY: number = 0;
 
-  constructor(private annotationElementService: AnnotationElementService) {}
+  constructor(
+    private textAnnotationElementService: TextAnnotationElementService,
+    private videoAnnotationElementService: VideoAnnotationElementService,
+  ) {}
 
   ngOnInit() {
     if (!(window as any).YT) {
@@ -87,8 +97,7 @@ export class Step2Component implements OnInit {
 
   onYoutubePlayerReady(event: any) {
     setInterval(() => {
-      const currentstartSec = this.youtubePlayer.getCurrentTime();
-      this.updateAnnotations(currentstartSec);
+      this.updateAnnotations(this.youtubePlayer.getCurrentTime());
     }, 1000);
   }
 
@@ -97,19 +106,19 @@ export class Step2Component implements OnInit {
   }
 
   startTextAnnotation() {
-    this.showTextAnnotationTextInput = true;
+    this.youtubePlayer.pauseVideo();
+    this.showTextAnnotationDialog = true;
   }
 
   startVideoAnnotation() {
-    this.showVideoAnnotationUrlInput = true;
+    this.youtubePlayer.pauseVideo();
+    this.showVideoAnnotationDialog = true;
   }
 
-  stopTextAnnotation() {
-    alert('Das tut noch nichts!');
-  }
+  createUrl() {}
 
   saveTextAnnotation() {
-    this.annotationElementService
+    this.textAnnotationElementService
       .create({
         id: null,
         startSec: this.youtubePlayer.getCurrentTime(),
@@ -117,66 +126,66 @@ export class Step2Component implements OnInit {
         annotation: this.annotation,
       })
       .subscribe(
-        (response: HttpResponse<IAnnotationElement>) => {
+        (response: HttpResponse<ITextAnnotationElement>) => {
           this.textAnnotations.push(response.body!);
           this.newTextAnnotationText = '';
-          this.showTextAnnotationTextInput = false;
+          this.showTextAnnotationDialog = false;
         },
         (res: HttpResponse<any>) => this.onSaveError(),
       );
+    this.youtubePlayer.playVideo();
   }
 
   saveVideoAnnotation() {
-    /*
-    this.annotationElementService.create({
-      id: null,
-      startSec: this.youtubePlayer.getCurrentTime(),
-      text: this.newTextAnnotationText,
-      annotation: this.annotation,
-    }).subscribe(
-      (response: HttpResponse<IAnnotationElement>) => {*/
-    //this.videoAnnotations.push(response.body!);
-    this.videoAnnotations.push({ startSec: 5, stopSec: 8, videoId: 'nqRtzQOf0Xk', videoStartSec: 100 });
-    this.showVideoAnnotationUrlInput = false;
-    /* },
-      (res: HttpResponse<any>) => this.onSaveError(),
-    );
-    */
-  }
-
-  private onSaveSuccess(response: HttpResponse<IAnnotationElement>): void {
-    this.textAnnotations.push(response.body!);
-    this.newTextAnnotationText = '';
-    this.showTextAnnotationTextInput = false;
+    this.videoAnnotationElementService
+      .create({
+        id: null,
+        startSec: this.youtubePlayer.getCurrentTime(),
+        stopSec: this.youtubePlayer.getCurrentTime() + this.newVideoAnnotationStopSec - this.newVideoAnnotationStartSec,
+        videoId: this.newVideoAnnotationUrl,
+        videoStartSec: this.newVideoAnnotationStartSec,
+        annotation: this.annotation,
+      })
+      .subscribe(
+        (response: HttpResponse<IVideoAnnotationElement>) => {
+          this.videoAnnotations.push(response.body!);
+          //this.videoAnnotations.push({ startSec: 5, stopSec: 8, videoId: 'nqRtzQOf0Xk', videoStartSec: 100 });
+          this.showVideoAnnotationDialog = false;
+        },
+        (res: HttpResponse<any>) => this.onSaveError(),
+      );
+    this.youtubePlayer.playVideo();
   }
 
   private onSaveError(): void {
     // Handle save error, e.g., show an error message
     console.error('There was an error creating the entity');
+    alert('Da ist was schief gegangen.');
   }
 
   updateAnnotations(actSec: number) {
     var nearestTextAnnotation = undefined;
     for (const textAnnotation of this.textAnnotations)
-      if (textAnnotation.startSec! <= actSec && (!nearestTextAnnotation || nearestTextAnnotation.startSec! < textAnnotation.startSec!))
+      if (actSec >= textAnnotation.startSec! && (!nearestTextAnnotation || nearestTextAnnotation.startSec! < textAnnotation.startSec!))
         nearestTextAnnotation = textAnnotation;
 
     if (nearestTextAnnotation && nearestTextAnnotation != this.actTextAnnotation) {
       document.getElementById('text-annotations')!.innerHTML = nearestTextAnnotation.text!;
       this.actTextAnnotation = nearestTextAnnotation;
     }
+
     var nearestVideoAnnotation = undefined;
     for (const videoAnnotation of this.videoAnnotations)
       if (actSec >= videoAnnotation.startSec! && actSec < videoAnnotation.stopSec!) nearestVideoAnnotation = videoAnnotation;
 
     if (nearestVideoAnnotation && nearestVideoAnnotation != this.actVideoAnnotation) {
-      console.log('1 !!!!!!!!!!!!!!!!!!');
+      console.log('1111111111111');
       this.annotationYoutubePlayer.loadVideoById(nearestVideoAnnotation.videoId, nearestVideoAnnotation.videoStartSec, 'large');
       this.actVideoAnnotation = nearestVideoAnnotation;
     } else if (!nearestVideoAnnotation && this.actVideoAnnotation) {
-      console.log('2 !!!!!!!!!!!!!!!!!!');
+      console.log('222222222222');
       this.annotationYoutubePlayer.stopVideo();
-      this.actVideoAnnotation = null;
+      this.actVideoAnnotation = undefined;
     }
   }
 

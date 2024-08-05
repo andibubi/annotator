@@ -1,6 +1,6 @@
 package de.andreasbubolz.annotator.web.rest;
 
-import static de.andreasbubolz.annotator.domain.AnnotationElementAsserts.*;
+import static de.andreasbubolz.annotator.domain.TextAnnotationElementAsserts.*;
 import static de.andreasbubolz.annotator.web.rest.TestUtil.createUpdateProxyForBean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -9,8 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.andreasbubolz.annotator.IntegrationTest;
-import de.andreasbubolz.annotator.domain.AnnotationElement;
-import de.andreasbubolz.annotator.repository.AnnotationElementRepository;
+import de.andreasbubolz.annotator.domain.TextAnnotationElement;
+import de.andreasbubolz.annotator.repository.TextAnnotationElementRepository;
 import jakarta.persistence.EntityManager;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
@@ -25,12 +25,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Integration tests for the {@link AnnotationElementResource} REST controller.
+ * Integration tests for the {@link TextAnnotationElementResource} REST controller.
  */
 @IntegrationTest
 @AutoConfigureMockMvc
 @WithMockUser
-class AnnotationElementResourceIT {
+class TextAnnotationElementResourceIT {
 
     private static final Integer DEFAULT_START_SEC = 1;
     private static final Integer UPDATED_START_SEC = 2;
@@ -38,7 +38,7 @@ class AnnotationElementResourceIT {
     private static final String DEFAULT_TEXT = "AAAAAAAAAA";
     private static final String UPDATED_TEXT = "BBBBBBBBBB";
 
-    private static final String ENTITY_API_URL = "/api/annotation-elements";
+    private static final String ENTITY_API_URL = "/api/text-annotation-elements";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
     private static Random random = new Random();
@@ -48,17 +48,17 @@ class AnnotationElementResourceIT {
     private ObjectMapper om;
 
     @Autowired
-    private AnnotationElementRepository annotationElementRepository;
+    private TextAnnotationElementRepository textAnnotationElementRepository;
 
     @Autowired
     private EntityManager em;
 
     @Autowired
-    private MockMvc restAnnotationElementMockMvc;
+    private MockMvc restTextAnnotationElementMockMvc;
 
-    private AnnotationElement annotationElement;
+    private TextAnnotationElement textAnnotationElement;
 
-    private AnnotationElement insertedAnnotationElement;
+    private TextAnnotationElement insertedTextAnnotationElement;
 
     /**
      * Create an entity for this test.
@@ -66,9 +66,9 @@ class AnnotationElementResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static AnnotationElement createEntity(EntityManager em) {
-        AnnotationElement annotationElement = new AnnotationElement().startSec(DEFAULT_START_SEC).text(DEFAULT_TEXT);
-        return annotationElement;
+    public static TextAnnotationElement createEntity(EntityManager em) {
+        TextAnnotationElement textAnnotationElement = new TextAnnotationElement().startSec(DEFAULT_START_SEC).text(DEFAULT_TEXT);
+        return textAnnotationElement;
     }
 
     /**
@@ -77,60 +77,63 @@ class AnnotationElementResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static AnnotationElement createUpdatedEntity(EntityManager em) {
-        AnnotationElement annotationElement = new AnnotationElement().startSec(UPDATED_START_SEC).text(UPDATED_TEXT);
-        return annotationElement;
+    public static TextAnnotationElement createUpdatedEntity(EntityManager em) {
+        TextAnnotationElement textAnnotationElement = new TextAnnotationElement().startSec(UPDATED_START_SEC).text(UPDATED_TEXT);
+        return textAnnotationElement;
     }
 
     @BeforeEach
     public void initTest() {
-        annotationElement = createEntity(em);
+        textAnnotationElement = createEntity(em);
     }
 
     @AfterEach
     public void cleanup() {
-        if (insertedAnnotationElement != null) {
-            annotationElementRepository.delete(insertedAnnotationElement);
-            insertedAnnotationElement = null;
+        if (insertedTextAnnotationElement != null) {
+            textAnnotationElementRepository.delete(insertedTextAnnotationElement);
+            insertedTextAnnotationElement = null;
         }
     }
 
     @Test
     @Transactional
-    void createAnnotationElement() throws Exception {
+    void createTextAnnotationElement() throws Exception {
         long databaseSizeBeforeCreate = getRepositoryCount();
-        // Create the AnnotationElement
-        var returnedAnnotationElement = om.readValue(
-            restAnnotationElementMockMvc
-                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(annotationElement)))
+        // Create the TextAnnotationElement
+        var returnedTextAnnotationElement = om.readValue(
+            restTextAnnotationElementMockMvc
+                .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(textAnnotationElement)))
                 .andExpect(status().isCreated())
                 .andReturn()
                 .getResponse()
                 .getContentAsString(),
-            AnnotationElement.class
+            TextAnnotationElement.class
         );
 
-        // Validate the AnnotationElement in the database
+        // Validate the TextAnnotationElement in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
-        assertAnnotationElementUpdatableFieldsEquals(returnedAnnotationElement, getPersistedAnnotationElement(returnedAnnotationElement));
+        assertTextAnnotationElementUpdatableFieldsEquals(
+            returnedTextAnnotationElement,
+            getPersistedTextAnnotationElement(returnedTextAnnotationElement)
+        );
 
-        insertedAnnotationElement = returnedAnnotationElement;
+        insertedTextAnnotationElement = returnedTextAnnotationElement;
     }
 
     @Test
     @Transactional
-    void createAnnotationElementWithExistingId() throws Exception {
-        // Create the AnnotationElement with an existing ID
-        annotationElement.setId(1L);
+    void createTextAnnotationElementWithExistingId() throws Exception {
+        // Create the TextAnnotationElement with an existing ID
+        textAnnotationElement.setId(1L);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
 
         // An entity with an existing ID cannot be created, so this API call must fail
-        restAnnotationElementMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(annotationElement)))
+        restTextAnnotationElementMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(textAnnotationElement)))
             .andExpect(status().isBadRequest());
 
-        // Validate the AnnotationElement in the database
+        // Validate the TextAnnotationElement in the database
         assertSameRepositoryCount(databaseSizeBeforeCreate);
     }
 
@@ -139,12 +142,12 @@ class AnnotationElementResourceIT {
     void checkStartSecIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
         // set the field null
-        annotationElement.setStartSec(null);
+        textAnnotationElement.setStartSec(null);
 
-        // Create the AnnotationElement, which fails.
+        // Create the TextAnnotationElement, which fails.
 
-        restAnnotationElementMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(annotationElement)))
+        restTextAnnotationElementMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(textAnnotationElement)))
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
@@ -155,12 +158,12 @@ class AnnotationElementResourceIT {
     void checkTextIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
         // set the field null
-        annotationElement.setText(null);
+        textAnnotationElement.setText(null);
 
-        // Create the AnnotationElement, which fails.
+        // Create the TextAnnotationElement, which fails.
 
-        restAnnotationElementMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(annotationElement)))
+        restTextAnnotationElementMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(textAnnotationElement)))
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
@@ -168,247 +171,249 @@ class AnnotationElementResourceIT {
 
     @Test
     @Transactional
-    void getAllAnnotationElements() throws Exception {
+    void getAllTextAnnotationElements() throws Exception {
         // Initialize the database
-        insertedAnnotationElement = annotationElementRepository.saveAndFlush(annotationElement);
+        insertedTextAnnotationElement = textAnnotationElementRepository.saveAndFlush(textAnnotationElement);
 
-        // Get all the annotationElementList
-        restAnnotationElementMockMvc
+        // Get all the textAnnotationElementList
+        restTextAnnotationElementMockMvc
             .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(annotationElement.getId().intValue())))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(textAnnotationElement.getId().intValue())))
             .andExpect(jsonPath("$.[*].startSec").value(hasItem(DEFAULT_START_SEC)))
             .andExpect(jsonPath("$.[*].text").value(hasItem(DEFAULT_TEXT)));
     }
 
     @Test
     @Transactional
-    void getAnnotationElement() throws Exception {
+    void getTextAnnotationElement() throws Exception {
         // Initialize the database
-        insertedAnnotationElement = annotationElementRepository.saveAndFlush(annotationElement);
+        insertedTextAnnotationElement = textAnnotationElementRepository.saveAndFlush(textAnnotationElement);
 
-        // Get the annotationElement
-        restAnnotationElementMockMvc
-            .perform(get(ENTITY_API_URL_ID, annotationElement.getId()))
+        // Get the textAnnotationElement
+        restTextAnnotationElementMockMvc
+            .perform(get(ENTITY_API_URL_ID, textAnnotationElement.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.id").value(annotationElement.getId().intValue()))
+            .andExpect(jsonPath("$.id").value(textAnnotationElement.getId().intValue()))
             .andExpect(jsonPath("$.startSec").value(DEFAULT_START_SEC))
             .andExpect(jsonPath("$.text").value(DEFAULT_TEXT));
     }
 
     @Test
     @Transactional
-    void getNonExistingAnnotationElement() throws Exception {
-        // Get the annotationElement
-        restAnnotationElementMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
+    void getNonExistingTextAnnotationElement() throws Exception {
+        // Get the textAnnotationElement
+        restTextAnnotationElementMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
     @Test
     @Transactional
-    void putExistingAnnotationElement() throws Exception {
+    void putExistingTextAnnotationElement() throws Exception {
         // Initialize the database
-        insertedAnnotationElement = annotationElementRepository.saveAndFlush(annotationElement);
+        insertedTextAnnotationElement = textAnnotationElementRepository.saveAndFlush(textAnnotationElement);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
-        // Update the annotationElement
-        AnnotationElement updatedAnnotationElement = annotationElementRepository.findById(annotationElement.getId()).orElseThrow();
-        // Disconnect from session so that the updates on updatedAnnotationElement are not directly saved in db
-        em.detach(updatedAnnotationElement);
-        updatedAnnotationElement.startSec(UPDATED_START_SEC).text(UPDATED_TEXT);
+        // Update the textAnnotationElement
+        TextAnnotationElement updatedTextAnnotationElement = textAnnotationElementRepository
+            .findById(textAnnotationElement.getId())
+            .orElseThrow();
+        // Disconnect from session so that the updates on updatedTextAnnotationElement are not directly saved in db
+        em.detach(updatedTextAnnotationElement);
+        updatedTextAnnotationElement.startSec(UPDATED_START_SEC).text(UPDATED_TEXT);
 
-        restAnnotationElementMockMvc
+        restTextAnnotationElementMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedAnnotationElement.getId())
+                put(ENTITY_API_URL_ID, updatedTextAnnotationElement.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(updatedAnnotationElement))
+                    .content(om.writeValueAsBytes(updatedTextAnnotationElement))
             )
             .andExpect(status().isOk());
 
-        // Validate the AnnotationElement in the database
+        // Validate the TextAnnotationElement in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        assertPersistedAnnotationElementToMatchAllProperties(updatedAnnotationElement);
+        assertPersistedTextAnnotationElementToMatchAllProperties(updatedTextAnnotationElement);
     }
 
     @Test
     @Transactional
-    void putNonExistingAnnotationElement() throws Exception {
+    void putNonExistingTextAnnotationElement() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        annotationElement.setId(longCount.incrementAndGet());
+        textAnnotationElement.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
-        restAnnotationElementMockMvc
+        restTextAnnotationElementMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, annotationElement.getId())
+                put(ENTITY_API_URL_ID, textAnnotationElement.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(annotationElement))
+                    .content(om.writeValueAsBytes(textAnnotationElement))
             )
             .andExpect(status().isBadRequest());
 
-        // Validate the AnnotationElement in the database
+        // Validate the TextAnnotationElement in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
-    void putWithIdMismatchAnnotationElement() throws Exception {
+    void putWithIdMismatchTextAnnotationElement() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        annotationElement.setId(longCount.incrementAndGet());
+        textAnnotationElement.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
-        restAnnotationElementMockMvc
+        restTextAnnotationElementMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(annotationElement))
+                    .content(om.writeValueAsBytes(textAnnotationElement))
             )
             .andExpect(status().isBadRequest());
 
-        // Validate the AnnotationElement in the database
+        // Validate the TextAnnotationElement in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
-    void putWithMissingIdPathParamAnnotationElement() throws Exception {
+    void putWithMissingIdPathParamTextAnnotationElement() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        annotationElement.setId(longCount.incrementAndGet());
+        textAnnotationElement.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
-        restAnnotationElementMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(annotationElement)))
+        restTextAnnotationElementMockMvc
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(textAnnotationElement)))
             .andExpect(status().isMethodNotAllowed());
 
-        // Validate the AnnotationElement in the database
+        // Validate the TextAnnotationElement in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
-    void partialUpdateAnnotationElementWithPatch() throws Exception {
+    void partialUpdateTextAnnotationElementWithPatch() throws Exception {
         // Initialize the database
-        insertedAnnotationElement = annotationElementRepository.saveAndFlush(annotationElement);
+        insertedTextAnnotationElement = textAnnotationElementRepository.saveAndFlush(textAnnotationElement);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
-        // Update the annotationElement using partial update
-        AnnotationElement partialUpdatedAnnotationElement = new AnnotationElement();
-        partialUpdatedAnnotationElement.setId(annotationElement.getId());
+        // Update the textAnnotationElement using partial update
+        TextAnnotationElement partialUpdatedTextAnnotationElement = new TextAnnotationElement();
+        partialUpdatedTextAnnotationElement.setId(textAnnotationElement.getId());
 
-        restAnnotationElementMockMvc
+        restTextAnnotationElementMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, partialUpdatedAnnotationElement.getId())
+                patch(ENTITY_API_URL_ID, partialUpdatedTextAnnotationElement.getId())
                     .contentType("application/merge-patch+json")
-                    .content(om.writeValueAsBytes(partialUpdatedAnnotationElement))
+                    .content(om.writeValueAsBytes(partialUpdatedTextAnnotationElement))
             )
             .andExpect(status().isOk());
 
-        // Validate the AnnotationElement in the database
+        // Validate the TextAnnotationElement in the database
 
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        assertAnnotationElementUpdatableFieldsEquals(
-            createUpdateProxyForBean(partialUpdatedAnnotationElement, annotationElement),
-            getPersistedAnnotationElement(annotationElement)
+        assertTextAnnotationElementUpdatableFieldsEquals(
+            createUpdateProxyForBean(partialUpdatedTextAnnotationElement, textAnnotationElement),
+            getPersistedTextAnnotationElement(textAnnotationElement)
         );
     }
 
     @Test
     @Transactional
-    void fullUpdateAnnotationElementWithPatch() throws Exception {
+    void fullUpdateTextAnnotationElementWithPatch() throws Exception {
         // Initialize the database
-        insertedAnnotationElement = annotationElementRepository.saveAndFlush(annotationElement);
+        insertedTextAnnotationElement = textAnnotationElementRepository.saveAndFlush(textAnnotationElement);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
 
-        // Update the annotationElement using partial update
-        AnnotationElement partialUpdatedAnnotationElement = new AnnotationElement();
-        partialUpdatedAnnotationElement.setId(annotationElement.getId());
+        // Update the textAnnotationElement using partial update
+        TextAnnotationElement partialUpdatedTextAnnotationElement = new TextAnnotationElement();
+        partialUpdatedTextAnnotationElement.setId(textAnnotationElement.getId());
 
-        partialUpdatedAnnotationElement.startSec(UPDATED_START_SEC).text(UPDATED_TEXT);
+        partialUpdatedTextAnnotationElement.startSec(UPDATED_START_SEC).text(UPDATED_TEXT);
 
-        restAnnotationElementMockMvc
+        restTextAnnotationElementMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, partialUpdatedAnnotationElement.getId())
+                patch(ENTITY_API_URL_ID, partialUpdatedTextAnnotationElement.getId())
                     .contentType("application/merge-patch+json")
-                    .content(om.writeValueAsBytes(partialUpdatedAnnotationElement))
+                    .content(om.writeValueAsBytes(partialUpdatedTextAnnotationElement))
             )
             .andExpect(status().isOk());
 
-        // Validate the AnnotationElement in the database
+        // Validate the TextAnnotationElement in the database
 
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        assertAnnotationElementUpdatableFieldsEquals(
-            partialUpdatedAnnotationElement,
-            getPersistedAnnotationElement(partialUpdatedAnnotationElement)
+        assertTextAnnotationElementUpdatableFieldsEquals(
+            partialUpdatedTextAnnotationElement,
+            getPersistedTextAnnotationElement(partialUpdatedTextAnnotationElement)
         );
     }
 
     @Test
     @Transactional
-    void patchNonExistingAnnotationElement() throws Exception {
+    void patchNonExistingTextAnnotationElement() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        annotationElement.setId(longCount.incrementAndGet());
+        textAnnotationElement.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
-        restAnnotationElementMockMvc
+        restTextAnnotationElementMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, annotationElement.getId())
+                patch(ENTITY_API_URL_ID, textAnnotationElement.getId())
                     .contentType("application/merge-patch+json")
-                    .content(om.writeValueAsBytes(annotationElement))
+                    .content(om.writeValueAsBytes(textAnnotationElement))
             )
             .andExpect(status().isBadRequest());
 
-        // Validate the AnnotationElement in the database
+        // Validate the TextAnnotationElement in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
-    void patchWithIdMismatchAnnotationElement() throws Exception {
+    void patchWithIdMismatchTextAnnotationElement() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        annotationElement.setId(longCount.incrementAndGet());
+        textAnnotationElement.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
-        restAnnotationElementMockMvc
+        restTextAnnotationElementMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(om.writeValueAsBytes(annotationElement))
+                    .content(om.writeValueAsBytes(textAnnotationElement))
             )
             .andExpect(status().isBadRequest());
 
-        // Validate the AnnotationElement in the database
+        // Validate the TextAnnotationElement in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
-    void patchWithMissingIdPathParamAnnotationElement() throws Exception {
+    void patchWithMissingIdPathParamTextAnnotationElement() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        annotationElement.setId(longCount.incrementAndGet());
+        textAnnotationElement.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
-        restAnnotationElementMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(om.writeValueAsBytes(annotationElement)))
+        restTextAnnotationElementMockMvc
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(om.writeValueAsBytes(textAnnotationElement)))
             .andExpect(status().isMethodNotAllowed());
 
-        // Validate the AnnotationElement in the database
+        // Validate the TextAnnotationElement in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
     }
 
     @Test
     @Transactional
-    void deleteAnnotationElement() throws Exception {
+    void deleteTextAnnotationElement() throws Exception {
         // Initialize the database
-        insertedAnnotationElement = annotationElementRepository.saveAndFlush(annotationElement);
+        insertedTextAnnotationElement = textAnnotationElementRepository.saveAndFlush(textAnnotationElement);
 
         long databaseSizeBeforeDelete = getRepositoryCount();
 
-        // Delete the annotationElement
-        restAnnotationElementMockMvc
-            .perform(delete(ENTITY_API_URL_ID, annotationElement.getId()).accept(MediaType.APPLICATION_JSON))
+        // Delete the textAnnotationElement
+        restTextAnnotationElementMockMvc
+            .perform(delete(ENTITY_API_URL_ID, textAnnotationElement.getId()).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item
@@ -416,7 +421,7 @@ class AnnotationElementResourceIT {
     }
 
     protected long getRepositoryCount() {
-        return annotationElementRepository.count();
+        return textAnnotationElementRepository.count();
     }
 
     protected void assertIncrementedRepositoryCount(long countBefore) {
@@ -431,18 +436,21 @@ class AnnotationElementResourceIT {
         assertThat(countBefore).isEqualTo(getRepositoryCount());
     }
 
-    protected AnnotationElement getPersistedAnnotationElement(AnnotationElement annotationElement) {
-        return annotationElementRepository.findById(annotationElement.getId()).orElseThrow();
+    protected TextAnnotationElement getPersistedTextAnnotationElement(TextAnnotationElement textAnnotationElement) {
+        return textAnnotationElementRepository.findById(textAnnotationElement.getId()).orElseThrow();
     }
 
-    protected void assertPersistedAnnotationElementToMatchAllProperties(AnnotationElement expectedAnnotationElement) {
-        assertAnnotationElementAllPropertiesEquals(expectedAnnotationElement, getPersistedAnnotationElement(expectedAnnotationElement));
+    protected void assertPersistedTextAnnotationElementToMatchAllProperties(TextAnnotationElement expectedTextAnnotationElement) {
+        assertTextAnnotationElementAllPropertiesEquals(
+            expectedTextAnnotationElement,
+            getPersistedTextAnnotationElement(expectedTextAnnotationElement)
+        );
     }
 
-    protected void assertPersistedAnnotationElementToMatchUpdatableProperties(AnnotationElement expectedAnnotationElement) {
-        assertAnnotationElementAllUpdatablePropertiesEquals(
-            expectedAnnotationElement,
-            getPersistedAnnotationElement(expectedAnnotationElement)
+    protected void assertPersistedTextAnnotationElementToMatchUpdatableProperties(TextAnnotationElement expectedTextAnnotationElement) {
+        assertTextAnnotationElementAllUpdatablePropertiesEquals(
+            expectedTextAnnotationElement,
+            getPersistedTextAnnotationElement(expectedTextAnnotationElement)
         );
     }
 }

@@ -15,7 +15,7 @@
     "enableHibernateCache": true,
     "enableSwaggerCodegen": false,
     "enableTranslation": false,
-    "entities": ["Annotation", "AnnotationElement"],
+    "entities": ["Annotation", "TextAnnotationElement"],
     "gitCompany": "",
     "jhiPrefix": "jhi",
     "jhipsterVersion": "8.6.0",

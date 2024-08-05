@@ -1,7 +1,7 @@
 package de.andreasbubolz.annotator.domain;
 
-import static de.andreasbubolz.annotator.domain.AnnotationElementTestSamples.*;
 import static de.andreasbubolz.annotator.domain.AnnotationTestSamples.*;
+import static de.andreasbubolz.annotator.domain.TextAnnotationElementTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import de.andreasbubolz.annotator.web.rest.TestUtil;
@@ -26,24 +26,24 @@ class AnnotationTest {
     }
 
     @Test
-    void annotationElementTest() {
+    void textAnnotationElementTest() {
         Annotation annotation = getAnnotationRandomSampleGenerator();
-        AnnotationElement annotationElementBack = getAnnotationElementRandomSampleGenerator();
+        TextAnnotationElement textAnnotationElementBack = getTextAnnotationElementRandomSampleGenerator();
 
-        annotation.addAnnotationElement(annotationElementBack);
-        assertThat(annotation.getAnnotationElements()).containsOnly(annotationElementBack);
-        assertThat(annotationElementBack.getAnnotation()).isEqualTo(annotation);
+        annotation.addTextAnnotationElement(textAnnotationElementBack);
+        assertThat(annotation.getTextAnnotationElements()).containsOnly(textAnnotationElementBack);
+        assertThat(textAnnotationElementBack.getAnnotation()).isEqualTo(annotation);
 
-        annotation.removeAnnotationElement(annotationElementBack);
-        assertThat(annotation.getAnnotationElements()).doesNotContain(annotationElementBack);
-        assertThat(annotationElementBack.getAnnotation()).isNull();
+        annotation.removeTextAnnotationElement(textAnnotationElementBack);
+        assertThat(annotation.getTextAnnotationElements()).doesNotContain(textAnnotationElementBack);
+        assertThat(textAnnotationElementBack.getAnnotation()).isNull();
 
-        annotation.annotationElements(new HashSet<>(Set.of(annotationElementBack)));
-        assertThat(annotation.getAnnotationElements()).containsOnly(annotationElementBack);
-        assertThat(annotationElementBack.getAnnotation()).isEqualTo(annotation);
+        annotation.textAnnotationElements(new HashSet<>(Set.of(textAnnotationElementBack)));
+        assertThat(annotation.getTextAnnotationElements()).containsOnly(textAnnotationElementBack);
+        assertThat(textAnnotationElementBack.getAnnotation()).isEqualTo(annotation);
 
-        annotation.setAnnotationElements(new HashSet<>());
-        assertThat(annotation.getAnnotationElements()).doesNotContain(annotationElementBack);
-        assertThat(annotationElementBack.getAnnotation()).isNull();
+        annotation.setTextAnnotationElements(new HashSet<>());
+        assertThat(annotation.getTextAnnotationElements()).doesNotContain(textAnnotationElementBack);
+        assertThat(textAnnotationElementBack.getAnnotation()).isNull();
     }
 }
