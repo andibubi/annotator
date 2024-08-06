@@ -1,40 +1,30 @@
 import { Component, OnInit, HostListener, Input, ElementRef, Renderer2, NgZone } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { IAnnotation } from '../entities/annotation/annotation.model';
 import { ITextAnnotationElement } from '../entities/text-annotation-element/text-annotation-element.model';
 import { IVideoAnnotationElement } from '../entities/video-annotation-element/video-annotation-element.model';
-import { IAnnotation } from '../entities/annotation/annotation.model';
-import { TextAnnotationElementService } from '../entities/text-annotation-element/service/text-annotation-element.service';
-import { VideoAnnotationElementService } from '../entities/video-annotation-element/service/video-annotation-element.service';
-import { AnnotationService } from '../entities/annotation/service/annotation.service';
+import { IAnnotationWithElements } from './annotation-with-elements.model';
+import { ViewerService } from './viewer.service';
 import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   imports: [CommonModule, FormsModule],
-  selector: 'app-step2',
+  selector: 'app-viewer',
   standalone: true,
-  templateUrl: './step2.component.html',
-  styleUrls: ['./step2.component.scss'],
+  templateUrl: './viewer.component.html',
+  styleUrls: ['./viewer.component.scss'],
 })
-export class Step2Component implements OnInit {
-  @Input() annotation: IAnnotation | null = null;
+export default class ViewerComponent implements OnInit {
+  annotation: IAnnotation | null = null;
 
   textAnnotations = new Array<ITextAnnotationElement>();
   actTextAnnotation: any = undefined;
 
-  showTextAnnotationDialog: boolean = false;
-  newTextAnnotationText: string = '';
-
   videoAnnotations = new Array<IVideoAnnotationElement>();
   actVideoAnnotation: any = undefined;
-
-  showVideoAnnotationDialog: boolean = false;
-  newVideoAnnotationUrl: string = '';
-  newVideoAnnotationStartSec: number = 0;
-  newVideoAnnotationStopSec: number = 1000;
-
-  qrCodeData: any = undefined;
 
   isFullscreen: boolean = false;
 
@@ -51,9 +41,8 @@ export class Step2Component implements OnInit {
   resizeStartY: number = 0;
 
   constructor(
-    private annotationService: AnnotationService,
-    private textAnnotationElementService: TextAnnotationElementService,
-    private videoAnnotationElementService: VideoAnnotationElementService,
+    private route: ActivatedRoute,
+    private viewerService: ViewerService,
     private ngZone: NgZone,
   ) {}
 
@@ -63,6 +52,19 @@ export class Step2Component implements OnInit {
     } else {
       this.initYoutubePlayers();
     }
+    this.route.paramMap.subscribe(params => {
+      this.viewerService.findAnnotationWithElements(Number(params.get('annotationId'))).subscribe(
+        response => {
+          var annotationWithElements: IAnnotationWithElements = response.body!;
+          this.annotation = annotationWithElements.annotation;
+          this.textAnnotations = annotationWithElements.textAnnotationElements;
+          this.videoAnnotations = annotationWithElements.videoAnnotationElements;
+        },
+        error => {
+          console.error('Error', error);
+        },
+      );
+    });
   }
 
   setFullscreen(fullscreen: boolean) {
@@ -110,73 +112,6 @@ export class Step2Component implements OnInit {
 
   onAnnotationYoutubePlayerReady(event: any) {
     setInterval(() => {}, 1000);
-  }
-
-  startTextAnnotation() {
-    this.youtubePlayer.pauseVideo();
-    this.showTextAnnotationDialog = true;
-  }
-
-  startVideoAnnotation() {
-    this.youtubePlayer.pauseVideo();
-    this.showVideoAnnotationDialog = true;
-  }
-
-  showAnnotationUrl() {
-    this.annotationService.getQrCode(this.annotation!.id).subscribe(
-      data => {
-        this.qrCodeData = data;
-      },
-      error => {
-        console.error('Error generating QR code', error);
-      },
-    );
-  }
-
-  saveTextAnnotation() {
-    this.textAnnotationElementService
-      .create({
-        id: null,
-        startSec: this.youtubePlayer.getCurrentTime(),
-        text: this.newTextAnnotationText,
-        annotation: this.annotation,
-      })
-      .subscribe(
-        (response: HttpResponse<ITextAnnotationElement>) => {
-          this.textAnnotations.push(response.body!);
-          this.newTextAnnotationText = '';
-          this.showTextAnnotationDialog = false;
-        },
-        (res: HttpResponse<any>) => this.onSaveError(),
-      );
-    this.youtubePlayer.playVideo();
-  }
-
-  saveVideoAnnotation() {
-    this.videoAnnotationElementService
-      .create({
-        id: null,
-        startSec: this.youtubePlayer.getCurrentTime(),
-        stopSec: this.youtubePlayer.getCurrentTime() + this.newVideoAnnotationStopSec - this.newVideoAnnotationStartSec,
-        videoId: this.newVideoAnnotationUrl,
-        videoStartSec: this.newVideoAnnotationStartSec,
-        annotation: this.annotation,
-      })
-      .subscribe(
-        (response: HttpResponse<IVideoAnnotationElement>) => {
-          this.videoAnnotations.push(response.body!);
-          //this.videoAnnotations.push({ startSec: 5, stopSec: 8, videoId: 'nqRtzQOf0Xk', videoStartSec: 100 });
-          this.showVideoAnnotationDialog = false;
-        },
-        (res: HttpResponse<any>) => this.onSaveError(),
-      );
-    this.youtubePlayer.playVideo();
-  }
-
-  private onSaveError(): void {
-    // Handle save error, e.g., show an error message
-    console.error('There was an error creating the entity');
-    alert('Da ist was schief gegangen.');
   }
 
   updateAnnotations(actSec: number) {

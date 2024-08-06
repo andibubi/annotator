@@ -1,6 +1,7 @@
 package de.andreasbubolz.annotator.repository;
 
 import de.andreasbubolz.annotator.domain.VideoAnnotationElement;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,4 +10,6 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface VideoAnnotationElementRepository extends JpaRepository<VideoAnnotationElement, Long> {}
+public interface VideoAnnotationElementRepository extends JpaRepository<VideoAnnotationElement, Long> {
+    List<VideoAnnotationElement> findAllByAnnotationId(Long annotationId);
+}

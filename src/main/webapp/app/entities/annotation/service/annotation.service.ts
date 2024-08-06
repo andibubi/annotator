@@ -19,6 +19,10 @@ export class AnnotationService {
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/annotations');
 
+  getQrCode(id: number): Observable<any> {
+    return this.http.get(this.applicationConfigService.getEndpointFor(`api/viewUrl/${id}`));
+  }
+
   create(annotation: NewAnnotation): Observable<EntityResponseType> {
     return this.http.post<IAnnotation>(this.resourceUrl, annotation, { observe: 'response' });
   }

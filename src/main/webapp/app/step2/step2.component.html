@@ -21,6 +21,11 @@
     <button id="save-subtitle" (click)="saveTextAnnotation()">Speichern</button>
   </div>
 
+  <div *ngIf="qrCodeData">
+    <p>{{ qrCodeData.url }}</p>
+    <img *ngIf="qrCodeData.qrCode" [src]="'data:image/png;base64,' + qrCodeData.qrCode" alt="QR Code" />
+  </div>
+
   <div class="annotation-input-container" [style.display]="showVideoAnnotationDialog ? 'block' : 'none'">
     <label class="username-label" for="annotation-url">URL oder Id</label>
     <input
@@ -56,5 +61,5 @@
   <button class="btn btn-primary" (click)="setFullscreen(true)">Fullscreen</button>
   <button class="btn btn-primary" (click)="startTextAnnotation()">Textannotation</button>
   <button class="btn btn-primary" (click)="startVideoAnnotation()">Videoannotation</button>
-  <button class="btn btn-primary" (click)="createUrl()">URL erzeugen</button>
+  <button class="btn btn-primary" (click)="showAnnotationUrl()">URL erzeugen</button>
 }

@@ -8,6 +8,7 @@ import HomeComponent from './home/home.component';
 import NavbarComponent from './layouts/navbar/navbar.component';
 import LoginComponent from './login/login.component';
 import CreateAnnotationComponent from './create-annotation/create-annotation.component';
+import ViewerComponent from './viewer/viewer.component';
 
 const routes: Routes = [
   {
@@ -45,6 +46,11 @@ const routes: Routes = [
     path: 'create-annotation',
     component: CreateAnnotationComponent,
     title: 'create-annotation.title',
+  },
+  {
+    path: 'view/:annotationId',
+    component: ViewerComponent,
+    title: 'view-annotation.title',
   },
   ...errorRoute,
 ];

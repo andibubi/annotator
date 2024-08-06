@@ -1,0 +1,19 @@
+<div>
+  <h1>Annotation ansehen</h1>
+
+  <div *ngIf="annotation" [ngClass]="{ fullscreen: isFullscreen }">
+    <div id="video-container">
+      <div id="youtube-player"></div>
+      <div id="text-annotations" class="draggable resizable"></div>
+      <div id="video-overlay" class="draggable resizable" [style.display]="actVideoAnnotation ? 'flex' : 'none'">
+        <div id="annotation-youtube-player"></div>
+      </div>
+    </div>
+    <div id="menu-overlay" [style.display]="isFullscreen ? 'block' : 'none'" class="draggable">
+      <button id="menu-button" (click)="setFullscreen(false)">Menü</button>
+    </div>
+  </div>
+  @if (!isFullscreen) {
+    <button class="btn btn-primary" (click)="setFullscreen(true)">Fullscreen</button>
+  }
+</div>
