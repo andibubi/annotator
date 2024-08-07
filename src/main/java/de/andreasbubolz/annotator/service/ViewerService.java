@@ -28,12 +28,10 @@ public class ViewerService {
 
     public AnnotationWithElementsDTO findOne(Long annotationId) throws WriterException, IOException {
         var annotationOpt = annotationRepository.findById(annotationId);
-        if (annotationOpt.isPresent()) {
-            var dto = new AnnotationWithElementsDTO();
-            dto.annotation = annotationOpt.get();
-            dto.textAnnotationElements = textAnnotationElementRepository.findAllByAnnotationId(annotationId);
-            dto.videoAnnotationElements = videoAnnotationElementRepository.findAllByAnnotationId(annotationId);
-            return dto;
-        } else return null;
+        var dto = new AnnotationWithElementsDTO();
+        dto.annotation = annotationOpt.orElseThrow(RuntimeException::new);
+        dto.textAnnotationElements = textAnnotationElementRepository.findAllByAnnotationId(annotationId);
+        dto.videoAnnotationElements = videoAnnotationElementRepository.findAllByAnnotationId(annotationId);
+        return dto;
     }
 }
