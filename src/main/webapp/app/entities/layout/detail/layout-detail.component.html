@@ -1,0 +1,42 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (layout()) {
+      <div>
+        <h2 data-cy="layoutDetailsHeading"><span>Layout</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span>ID</span></dt>
+          <dd>
+            <span>{{ layout()!.id }}</span>
+          </dd>
+          <dt><span>Name</span></dt>
+          <dd>
+            <span>{{ layout()!.name }}</span>
+          </dd>
+          <dt><span>Created At</span></dt>
+          <dd>
+            <span>{{ layout()!.created_at | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span>Updated At</span></dt>
+          <dd>
+            <span>{{ layout()!.updated_at | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span>User</span></dt>
+          <dd>
+            <span>{{ layout()!.user?.login }}</span>
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

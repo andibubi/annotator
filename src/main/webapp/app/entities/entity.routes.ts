@@ -21,6 +21,11 @@ const routes: Routes = [
     data: { pageTitle: 'VideoAnnotationElements' },
     loadChildren: () => import('./video-annotation-element/video-annotation-element.routes'),
   },
+  {
+    path: 'layout',
+    data: { pageTitle: 'Layouts' },
+    loadChildren: () => import('./layout/layout.routes'),
+  },
   /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
 ];
 

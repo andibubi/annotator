@@ -1,0 +1,10 @@
+runtime: java
+env: standard
+instance_class: F2
+handlers:
+  - url: /.*
+    script: this field is required, but ignored
+    secure: always
+
+env_variables:
+  SPRING_PROFILES_ACTIVE: dev

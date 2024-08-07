@@ -9,6 +9,7 @@ import NavbarComponent from './layouts/navbar/navbar.component';
 import LoginComponent from './login/login.component';
 import CreateAnnotationComponent from './create-annotation/create-annotation.component';
 import ViewerComponent from './viewer/viewer.component';
+import GridComponent from './grid/grid.component';
 
 const routes: Routes = [
   {
@@ -49,7 +50,7 @@ const routes: Routes = [
   },
   {
     path: 'view/:annotationId',
-    component: ViewerComponent,
+    component: GridComponent,
     title: 'view-annotation.title',
   },
   ...errorRoute,

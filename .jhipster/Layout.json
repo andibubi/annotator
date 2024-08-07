@@ -1,0 +1,36 @@
+{
+  "annotations": {
+    "changelogDate": "20240807120616"
+  },
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "created_at",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "updated_at",
+      "fieldType": "Instant"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "Layout",
+  "pagination": "infinite-scroll",
+  "readOnly": true,
+  "relationships": [
+    {
+      "otherEntityField": "login",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "layouts",
+      "relationshipName": "user",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}
