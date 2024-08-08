@@ -20,6 +20,8 @@ import {
   BaseWidget,
 } from 'gridstack/dist/angular';
 
+import { AComponent, BComponent, CComponent } from './dummy.component';
+
 @Component({
   imports: [CommonModule, GridstackModule],
   selector: 'app-player',
@@ -65,27 +67,11 @@ export default class PlayerComponent implements OnInit {
     private route: ActivatedRoute,
     private playerService: PlayerService,
     private ngZone: NgZone,
-  ) {}
-
-  //@ViewChild('gridContainer', { static: true }) gridContainer!: ElementRef;
-  @ViewChild('gridstack', { static: true }) gridstack!: ElementRef;
-
-  updateGrid(data: any): void {
-    console.log(this.gridstack.constructor.name);
-    var c: GridstackComponent = this.gridstack as unknown as GridstackComponent;
-
-    //let g = this.gridstack.nativeElement;
-    const grid = GridStack.init(data, this.gridstack.nativeElement);
-    let g: GridStack = c.grid!;
-    for (var bb of data.children) {
-      grid.addWidget(bb);
-    }
-    //new NgGridStackWidget();
-    //grid.update(this.gridstack.nativeElement, null as unknown as NgGridStackWidget);
-    //c.options = this.gridOptions;
-    //c.updateAll();
-    //c.ngOnInit()
+  ) {
+    GridstackComponent.addComponentToSelectorType([AComponent, BComponent, CComponent]);
   }
+
+  @ViewChild('gridstack', { static: true }) gridstack!: ElementRef;
 
   ngOnInit() {
     if (!(window as any).YT) {
@@ -121,10 +107,16 @@ export default class PlayerComponent implements OnInit {
             { x: 0, y: 0 },
             { x: 0, y: 1, w: 2 },
           ];
+          let subOptions: NgGridStackOptions = {
+            cellHeight: 50, // should be 50 - top/bottom
+            column: 'auto', // size to match container. make sure to include gridstack-extra.min.css
+            acceptWidgets: true, // will accept .grid-stack-item by default
+            margin: 5,
+          };
           this.subChildren = [
             { x: 0, y: 0, content: 'regular item' },
-            { x: 1, y: 0, w: 4, h: 4, subGridOpts: { children: sub1, class: 'sub1' } },
-            { x: 5, y: 0, w: 3, h: 4, subGridOpts: { children: sub2, class: 'sub2' } },
+            { x: 1, y: 0, w: 4, h: 4, subGridOpts: { children: sub1, class: 'sub1', ...subOptions } },
+            { x: 5, y: 0, w: 3, h: 4, subGridOpts: { children: sub2, class: 'sub2', ...subOptions } },
           ];
           // give them content and unique id to make sure we track them during changes below...
           let ids = 0;
@@ -132,8 +124,10 @@ export default class PlayerComponent implements OnInit {
             if (!w.selector && !w.content && !w.subGridOpts) w.content = `item ${ids}`;
             w.id = String(ids++);
           });
-          this.gridOptions.children = this.subChildren;
-          this.updateGrid(this.gridOptions);
+          const grid = GridStack.init(this.gridOptions, this.gridstack.nativeElement);
+          for (var bb of this.subChildren) {
+            grid.addWidget(bb);
+          }
           /*
           var annotationWithElements: IAnnotationWithElements = response.body!;
           this.annotation = annotationWithElements.annotation;
