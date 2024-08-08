@@ -49,21 +49,13 @@ export default class YtPlayerComponent extends BaseWidget implements OnInit {
   }
 
   initYoutubePlayers() {
-    let bbb = this;
-    let ccc = bbb.videoId;
-    setTimeout(() => {
-      this.youtubePlayer = new (window as any).YT.Player(
-        'youtube-player',
-        {
-          height: '100%',
-          width: '100%',
-          videoId: this.videoId,
-          events: {
-            onReady: this.onYoutubePlayerReady.bind(this),
-          },
-        },
-        0,
-      );
+    this.youtubePlayer = new (window as any).YT.Player('youtube-player', {
+      height: '100%',
+      width: '100%',
+      videoId: this.videoId,
+      events: {
+        onReady: this.onYoutubePlayerReady.bind(this),
+      },
     });
   }
 
@@ -75,35 +67,7 @@ export default class YtPlayerComponent extends BaseWidget implements OnInit {
     }, 1000);
   }
 
-  onAnnotationYoutubePlayerReady(event: any) {
-    setInterval(() => {}, 1000);
-  }
-
-  updateAnnotations(actSec: number) {
-    /*
-    var nearestTextAnnotation = undefined;
-    for (const textAnnotation of this.textAnnotations)
-      if (actSec >= textAnnotation.startSec! && (!nearestTextAnnotation || nearestTextAnnotation.startSec! < textAnnotation.startSec!))
-        nearestTextAnnotation = textAnnotation;
-
-    if (nearestTextAnnotation && nearestTextAnnotation != this.actTextAnnotation) {
-      document.getElementById('text-annotations')!.innerHTML = nearestTextAnnotation.text!;
-      this.actTextAnnotation = nearestTextAnnotation;
-    }
-
-    var nearestVideoAnnotation = undefined;
-    for (const videoAnnotation of this.videoAnnotations)
-      if (actSec >= videoAnnotation.startSec! && actSec < videoAnnotation.stopSec!) nearestVideoAnnotation = videoAnnotation;
-
-    if (nearestVideoAnnotation && nearestVideoAnnotation != this.actVideoAnnotation) {
-      this.annotationYoutubePlayer.loadVideoById(nearestVideoAnnotation.videoId, nearestVideoAnnotation.videoStartSec, 'large');
-      this.actVideoAnnotation = nearestVideoAnnotation;
-    } else if (!nearestVideoAnnotation && this.actVideoAnnotation) {
-      this.annotationYoutubePlayer.stopVideo();
-      this.actVideoAnnotation = undefined;
-    }
-    */
-  }
+  updateAnnotations(actSec: number) {}
   /*
   resizeYoutubePlayer() {
     if (this.annotationYoutubePlayer) {
