@@ -1,11 +1,10 @@
 // grid.component.ts
-import { Component, OnInit, AfterViewInit, NgZone, ViewChild, ElementRef, ViewEncapsulation } from '@angular/core';
+import { Component, AfterViewInit, NgZone, ViewChild, ElementRef, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { GridService } from './grid.service';
 import { GridstackModule } from 'gridstack/dist/angular';
-//import { GridStack, GridStackOptions, GridStackWidget } from 'gridstack'; // Import necessary types
 import {
   NgGridStackOptions,
   GridstackComponent,
@@ -28,7 +27,7 @@ let ids = 1;
   styleUrls: ['./gridstack.scss', './demo.scss', 'gridstack-extra.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export default class GridComponent implements OnInit, AfterViewInit {
+export default class GridComponent implements AfterViewInit {
   @ViewChild('gridContainer', { static: false }) gridContainer!: ElementRef;
   gridElements: any[] = [];
   public items: NgGridStackWidget[] = [
@@ -99,19 +98,6 @@ export default class GridComponent implements OnInit, AfterViewInit {
       if (!w.selector && !w.content && !w.subGridOpts) w.content = `item ${ids}`;
       w.id = String(ids++);
     });
-  }
-
-  ngOnInit(): void {
-    /*
-        this.gridOptions = {
-          margin: 5,
-          minRow: 1, // make space for empty message
-          children: [ // or call load()/addWidget() with same data
-            {x:0, y:0, minW:2, selector:'app-a'},
-            {x:1, y:0, selector:'app-b'},
-            {x:0, y:1, content:'plain html content'},
-          ]
-        }*/
   }
 
   ngAfterViewInit(): void {
