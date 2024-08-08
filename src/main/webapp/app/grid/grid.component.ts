@@ -1,158 +1,121 @@
 // grid.component.ts
-import { Component, OnInit, AfterViewInit, NgZone, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, NgZone, ViewChild, ElementRef, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { GridStack, GridStackOptions, GridStackWidget } from 'gridstack'; // Import necessary types
 import { ActivatedRoute } from '@angular/router';
 import { GridService } from './grid.service';
 import { GridstackModule } from 'gridstack/dist/angular';
+//import { GridStack, GridStackOptions, GridStackWidget } from 'gridstack'; // Import necessary types
+import {
+  NgGridStackOptions,
+  GridstackComponent,
+  gsCreateNgComponents,
+  NgGridStackWidget,
+  nodesCB,
+  BaseWidget,
+} from 'gridstack/dist/angular';
 
-interface GridItem {
-  x: number;
-  y: number;
-  w?: number;
-  h?: number;
-  id?: string;
-  content?: string;
-  subGridOpts?: SubGridOptions;
-}
+import { AComponent, BComponent, CComponent } from './dummy.component';
 
-interface SubGridOptions {
-  cellHeight: number;
-  column: number | 'auto';
-  acceptWidgets: boolean;
-  margin: number;
-  subGridDynamic: boolean;
-  children?: GridItem[];
-}
-
-interface MainGridOptions {
-  cellHeight: number;
-  margin: number;
-  minRow: number;
-  acceptWidgets: boolean;
-  subGridOpts: SubGridOptions;
-  subGridDynamic: boolean;
-  children: GridItem[];
-}
+let ids = 1;
 
 @Component({
   imports: [CommonModule, GridstackModule],
+  //declarations: [{ AComponent, BComponent, CComponent,}],
   selector: 'app-grid',
   standalone: true,
   templateUrl: './grid.component.html',
-  styleUrls: ['./grid.component.scss', './demo.scss', 'gridstack-extra.scss'],
+  styleUrls: ['./gridstack.scss', './demo.scss', 'gridstack-extra.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export default class GridComponent implements OnInit, AfterViewInit {
   @ViewChild('gridContainer', { static: false }) gridContainer!: ElementRef;
   gridElements: any[] = [];
-  grid: GridStack | null = null;
-  gridOptions: MainGridOptions | null = null; // Define gridOptions as a class member
+  public items: NgGridStackWidget[] = [
+    { x: 0, y: 0, minW: 2 },
+    { x: 1, y: 1 },
+    { x: 2, y: 2 },
+  ];
+  public gridOptions: NgGridStackOptions = {
+    margin: 5,
+    // float: true,
+    minRow: 1,
+    cellHeight: 70,
+    columnOpts: { breakpoints: [{ w: 768, c: 1 }] },
+  };
+  private sub0: NgGridStackWidget[] = [
+    { x: 0, y: 0, selector: 'app-a' },
+    { x: 1, y: 0, selector: 'app-a', input: { text: 'bar' } },
+    { x: 1, y: 1, content: 'plain html' },
+    { x: 0, y: 1, selector: 'app-b' },
+  ];
+  public gridOptionsFull: NgGridStackOptions = {
+    ...this.gridOptions,
+    children: this.sub0,
+  };
+
+  //grid: GridStack | null = null;
+  private subOptions: NgGridStackOptions = {
+    cellHeight: 50, // should be 50 - top/bottom
+    column: 'auto', // size to match container. make sure to include gridstack-extra.min.css
+    acceptWidgets: true, // will accept .grid-stack-item by default
+    margin: 5,
+  };
+  private sub1: NgGridStackWidget[] = [
+    { x: 0, y: 0, selector: 'app-a' },
+    { x: 1, y: 0, selector: 'app-b' },
+    { x: 2, y: 0, selector: 'app-c' },
+    { x: 3, y: 0 },
+    { x: 0, y: 1 },
+    { x: 1, y: 1 },
+  ];
+  private sub2: NgGridStackWidget[] = [
+    { x: 0, y: 0 },
+    { x: 0, y: 1, w: 2 },
+  ];
+  private subChildren: NgGridStackWidget[] = [
+    { x: 0, y: 0, content: 'regular item' },
+    { x: 1, y: 0, w: 4, h: 4, subGridOpts: { children: this.sub1, class: 'sub1', ...this.subOptions } },
+    { x: 5, y: 0, w: 3, h: 4, subGridOpts: { children: this.sub2, class: 'sub2', ...this.subOptions } },
+  ];
+  public nestedGridOptions: NgGridStackOptions = {
+    // main grid options
+    cellHeight: 50,
+    margin: 5,
+    minRow: 2, // don't collapse when empty
+    acceptWidgets: true,
+    children: this.subChildren,
+  };
 
   constructor(
     private route: ActivatedRoute,
     private gridService: GridService,
     private ngZone: NgZone,
-  ) {}
+  ) {
+    GridstackComponent.addComponentToSelectorType([AComponent, BComponent, CComponent]);
 
-  ngOnInit(): void {}
-
-  ngAfterViewInit(): void {
-    let subOptions: SubGridOptions = {
-      cellHeight: 50, // should be 50 - top/bottom
-      column: 'auto', // size to match container. make sure to include gridstack-extra.min.css
-      acceptWidgets: true, // will accept .grid-stack-item by default
-      margin: 5,
-      subGridDynamic: true, // make it recursive for all future sub-grids
-    };
-    let main: GridItem[] = [
-      { x: 0, y: 0 },
-      { x: 0, y: 1 },
-      { x: 1, y: 0 },
-    ];
-    let sub1: GridItem[] = [{ x: 0, y: 0 }];
-    let sub0: GridItem[] = [
-      { x: 0, y: 0 },
-      { x: 1, y: 0 },
-    ];
-
-    this.gridOptions = {
-      // main grid options
-      cellHeight: 50,
-      margin: 5,
-      minRow: 2, // don't collapse when empty
-      acceptWidgets: true,
-      subGridOpts: subOptions,
-      subGridDynamic: true, // v7 api to create sub-grids on the fly
-      children: [
-        ...main,
-        { x: 2, y: 0, w: 2, h: 3, id: 'sub0', subGridOpts: { children: sub0, ...subOptions } },
-        { x: 4, y: 0, h: 2, id: 'sub1', subGridOpts: { children: sub1, ...subOptions } },
-        // {x:2, y:0, w:2, h:3, subGridOpts: {children: [...sub1, {x:0, y:1, subGridOpts: subOptions}], ...subOptions}/*,content: "<div>nested grid here</div>"*/},
-      ],
-    };
-
-    let count = 0;
-    // create unique ids+content so we can incrementally load() and not re-create anything (updates)
-    [...main, ...sub0, ...sub1].forEach(d => (d.id = d.content = String(count++)));
-    debugger;
-
-    const gridStackOptions: GridStackOptions = {
-      cellHeight: 50,
-      margin: 5,
-      acceptWidgets: true,
-      //children: this.gridOptions.children, // Use this.gridOptions.children
-    };
-
-    // Überprüfen, ob das Element korrekt referenziert wird
-    if (!this.gridContainer || !this.gridContainer.nativeElement) {
-      console.error('Grid container element not found!');
-      return;
-    }
-
-    // Initialisieren von GridStack
-    this.grid = GridStack.init(gridStackOptions, this.gridContainer.nativeElement);
-
-    // Überprüfen, ob GridStack korrekt initialisiert wurde
-    if (!this.grid) {
-      console.error('GridStack initialization failed!');
-      return;
-    }
-
-    this.gridOptions.children.forEach((child: GridItem) => {
-      const content = child.content || 'LEER'; // Standardinhalt setzen, falls `content` undefined oder leer ist
-      const widgetElement = document.createElement('div');
-      widgetElement.classList.add('grid-stack-item');
-      widgetElement.innerHTML = `
-    <div class="grid-stack-item-content ">${content}</div>
-  `;
-      widgetElement.setAttribute('gs-x', child.x.toString());
-      widgetElement.setAttribute('gs-y', child.y.toString());
-      widgetElement.setAttribute('gs-w', (child.w || 1).toString());
-      widgetElement.setAttribute('gs-h', (child.h || 1).toString());
-
-      this.gridContainer.nativeElement.appendChild(widgetElement);
-
-      console.log('Adding widget element:', widgetElement);
-      this.grid!.makeWidget(widgetElement);
+    // give them content and unique id to make sure we track them during changes below...
+    [...this.items, ...this.subChildren, ...this.sub1, ...this.sub2, ...this.sub0].forEach((w: NgGridStackWidget) => {
+      if (!w.selector && !w.content && !w.subGridOpts) w.content = `item ${ids}`;
+      w.id = String(ids++);
     });
-
-    console.log('Grid initialization complete:', this.grid);
-    /*
-        this.route.paramMap.subscribe(params => {
-          this.gridService.getGridElementsByLayout(Number(params.get('layoutId'))).subscribe(
-            response => {
-              this.gridElements = response as any[];
-              this.scheduleUpdates();
-            },
-            error => {
-              console.error('Error', error);
-            },
-          );
-        });
-      */
   }
 
+  ngOnInit(): void {
+    /*
+        this.gridOptions = {
+          margin: 5,
+          minRow: 1, // make space for empty message
+          children: [ // or call load()/addWidget() with same data
+            {x:0, y:0, minW:2, selector:'app-a'},
+            {x:1, y:0, selector:'app-b'},
+            {x:0, y:1, content:'plain html content'},
+          ]
+        }*/
+  }
+
+  ngAfterViewInit(): void {
+    /*
   scheduleUpdates(): void {
     this.gridElements.forEach(element => {
       setTimeout(() => {
@@ -166,6 +129,6 @@ export default class GridComponent implements OnInit, AfterViewInit {
         console.log('Widget scheduled:', widget);
         setTimeout(() => this.grid!.removeWidget(widget), element.displayDurationMillis);
       }, element.displayAfterMillis);
-    });
+    });*/
   }
 }
