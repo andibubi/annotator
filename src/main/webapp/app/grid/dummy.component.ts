@@ -13,7 +13,7 @@ import { BaseWidget, NgCompInputs } from 'gridstack/dist/angular';
   template: 'Comp A {{text}}',
 })
 export class AComponent extends BaseWidget implements OnDestroy {
-  @Input() text: string = 'foo'; // test custom input data
+  @Input() text: string = 'foo2'; // test custom input data
   public override serialize(): NgCompInputs | undefined {
     return this.text ? { text: this.text } : undefined;
   }

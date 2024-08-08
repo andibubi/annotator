@@ -52,12 +52,12 @@ export default class GridComponent implements AfterViewInit {
   ];
   private sub0: NgGridStackWidget[] = [
     { x: 0, y: 0, selector: 'app-a' },
-    { x: 1, y: 0, selector: 'app-a', input: { text: 'bar' } },
+    { x: 1, y: 0, selector: 'app-a' },
     { x: 1, y: 1, content: 'plain html' },
     { x: 0, y: 1, selector: 'app-b' },
   ];
   private sub1: NgGridStackWidget[] = [
-    { x: 0, y: 0, selector: 'app-a' },
+    { x: 0, y: 0, selector: 'app-a', input: { text: 'bar4711' } },
     { x: 1, y: 0, selector: 'app-b' },
     { x: 2, y: 0, selector: 'app-c' },
     { x: 3, y: 0 },

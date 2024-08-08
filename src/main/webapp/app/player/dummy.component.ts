@@ -34,6 +34,6 @@ export class BComponent extends BaseWidget implements OnDestroy {
 
 @Component({
   selector: 'app-c',
-  template: 'Comp C',
+  template: 'DummyComp C',
 })
 export class CComponent extends BaseWidget {}

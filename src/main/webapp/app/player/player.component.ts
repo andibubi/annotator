@@ -21,25 +21,16 @@ import {
 } from 'gridstack/dist/angular';
 
 import { AComponent, BComponent, CComponent } from './dummy.component';
+import YtPlayerComponent from '../yt-player/yt-player.component';
 
 @Component({
-  imports: [CommonModule, GridstackModule],
+  imports: [CommonModule, GridstackModule, YtPlayerComponent],
   selector: 'app-player',
   standalone: true,
   templateUrl: './player.component.html',
   styleUrls: ['./player.component.scss', './gridstack.scss', './demo.scss', 'gridstack-extra.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-/*
-@Component({
-  imports: [CommonModule, GridstackModule],
-  selector: 'app-grid',
-  standalone: true,
-  templateUrl: './grid.component.html',
-  styleUrls: ['./gridstack.scss', './demo.scss', 'gridstack-extra.scss'],
-  encapsulation: ViewEncapsulation.None,
-})
-*/
 export default class PlayerComponent implements OnInit {
   annotation: IAnnotation | null = null;
 
@@ -68,7 +59,7 @@ export default class PlayerComponent implements OnInit {
     private playerService: PlayerService,
     private ngZone: NgZone,
   ) {
-    GridstackComponent.addComponentToSelectorType([AComponent, BComponent, CComponent]);
+    GridstackComponent.addComponentToSelectorType([YtPlayerComponent, AComponent, BComponent, CComponent]);
   }
 
   @ViewChild('gridstack', { static: true }) gridstack!: ElementRef;
@@ -89,15 +80,15 @@ export default class PlayerComponent implements OnInit {
           ];
           let sub0: NgGridStackWidget[] = [
             { x: 0, y: 0, selector: 'app-a' },
-            { x: 1, y: 0, selector: 'app-a', input: { text: 'bar' } },
+            { x: 1, y: 0, selector: 'app-a' },
             { x: 1, y: 1, content: 'plain html' },
             { x: 0, y: 1, selector: 'app-b' },
           ];
 
           let sub1: NgGridStackWidget[] = [
-            { x: 0, y: 0, selector: 'app-a' },
+            { x: 0, y: 0, selector: 'app-a', input: { text: 'bar17' } },
             { x: 1, y: 0, selector: 'app-b' },
-            { x: 2, y: 0, selector: 'app-c' },
+            { x: 2, y: 0, selector: 'app-yt-player', input: { videoId: '7I0tBlfcg10' } },
             { x: 3, y: 0 },
             { x: 0, y: 1 },
             { x: 1, y: 1 },
@@ -113,27 +104,21 @@ export default class PlayerComponent implements OnInit {
             acceptWidgets: true, // will accept .grid-stack-item by default
             margin: 5,
           };
-          this.subChildren = [
+          let subChildren: NgGridStackWidget[] = [
             { x: 0, y: 0, content: 'regular item' },
             { x: 1, y: 0, w: 4, h: 4, subGridOpts: { children: sub1, class: 'sub1', ...subOptions } },
             { x: 5, y: 0, w: 3, h: 4, subGridOpts: { children: sub2, class: 'sub2', ...subOptions } },
           ];
           // give them content and unique id to make sure we track them during changes below...
           let ids = 0;
-          [...items, ...this.subChildren, ...sub1, ...sub2, ...sub0].forEach((w: NgGridStackWidget) => {
+          [...items, ...subChildren, ...sub1, ...sub2, ...sub0].forEach((w: NgGridStackWidget) => {
             if (!w.selector && !w.content && !w.subGridOpts) w.content = `item ${ids}`;
             w.id = String(ids++);
           });
           const grid = GridStack.init(this.gridOptions, this.gridstack.nativeElement);
-          for (var bb of this.subChildren) {
+          for (var bb of subChildren) {
             grid.addWidget(bb);
           }
-          /*
-          var annotationWithElements: IAnnotationWithElements = response.body!;
-          this.annotation = annotationWithElements.annotation;
-          this.textAnnotations = annotationWithElements.textAnnotationElements;
-          this.videoAnnotations = annotationWithElements.videoAnnotationElements;
-          */
         },
         error => {
           console.error('Error', error);
@@ -142,15 +127,13 @@ export default class PlayerComponent implements OnInit {
     });
   }
 
-  public subChildren: NgGridStackWidget[] = [];
-
   public gridOptions: NgGridStackOptions = {
     // main grid options
     cellHeight: 50,
     margin: 5,
     minRow: 2, // don't collapse when empty
     acceptWidgets: true,
-    children: this.subChildren,
+    children: [],
   };
 
   setFullscreen(fullscreen: boolean) {
