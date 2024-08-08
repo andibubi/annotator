@@ -1,14 +1,3 @@
-<!-- grid.component.html -->
-<div class="grid-stack">
-  <div
-    *ngFor="let element of gridElements"
-    class="grid-stack-item"
-    [attr.gs-x]="element.x"
-    [attr.gs-y]="element.y"
-    [attr.gs-width]="element.width"
-    [attr.gs-height]="element.height"
-    [ngClass]="{ hidden: !element.visible }"
-  >
-    <div class="grid-stack-item-content" [innerHTML]="element.content"></div>
-  </div>
+<div #gridContainer class="grid grid-stack grid-stack.grid-stack-nested" style="border: 2px solid blue">
+  <!-- Grid-Items werden hier dynamisch eingefügt -->
 </div>

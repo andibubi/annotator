@@ -1,0 +1,60 @@
+{
+  "annotations": {
+    "changelogDate": "20240807130038"
+  },
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "x",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "y",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "w",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "h",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "content",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "displayAfterMillis",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "displayDurationMillis",
+      "fieldType": "Long"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "GridElement",
+  "pagination": "infinite-scroll",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityField": "id",
+      "otherEntityName": "layout",
+      "otherEntityRelationshipName": "gridElements",
+      "relationshipName": "layout",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "id",
+      "otherEntityName": "gridElement",
+      "otherEntityRelationshipName": "gridElements",
+      "relationshipName": "gridElement",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

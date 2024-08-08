@@ -32,6 +32,8 @@ public class LayoutCriteria implements Serializable, Criteria {
 
     private LongFilter userId;
 
+    private LongFilter grtidWElementsId;
+
     private Boolean distinct;
 
     public LayoutCriteria() {}
@@ -42,6 +44,7 @@ public class LayoutCriteria implements Serializable, Criteria {
         this.created_at = other.optionalCreated_at().map(InstantFilter::copy).orElse(null);
         this.updated_at = other.optionalUpdated_at().map(InstantFilter::copy).orElse(null);
         this.userId = other.optionalUserId().map(LongFilter::copy).orElse(null);
+        this.grtidWElementsId = other.optionalGrtidWElementsId().map(LongFilter::copy).orElse(null);
         this.distinct = other.distinct;
     }
 
@@ -145,6 +148,25 @@ public class LayoutCriteria implements Serializable, Criteria {
         this.userId = userId;
     }
 
+    public LongFilter getGrtidWElementsId() {
+        return grtidWElementsId;
+    }
+
+    public Optional<LongFilter> optionalGrtidWElementsId() {
+        return Optional.ofNullable(grtidWElementsId);
+    }
+
+    public LongFilter grtidWElementsId() {
+        if (grtidWElementsId == null) {
+            setGrtidWElementsId(new LongFilter());
+        }
+        return grtidWElementsId;
+    }
+
+    public void setGrtidWElementsId(LongFilter grtidWElementsId) {
+        this.grtidWElementsId = grtidWElementsId;
+    }
+
     public Boolean getDistinct() {
         return distinct;
     }
@@ -179,13 +201,14 @@ public class LayoutCriteria implements Serializable, Criteria {
             Objects.equals(created_at, that.created_at) &&
             Objects.equals(updated_at, that.updated_at) &&
             Objects.equals(userId, that.userId) &&
+            Objects.equals(grtidWElementsId, that.grtidWElementsId) &&
             Objects.equals(distinct, that.distinct)
         );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, created_at, updated_at, userId, distinct);
+        return Objects.hash(id, name, created_at, updated_at, userId, grtidWElementsId, distinct);
     }
 
     // prettier-ignore
@@ -197,6 +220,7 @@ public class LayoutCriteria implements Serializable, Criteria {
             optionalCreated_at().map(f -> "created_at=" + f + ", ").orElse("") +
             optionalUpdated_at().map(f -> "updated_at=" + f + ", ").orElse("") +
             optionalUserId().map(f -> "userId=" + f + ", ").orElse("") +
+            optionalGrtidWElementsId().map(f -> "grtidWElementsId=" + f + ", ").orElse("") +
             optionalDistinct().map(f -> "distinct=" + f + ", ").orElse("") +
         "}";
     }

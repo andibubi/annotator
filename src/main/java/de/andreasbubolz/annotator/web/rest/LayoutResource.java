@@ -1,5 +1,7 @@
 package de.andreasbubolz.annotator.web.rest;
 
+import de.andreasbubolz.annotator.domain.GridElement;
+import de.andreasbubolz.annotator.repository.GridElementRepository;
 import de.andreasbubolz.annotator.service.LayoutQueryService;
 import de.andreasbubolz.annotator.service.LayoutService;
 import de.andreasbubolz.annotator.service.criteria.LayoutCriteria;
@@ -30,9 +32,12 @@ public class LayoutResource {
 
     private final LayoutQueryService layoutQueryService;
 
-    public LayoutResource(LayoutService layoutService, LayoutQueryService layoutQueryService) {
+    private final GridElementRepository gridElementRepository;
+
+    public LayoutResource(LayoutService layoutService, LayoutQueryService layoutQueryService, GridElementRepository gridElementRepository) {
         this.layoutService = layoutService;
         this.layoutQueryService = layoutQueryService;
+        this.gridElementRepository = gridElementRepository;
     }
 
     /**
@@ -77,5 +82,10 @@ public class LayoutResource {
         log.debug("REST request to get Layout : {}", id);
         Optional<LayoutDTO> layoutDTO = layoutService.findOne(id);
         return ResponseUtil.wrapOrNotFound(layoutDTO);
+    }
+
+    @GetMapping("/{layoutId}/grid-elements")
+    public List<GridElement> getGridElementsByLayout(@PathVariable Long layoutId) {
+        return gridElementRepository.findByLayoutId(layoutId);
     }
 }

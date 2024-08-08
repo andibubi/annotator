@@ -49,7 +49,7 @@ const routes: Routes = [
     title: 'create-annotation.title',
   },
   {
-    path: 'view/:annotationId',
+    path: 'view/:layoutId',
     component: GridComponent,
     title: 'view-annotation.title',
   },

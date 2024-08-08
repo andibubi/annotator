@@ -3,19 +3,20 @@ import dayjs from 'dayjs/esm';
 import { ILayout } from './layout.model';
 
 export const sampleWithRequiredData: ILayout = {
-  id: 2843,
+  id: 18156,
 };
 
 export const sampleWithPartialData: ILayout = {
-  id: 21471,
-  updated_at: dayjs('2024-08-07T00:55'),
+  id: 13608,
+  name: 'about attentive start',
+  created_at: dayjs('2024-08-06T20:32'),
 };
 
 export const sampleWithFullData: ILayout = {
-  id: 31691,
-  name: 'shellac aw',
-  created_at: dayjs('2024-08-06T16:09'),
-  updated_at: dayjs('2024-08-07T01:46'),
+  id: 19119,
+  name: 'netbook siphon beneficial',
+  created_at: dayjs('2024-08-06T21:47'),
+  updated_at: dayjs('2024-08-06T17:41'),
 };
 Object.freeze(sampleWithRequiredData);
 Object.freeze(sampleWithPartialData);

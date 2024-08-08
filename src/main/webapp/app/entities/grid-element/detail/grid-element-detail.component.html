@@ -1,0 +1,74 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (gridElement()) {
+      <div>
+        <h2 data-cy="gridElementDetailsHeading"><span>Grid Element</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span>ID</span></dt>
+          <dd>
+            <span>{{ gridElement()!.id }}</span>
+          </dd>
+          <dt><span>X</span></dt>
+          <dd>
+            <span>{{ gridElement()!.x }}</span>
+          </dd>
+          <dt><span>Y</span></dt>
+          <dd>
+            <span>{{ gridElement()!.y }}</span>
+          </dd>
+          <dt><span>W</span></dt>
+          <dd>
+            <span>{{ gridElement()!.w }}</span>
+          </dd>
+          <dt><span>H</span></dt>
+          <dd>
+            <span>{{ gridElement()!.h }}</span>
+          </dd>
+          <dt><span>Content</span></dt>
+          <dd>
+            <span>{{ gridElement()!.content }}</span>
+          </dd>
+          <dt><span>Display After Millis</span></dt>
+          <dd>
+            <span>{{ gridElement()!.displayAfterMillis }}</span>
+          </dd>
+          <dt><span>Display Duration Millis</span></dt>
+          <dd>
+            <span>{{ gridElement()!.displayDurationMillis }}</span>
+          </dd>
+          <dt><span>Layout</span></dt>
+          <dd>
+            @if (gridElement()!.layout) {
+              <div>
+                <a [routerLink]="['/layout', gridElement()!.layout?.id, 'view']">{{ gridElement()!.layout?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span>Grid Element</span></dt>
+          <dd>
+            @if (gridElement()!.gridElement) {
+              <div>
+                <a [routerLink]="['/grid-element', gridElement()!.gridElement?.id, 'view']">{{ gridElement()!.gridElement?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/grid-element', gridElement()!.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

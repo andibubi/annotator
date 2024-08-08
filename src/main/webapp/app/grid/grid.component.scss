@@ -1,4 +1,13 @@
-/* grid.component.css */
-.hidden {
-  display: none;
+.grid-stack-item {
+  outline: 2px solid red; /* Umrandung zur besseren Sichtbarkeit */
+  background-color: lightyellow; /* Hintergrund zur besseren Sichtbarkeit */
 }
+
+.grid-stack-item-content {
+  background-color: lightblue; /* Temporärer Hintergrund zur besseren Sichtbarkeit */
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+}
+@import 'gridstack/dist/gridstack.min.css';

@@ -1,0 +1,160 @@
+<div>
+  <h2 id="page-heading" data-cy="GridElementHeading">
+    <span>Grid Elements</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span>Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-grid-element"
+        [routerLink]="['/grid-element/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span>Create a new Grid Element</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  @if (gridElements?.length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span>No Grid Elements found</span>
+    </div>
+  }
+
+  @if (gridElements && gridElements.length > 0) {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [sortState]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span>ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="x">
+              <div class="d-flex">
+                <span>X</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="y">
+              <div class="d-flex">
+                <span>Y</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="w">
+              <div class="d-flex">
+                <span>W</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="h">
+              <div class="d-flex">
+                <span>H</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="content">
+              <div class="d-flex">
+                <span>Content</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="displayAfterMillis">
+              <div class="d-flex">
+                <span>Display After Millis</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="displayDurationMillis">
+              <div class="d-flex">
+                <span>Display Duration Millis</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="layout.id">
+              <div class="d-flex">
+                <span>Layout</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="gridElement.id">
+              <div class="d-flex">
+                <span>Grid Element</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody infinite-scroll (scrolled)="loadNextPage()" [infiniteScrollDisabled]="!hasMorePage()" [infiniteScrollDistance]="0">
+          @for (gridElement of gridElements; track trackId) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/grid-element', gridElement.id, 'view']">{{ gridElement.id }}</a>
+              </td>
+              <td>{{ gridElement.x }}</td>
+              <td>{{ gridElement.y }}</td>
+              <td>{{ gridElement.w }}</td>
+              <td>{{ gridElement.h }}</td>
+              <td>{{ gridElement.content }}</td>
+              <td>{{ gridElement.displayAfterMillis }}</td>
+              <td>{{ gridElement.displayDurationMillis }}</td>
+              <td>
+                @if (gridElement.layout) {
+                  <div>
+                    <a [routerLink]="['/layout', gridElement.layout.id, 'view']">{{ gridElement.layout.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (gridElement.gridElement) {
+                  <div>
+                    <a [routerLink]="['/grid-element', gridElement.gridElement.id, 'view']">{{ gridElement.gridElement.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/grid-element', gridElement.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline">View</span>
+                  </a>
+
+                  <a [routerLink]="['/grid-element', gridElement.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline">Edit</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(gridElement)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline">Delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

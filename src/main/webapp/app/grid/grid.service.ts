@@ -8,13 +8,16 @@ import { createRequestOption } from 'app/core/request/request-util';
 
 @Injectable({ providedIn: 'root' })
 export class GridService {
-  protected http = inject(HttpClient);
-  protected applicationConfigService = inject(ApplicationConfigService);
+  private apiUrl = 'http://localhost:8080/api'; // API-URL direkt hier definieren
 
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/grid-elements');
+  constructor(private http: HttpClient) {}
 
-  getGridElements(): Observable<any[]> {
-    return this.http.get<any[]>(this.resourceUrl);
-    //return this.http.get<IAnnotationWithElements>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  getGridElements(id: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/grid-elements/${id}`);
+  }
+  getGridElementsByLayout(layoutId: number): Observable<any[]> {
+    //return this.http.get<any[]>(`${this.apiUrl}/layouts/${layoutId}/grid-elements`);
+    // Übel: Struktur wird in grid.component.scheduleUpdates festgelegt
+    return new Observable<any>();
   }
 }

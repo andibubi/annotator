@@ -1,8 +1,11 @@
 package de.andreasbubolz.annotator.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -34,6 +37,11 @@ public class Layout implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "layout")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "layout", "gridElement", "gridElements" }, allowSetters = true)
+    private Set<GridElement> gridElements = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -99,6 +107,37 @@ public class Layout implements Serializable {
 
     public Layout user(User user) {
         this.setUser(user);
+        return this;
+    }
+
+    public Set<GridElement> getGrtidWElements() {
+        return this.gridElements;
+    }
+
+    public void setGrtidWElements(Set<GridElement> gridElements) {
+        if (this.gridElements != null) {
+            this.gridElements.forEach(i -> i.setLayout(null));
+        }
+        if (gridElements != null) {
+            gridElements.forEach(i -> i.setLayout(this));
+        }
+        this.gridElements = gridElements;
+    }
+
+    public Layout gridElements(Set<GridElement> gridElements) {
+        this.setGrtidWElements(gridElements);
+        return this;
+    }
+
+    public Layout addGrtidWElements(GridElement gridElement) {
+        this.gridElements.add(gridElement);
+        gridElement.setLayout(this);
+        return this;
+    }
+
+    public Layout removeGrtidWElements(GridElement gridElement) {
+        this.gridElements.remove(gridElement);
+        gridElement.setLayout(null);
         return this;
     }
 

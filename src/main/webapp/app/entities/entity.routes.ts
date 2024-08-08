@@ -26,6 +26,11 @@ const routes: Routes = [
     data: { pageTitle: 'Layouts' },
     loadChildren: () => import('./layout/layout.routes'),
   },
+  {
+    path: 'grid-element',
+    data: { pageTitle: 'GridElements' },
+    loadChildren: () => import('./grid-element/grid-element.routes'),
+  },
   /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
 ];
 
