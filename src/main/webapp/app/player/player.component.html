@@ -1,0 +1,24 @@
+<div>
+  <h1>Player</h1>
+
+  <!--<gridstack [options]="nestedGridOptions" (changeCB)="onChange($event)" (resizeStopCB)="onResizeStop($event)"> -->
+  <gridstack #gridstack [options]="gridOptions">
+    <div empty-content>Add items here or reload the grid</div>
+  </gridstack>
+
+  <div *ngIf="annotation" [ngClass]="{ fullscreen: isFullscreen }">
+    <div id="video-container">
+      <div id="youtube-player"></div>
+      <div id="text-annotations" class="draggable resizable"></div>
+      <div id="video-overlay" class="draggable resizable" [style.display]="actVideoAnnotation ? 'flex' : 'none'">
+        <div id="annotation-youtube-player"></div>
+      </div>
+    </div>
+    <div id="menu-overlay" [style.display]="isFullscreen ? 'block' : 'none'" class="draggable">
+      <button id="menu-button" (click)="setFullscreen(false)">Menü</button>
+    </div>
+  </div>
+  @if (!isFullscreen) {
+    <button class="btn btn-primary" (click)="setFullscreen(true)">Fullscreen</button>
+  }
+</div>

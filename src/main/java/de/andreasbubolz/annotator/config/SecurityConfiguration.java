@@ -70,7 +70,7 @@ public class SecurityConfiguration {
                     // prettier-ignore
                 authz
                     .requestMatchers(mvc.pattern("/index.html"), mvc.pattern("/*.js"), mvc.pattern("/*.txt"), mvc.pattern("/*.json"), mvc.pattern("/*.map"), mvc.pattern("/*.css"),
-                        mvc.pattern("/api/view/**"), mvc.pattern("/api/grid-elements/**"), mvc.pattern("/api/layouts/**")).permitAll()
+                        mvc.pattern("/api/play/**"), mvc.pattern("/api/view/**"), mvc.pattern("/api/grid-elements/**"), mvc.pattern("/api/layouts/**")).permitAll()
                     .requestMatchers(mvc.pattern("/*.ico"), mvc.pattern("/*.png"), mvc.pattern("/*.svg"), mvc.pattern("/*.webapp")).permitAll()
                     .requestMatchers(mvc.pattern("/app/**")).permitAll()
                     .requestMatchers(mvc.pattern("/i18n/**")).permitAll()

@@ -20,7 +20,6 @@ let ids = 1;
 
 @Component({
   imports: [CommonModule, GridstackModule],
-  //declarations: [{ AComponent, BComponent, CComponent,}],
   selector: 'app-grid',
   standalone: true,
   templateUrl: './grid.component.html',
@@ -30,27 +29,12 @@ let ids = 1;
 export default class GridComponent implements AfterViewInit {
   @ViewChild('gridContainer', { static: false }) gridContainer!: ElementRef;
   gridElements: any[] = [];
-  public items: NgGridStackWidget[] = [
-    { x: 0, y: 0, minW: 2 },
-    { x: 1, y: 1 },
-    { x: 2, y: 2 },
-  ];
   public gridOptions: NgGridStackOptions = {
     margin: 5,
     // float: true,
     minRow: 1,
     cellHeight: 70,
     columnOpts: { breakpoints: [{ w: 768, c: 1 }] },
-  };
-  private sub0: NgGridStackWidget[] = [
-    { x: 0, y: 0, selector: 'app-a' },
-    { x: 1, y: 0, selector: 'app-a', input: { text: 'bar' } },
-    { x: 1, y: 1, content: 'plain html' },
-    { x: 0, y: 1, selector: 'app-b' },
-  ];
-  public gridOptionsFull: NgGridStackOptions = {
-    ...this.gridOptions,
-    children: this.sub0,
   };
 
   //grid: GridStack | null = null;
@@ -60,6 +44,18 @@ export default class GridComponent implements AfterViewInit {
     acceptWidgets: true, // will accept .grid-stack-item by default
     margin: 5,
   };
+
+  public items: NgGridStackWidget[] = [
+    { x: 0, y: 0, minW: 2 },
+    { x: 1, y: 1 },
+    { x: 2, y: 2 },
+  ];
+  private sub0: NgGridStackWidget[] = [
+    { x: 0, y: 0, selector: 'app-a' },
+    { x: 1, y: 0, selector: 'app-a', input: { text: 'bar' } },
+    { x: 1, y: 1, content: 'plain html' },
+    { x: 0, y: 1, selector: 'app-b' },
+  ];
   private sub1: NgGridStackWidget[] = [
     { x: 0, y: 0, selector: 'app-a' },
     { x: 1, y: 0, selector: 'app-b' },
@@ -77,6 +73,7 @@ export default class GridComponent implements AfterViewInit {
     { x: 1, y: 0, w: 4, h: 4, subGridOpts: { children: this.sub1, class: 'sub1', ...this.subOptions } },
     { x: 5, y: 0, w: 3, h: 4, subGridOpts: { children: this.sub2, class: 'sub2', ...this.subOptions } },
   ];
+
   public nestedGridOptions: NgGridStackOptions = {
     // main grid options
     cellHeight: 50,

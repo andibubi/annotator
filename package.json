@@ -78,6 +78,7 @@
     "@angular/platform-browser": "18.0.4",
     "@angular/platform-browser-dynamic": "18.0.4",
     "@angular/router": "18.0.4",
+    "@angular/youtube-player": "^18.1.4",
     "@fortawesome/angular-fontawesome": "0.15.0",
     "@fortawesome/fontawesome-svg-core": "6.5.2",
     "@fortawesome/free-solid-svg-icons": "6.5.2",
