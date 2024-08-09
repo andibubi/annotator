@@ -19,6 +19,9 @@
     <div id="menu-overlay" [style.display]="isFullscreen ? 'block' : 'none'" class="draggable">
       <button id="menu-button" (click)="setFullscreen(false)">Menü</button>
     </div>
+    <ul id="context-menu" style="display: none; position: absolute; z-index: 10000">
+      <li id="detach-widget">Widget abreißen</li>
+    </ul>
   </div>
   @if (!isFullscreen) {
     <button class="btn btn-primary" (click)="setFullscreen(true)">Fullscreen</button>

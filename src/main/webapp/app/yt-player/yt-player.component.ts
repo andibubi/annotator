@@ -8,7 +8,7 @@ import { IAnnotationWithElements } from './annotation-with-elements.model';
 import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
-import { BaseWidget, NgCompInputs } from 'gridstack/dist/angular';
+import { /*GridstackComponent, */ BaseWidget, NgCompInputs } from 'gridstack/dist/angular';
 
 @Component({
   imports: [CommonModule, FormsModule],
@@ -27,6 +27,7 @@ export default class YtPlayerComponent extends BaseWidget implements OnInit {
 
   constructor(private ngZone: NgZone) {
     super();
+    //GridstackComponent.addComponentToSelectorType([YtPlayerComponent]);
   }
 
   ngOnInit() {

@@ -22,6 +22,7 @@ import {
 
 import { AComponent, BComponent, CComponent } from './dummy.component';
 import YtPlayerComponent from '../yt-player/yt-player.component';
+import { TextoutComponent } from './textout.component';
 
 @Component({
   imports: [CommonModule, GridstackModule, YtPlayerComponent],
@@ -59,7 +60,7 @@ export default class PlayerComponent implements OnInit {
     private playerService: PlayerService,
     private ngZone: NgZone,
   ) {
-    GridstackComponent.addComponentToSelectorType([YtPlayerComponent, AComponent, BComponent, CComponent]);
+    GridstackComponent.addComponentToSelectorType([TextoutComponent, YtPlayerComponent, AComponent, BComponent, CComponent]);
   }
 
   @ViewChild('gridstack', { static: true }) gridstack!: ElementRef;
@@ -74,9 +75,9 @@ export default class PlayerComponent implements OnInit {
       this.playerService.findLayout(Number(params.get('layoutId'))).subscribe(
         response => {
           let sub1: NgGridStackWidget[] = [
-            { x: 0, y: 0, selector: 'app-a', input: { text: 'bar17' } },
+            { x: 0, y: 0, selector: 'app-a', input: { text: 'bar7' } },
             { x: 1, y: 1, w: 12, h: 8, selector: 'app-yt-player', input: { videoId: '7I0tBlfcg10' } },
-            { x: 1, y: 2 },
+            { x: 1, y: 2, selector: 'widget-textout', input: { text: 'bar17' } },
           ];
 
           let sub2: NgGridStackWidget[] = [
