@@ -73,25 +73,10 @@ export default class PlayerComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.playerService.findLayout(Number(params.get('layoutId'))).subscribe(
         response => {
-          let items: NgGridStackWidget[] = [
-            { x: 0, y: 0, minW: 2 },
-            { x: 1, y: 1 },
-            { x: 2, y: 2 },
-          ];
-          let sub0: NgGridStackWidget[] = [
-            { x: 0, y: 0, selector: 'app-a' },
-            { x: 1, y: 0, selector: 'app-a' },
-            { x: 1, y: 1, content: 'plain html' },
-            { x: 0, y: 1, selector: 'app-b' },
-          ];
-
           let sub1: NgGridStackWidget[] = [
             { x: 0, y: 0, selector: 'app-a', input: { text: 'bar17' } },
-            { x: 1, y: 0, selector: 'app-b' },
-            { x: 2, y: 0, selector: 'app-yt-player', input: { videoId: '7I0tBlfcg10' } },
-            { x: 3, y: 0 },
-            { x: 0, y: 1 },
-            { x: 1, y: 1 },
+            { x: 1, y: 1, w: 12, h: 8, selector: 'app-yt-player', input: { videoId: '7I0tBlfcg10' } },
+            { x: 1, y: 2 },
           ];
 
           let sub2: NgGridStackWidget[] = [
@@ -104,20 +89,20 @@ export default class PlayerComponent implements OnInit {
             acceptWidgets: true, // will accept .grid-stack-item by default
             margin: 5,
           };
-          let subChildren: NgGridStackWidget[] = [
-            { x: 0, y: 0, content: 'regular item' },
-            { x: 1, y: 0, w: 4, h: 4, subGridOpts: { children: sub1, class: 'sub1', ...subOptions } },
-            { x: 5, y: 0, w: 3, h: 4, subGridOpts: { children: sub2, class: 'sub2', ...subOptions } },
+          let widgets: NgGridStackWidget[] = [
+            { x: 0, y: 0, w: 1, h: 1, content: 'Hallo' },
+            { x: 1, y: 0, w: 10, h: 10, subGridOpts: { children: sub1, class: 'sub1', ...subOptions } },
+            { x: 11, y: 0, w: 1, h: 2, subGridOpts: { children: sub2, class: 'sub2', ...subOptions } },
           ];
           // give them content and unique id to make sure we track them during changes below...
           let ids = 0;
-          [...items, ...subChildren, ...sub1, ...sub2, ...sub0].forEach((w: NgGridStackWidget) => {
+          [...widgets, ...sub1, ...sub2].forEach((w: NgGridStackWidget) => {
             if (!w.selector && !w.content && !w.subGridOpts) w.content = `item ${ids}`;
             w.id = String(ids++);
           });
           const grid = GridStack.init(this.gridOptions, this.gridstack.nativeElement);
-          for (var bb of subChildren) {
-            grid.addWidget(bb);
+          for (var widget of widgets) {
+            grid.addWidget(widget);
           }
         },
         error => {
@@ -128,7 +113,7 @@ export default class PlayerComponent implements OnInit {
   }
 
   public gridOptions: NgGridStackOptions = {
-    // main grid options
+    float: true,
     cellHeight: 50,
     margin: 5,
     minRow: 2, // don't collapse when empty
