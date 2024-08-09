@@ -19,24 +19,7 @@ import {
       <li (click)="detachWidget()">Widget abreißen</li>
     </ul>
   `,
-  styles: [
-    `
-      .context-menu {
-        position: absolute;
-        background-color: #333;
-        color: #fff;
-        padding: 5px;
-        border-radius: 5px;
-      }
-      .context-menu li {
-        padding: 5px;
-        cursor: pointer;
-      }
-      .context-menu li:hover {
-        background-color: #555;
-      }
-    `,
-  ],
+  styleUrl: './context-menu.component.scss',
 })
 export class ContextMenuComponent {
   @Input() visible = false;
