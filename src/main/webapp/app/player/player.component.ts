@@ -24,6 +24,11 @@ import { AComponent, BComponent, CComponent } from './dummy.component';
 import YtPlayerComponent from '../yt-player/yt-player.component';
 import { TextoutComponent } from './textout.component';
 
+// Neues Interface, das das Original erweitert
+export interface NgGridStackWidgetWithGrid extends NgGridStackWidget {
+  grid?: any; // Typ des Grids anpassen, wenn bekannt
+}
+
 @Component({
   imports: [CommonModule, GridstackModule, YtPlayerComponent],
   selector: 'app-player',
@@ -74,13 +79,13 @@ export default class PlayerComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.playerService.findLayout(Number(params.get('layoutId'))).subscribe(
         response => {
-          let sub1: NgGridStackWidget[] = [
+          let sub1: NgGridStackWidgetWithGrid[] = [
             { x: 0, y: 0, selector: 'app-a', input: { text: 'bar7' } },
             { x: 1, y: 1, w: 12, h: 8, selector: 'app-yt-player', input: { videoId: '7I0tBlfcg10' } },
             { x: 1, y: 2, selector: 'widget-textout', input: { text: 'bar17' } },
           ];
 
-          let sub2: NgGridStackWidget[] = [
+          let sub2: NgGridStackWidgetWithGrid[] = [
             { x: 0, y: 0 },
             { x: 0, y: 1, w: 2 },
           ];
@@ -90,7 +95,7 @@ export default class PlayerComponent implements OnInit {
             acceptWidgets: true, // will accept .grid-stack-item by default
             margin: 5,
           };
-          let widgets: NgGridStackWidget[] = [
+          let widgets: NgGridStackWidgetWithGrid[] = [
             { x: 0, y: 0, w: 1, h: 1, content: 'Hallo' },
             { x: 1, y: 0, w: 10, h: 10, subGridOpts: { children: sub1, class: 'sub1', ...subOptions } },
             { x: 11, y: 0, w: 1, h: 2, subGridOpts: { children: sub2, class: 'sub2', ...subOptions } },
@@ -103,6 +108,7 @@ export default class PlayerComponent implements OnInit {
           });
           const grid = GridStack.init(this.gridOptions, this.gridstack.nativeElement);
           for (var widget of widgets) {
+            widget.grid = grid;
             grid.addWidget(widget);
           }
         },
