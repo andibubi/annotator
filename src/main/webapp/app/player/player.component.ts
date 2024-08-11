@@ -98,7 +98,7 @@ export default class PlayerComponent implements OnInit {
           };
           let widgets: NgGridStackWidgetWithGrid[] = [
             { x: 0, y: 0, w: 1, h: 1, content: 'Hallo' },
-            { x: 1, y: 0, w: 10, h: 10, subGridOpts: { children: sub1, class: 'sub1', ...subOptions } },
+            { x: 1, y: 0, w: 10, h: 11, subGridOpts: { children: sub1, class: 'sub1', ...subOptions } },
             { x: 11, y: 0, w: 1, h: 2, subGridOpts: { children: sub2, class: 'sub2', ...subOptions } },
           ];
           // give them content and unique id to make sure we track them during changes below...
