@@ -1,0 +1,156 @@
+import { Directive, ElementRef, HostListener } from '@angular/core';
+import { GridStack, GridStackNode } from 'gridstack';
+import { BaseWidget } from 'gridstack/dist/angular';
+
+export class DraggableResizableWidget extends BaseWidget {
+  protected grid: any;
+  protected startX = 0;
+  protected startY = 0;
+  protected floating = false;
+  protected draggableElement: HTMLElement | null = null;
+  protected nonGridDragging = false;
+  protected dragInfo = { x: 0, dx: 0, y: 0, dy: 0 };
+  protected resizing = false;
+  protected resizeStartWidth: number = 0;
+  protected resizeStartHeight: number = 0;
+  protected resizeStartX: number = 0;
+  protected resizeStartY: number = 0;
+  protected timerId: any;
+  protected movementThreshold = 20;
+  protected delay = 3000;
+  protected gridDragging = false;
+
+  constructor(protected elementRef: ElementRef) {
+    super();
+  }
+  protected afterViewInit() {
+    const nativeElement = this.elementRef.nativeElement as HTMLElement;
+    const gridElement = nativeElement.closest('.grid-stack')! as HTMLElement & { gridstack?: any };
+    this.grid = gridElement.gridstack;
+    //// Events s.u.
+    this.grid.on('dragstart', (event: MouseEvent, el: HTMLElement, node: GridStackNode) => this.onGridDragStart(event, node, this));
+    /*this.grid.on('dragstart', (event: MouseEvent, el: HTMLElement, node: GridStackNode) =>
+        this.onGridDragStart2.bind(this)(event, node)
+    );*/
+
+    this.grid.on('dragstop', () => this.onGridDragStop(this));
+    document.addEventListener('mousedown', e => this.onMouseDown(e));
+    document.addEventListener('mousemove', (e: MouseEvent) => this.onMouseMove(e));
+    document.addEventListener('mouseup', e => this.onMouseUp(e));
+  }
+
+  private startTimer() {
+    this.timerId = setTimeout(() => {
+      this.makeFloating();
+    }, this.delay);
+  }
+
+  private resetTimer() {
+    clearTimeout(this.timerId);
+    this.startTimer();
+  }
+
+  private makeFloating() {
+    const nativeElement = this.elementRef.nativeElement as HTMLElement;
+
+    const gridDomElement = nativeElement.closest('.grid-stack')! as HTMLElement & { gridstack?: any };
+    this.grid = gridDomElement.gridstack;
+
+    const gridItemDomElement = nativeElement.closest('.grid-stack-item')!;
+    this.grid.removeWidget(gridItemDomElement, false, true);
+
+    this.draggableElement = gridItemDomElement.querySelector('.grid-stack-item-content')! as HTMLElement;
+    let de = this.draggableElement;
+    de.style.position = 'absolute';
+    de.classList.add('draggable');
+    de.addEventListener('mousedown', e => this.onMouseDown(e));
+    de.addEventListener('mousemove', (e: MouseEvent) => this.onMouseMove(e));
+    de.addEventListener('mouseup', e => this.onMouseUp(e));
+
+    this.floating = true;
+    alert('floating');
+  }
+
+  private onGridDragStart(this: DraggableResizableWidget, event: MouseEvent, node: any, c: any) {
+    console.log('PPPPPPPPPPPPPPPPP');
+    debugger;
+    this.gridDragging = true;
+    this.startX = event.clientX;
+    this.startY = event.clientY;
+    this.startTimer();
+  }
+
+  private onGridDragStart2(event: MouseEvent, node: any, c: any) {
+    console.log('QQQQQQQQQQQQQQQQQ');
+    this.gridDragging = true;
+    this.startX = event.clientX;
+    this.startY = event.clientY;
+    this.startTimer();
+  }
+
+  private onGridDragStop(c: any) {
+    this.gridDragging = false;
+    clearTimeout(this.timerId);
+  }
+
+  onMouseDown(event: MouseEvent) {
+    if (!this.floating || event.target != this.draggableElement) return;
+
+    event.stopPropagation();
+    event.preventDefault();
+    this.grid.enableMove(false);
+    const target = this.draggableElement!;
+    if (target.classList.contains('resizable') && event.offsetX > target.offsetWidth - 10 && event.offsetY > target.offsetHeight - 10) {
+      this.resizing = true;
+      this.resizeStartWidth = target.offsetWidth;
+      this.resizeStartHeight = target.offsetHeight;
+      this.resizeStartX = event.clientX;
+      this.resizeStartY = event.clientY;
+    } else {
+      this.dragInfo.x = event.clientX - this.dragInfo.dx;
+      this.dragInfo.y = event.clientY - this.dragInfo.dy;
+      this.nonGridDragging = true;
+    }
+  }
+
+  onMouseMove(event: MouseEvent) {
+    if (!this.floating && this.gridDragging) {
+      const deltaX = Math.abs(event.clientX - this.startX);
+      const deltaY = Math.abs(event.clientY - this.startY);
+
+      if (deltaX > this.movementThreshold || deltaY > this.movementThreshold) {
+        this.resetTimer();
+        this.startX = event.clientX;
+        this.startY = event.clientY;
+      }
+    }
+    if (!this.floating || (event.target != this.draggableElement && !this.nonGridDragging))
+      // sonst reissts ab, wen man schnell draggt
+      return;
+
+    if (this.floating) {
+      if (this.resizing) {
+        event.preventDefault();
+        const target = this.draggableElement!;
+        const newWidth = this.resizeStartWidth + (event.clientX - this.resizeStartX);
+        const newHeight = this.resizeStartHeight + (event.clientY - this.resizeStartY);
+        target.style.width = `${newWidth}px`;
+        target.style.height = `${newHeight}px`;
+      } else if (this.nonGridDragging) {
+        event.preventDefault();
+        this.dragInfo.dx = event.clientX - this.dragInfo.x;
+        this.dragInfo.dy = event.clientY - this.dragInfo.y;
+        this.draggableElement!.style.transform = `translate3d(${this.dragInfo.dx}px, ${this.dragInfo.dy}px, 0)`;
+      }
+    }
+  }
+
+  onMouseUp(event: MouseEvent) {
+    if (event.target != this.draggableElement) return;
+
+    this.gridDragging = false;
+    this.nonGridDragging = false;
+    this.resizing = false;
+    this.grid.enableMove(true);
+  }
+}

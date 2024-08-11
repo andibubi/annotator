@@ -1,23 +1,17 @@
-import { Component, OnInit, HostListener, Input, ElementRef, Renderer2, NgZone } from '@angular/core';
+import { Component, ElementRef, OnInit, AfterViewInit, Input, NgZone } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { IAnnotation } from '../entities/annotation/annotation.model';
-import { ITextAnnotationElement } from '../entities/text-annotation-element/text-annotation-element.model';
-import { IVideoAnnotationElement } from '../entities/video-annotation-element/video-annotation-element.model';
-import { IAnnotationWithElements } from './annotation-with-elements.model';
-import { Observable } from 'rxjs';
-import { HttpResponse } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
-import { /*GridstackComponent, */ BaseWidget, NgCompInputs } from 'gridstack/dist/angular';
+import { DraggableResizableWidget } from '../draggable-resizable-widget/draggable-resizable-widget'; // Importiere die Basisklasse
+import { NgCompInputs } from 'gridstack/dist/angular';
 
 @Component({
   imports: [CommonModule, FormsModule],
   selector: 'app-yt-player',
   standalone: true,
   template: `<div [id]="'youtube-player_' + name"></div>`,
-  styleUrls: ['./yt-player.component.scss'],
+  //styleUrls: ['./yt-player.component.scss'],
 })
-export default class YtPlayerComponent extends BaseWidget implements OnInit {
+export default class YtPlayerComponent extends DraggableResizableWidget implements OnInit, AfterViewInit {
   youtubePlayer: any;
 
   @Input() name: string = '';
@@ -26,8 +20,15 @@ export default class YtPlayerComponent extends BaseWidget implements OnInit {
     return this.videoId ? { videoId: this.videoId } : undefined;
   }
 
-  constructor(private ngZone: NgZone) {
-    super();
+  ngAfterViewInit() {
+    this.afterViewInit();
+  }
+
+  constructor(
+    protected elementRef: ElementRef,
+    private ngZone: NgZone,
+  ) {
+    super(elementRef);
     //GridstackComponent.addComponentToSelectorType([YtPlayerComponent]);
   }
 
