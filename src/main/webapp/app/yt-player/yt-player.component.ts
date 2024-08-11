@@ -14,12 +14,13 @@ import { /*GridstackComponent, */ BaseWidget, NgCompInputs } from 'gridstack/dis
   imports: [CommonModule, FormsModule],
   selector: 'app-yt-player',
   standalone: true,
-  template: ' <div id="youtube-player"></div>',
+  template: `<div [id]="'youtube-player_' + name"></div>`,
   styleUrls: ['./yt-player.component.scss'],
 })
 export default class YtPlayerComponent extends BaseWidget implements OnInit {
   youtubePlayer: any;
 
+  @Input() name: string = '';
   @Input() videoId: string = '';
   public override serialize(): NgCompInputs | undefined {
     return this.videoId ? { videoId: this.videoId } : undefined;
@@ -34,23 +35,32 @@ export default class YtPlayerComponent extends BaseWidget implements OnInit {
     if (!(window as any).YT) {
       this.loadYoutubeAPI();
     } else {
-      this.initYoutubePlayers();
+      this.initYoutubePlayer();
     }
   }
 
   loadYoutubeAPI() {
-    const tag = document.createElement('script');
-    tag.src = 'https://www.youtube.com/iframe_api';
-    const firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag!.parentNode!.insertBefore(tag, firstScriptTag);
+    if (!document.getElementById('script_' + this.name) && !(window as any).YT) {
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      tag.id = 'script_' + this.name;
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag!.parentNode!.insertBefore(tag, firstScriptTag);
+    }
 
-    (window as any).onYouTubeIframeAPIReady = () => {
-      this.initYoutubePlayers();
-    };
+    (window as any).onYouTubeIframeAPIReady = (() => {
+      const previousCallback = (window as any).onYouTubeIframeAPIReady;
+      return () => {
+        if (typeof previousCallback === 'function') {
+          previousCallback();
+        }
+        this.initYoutubePlayer();
+      };
+    })();
   }
 
-  initYoutubePlayers() {
-    this.youtubePlayer = new (window as any).YT.Player('youtube-player', {
+  initYoutubePlayer() {
+    this.youtubePlayer = new (window as any).YT.Player('youtube-player_' + this.name, {
       height: '100%',
       width: '100%',
       videoId: this.videoId,

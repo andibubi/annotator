@@ -70,6 +70,7 @@ export class Step2Component implements OnInit {
   }
 
   loadYoutubeAPI() {
+    debugger;
     const tag = document.createElement('script');
     tag.src = 'https://www.youtube.com/iframe_api';
     const firstScriptTag = document.getElementsByTagName('script')[0];

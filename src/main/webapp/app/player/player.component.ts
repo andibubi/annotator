@@ -80,9 +80,10 @@ export default class PlayerComponent implements OnInit {
       this.playerService.findLayout(Number(params.get('layoutId'))).subscribe(
         response => {
           let sub1: NgGridStackWidgetWithGrid[] = [
-            { x: 0, y: 0, selector: 'app-a', input: { text: 'bar7' } },
-            { x: 1, y: 1, w: 12, h: 8, selector: 'app-yt-player', input: { videoId: '7I0tBlfcg10' } },
-            { x: 1, y: 2, selector: 'widget-textout', input: { text: 'bar17' } },
+            { x: 0, y: 0, h: 2, selector: 'app-yt-player', input: { name: 'sec', videoId: '7I0tBlfcg10' } },
+
+            { x: 1, y: 1, w: 12, h: 8, selector: `app-yt-player`, input: { name: 'horst', videoId: 'NsUWXo8M7UA' } },
+            { x: 1, y: 2, selector: 'widget-textout', input: { text: 'bar17' } }, // Kommentar
           ];
 
           let sub2: NgGridStackWidgetWithGrid[] = [
@@ -133,6 +134,7 @@ export default class PlayerComponent implements OnInit {
   }
 
   loadYoutubeAPI() {
+    console.log('player.loadToutubeApi');
     const tag = document.createElement('script');
     tag.src = 'https://www.youtube.com/iframe_api';
     const firstScriptTag = document.getElementsByTagName('script')[0];
