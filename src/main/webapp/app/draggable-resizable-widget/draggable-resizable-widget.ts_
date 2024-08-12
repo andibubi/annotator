@@ -15,9 +15,7 @@ export class DraggableResizableWidget extends BaseWidget {
   protected resizeStartHeight: number = 0;
   protected resizeStartX: number = 0;
   protected resizeStartY: number = 0;
-  protected timerId: any;
   protected movementThreshold = 20;
-  protected delay = 3000;
   protected gridDragging = false;
 
   constructor(protected elementRef: ElementRef) {

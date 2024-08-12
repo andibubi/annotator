@@ -1,4 +1,15 @@
-import { Component, OnInit, HostListener, Input, ElementRef, Renderer2, NgZone, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  HostListener,
+  Input,
+  ElementRef,
+  Renderer2,
+  NgZone,
+  ViewChild,
+  ViewEncapsulation,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { IAnnotation } from '../entities/annotation/annotation.model';
@@ -10,6 +21,7 @@ import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { GridStack, GridStackOptions } from 'gridstack';
+import { AdvancedGrid } from '../advanced-grid/advanced-grid';
 import {
   GridstackModule,
   NgGridStackOptions,
@@ -30,7 +42,7 @@ export interface NgGridStackWidgetWithGrid extends NgGridStackWidget {
 }
 
 @Component({
-  imports: [CommonModule, GridstackModule, YtPlayerComponent],
+  imports: [CommonModule, GridstackModule, YtPlayerComponent, AdvancedGrid],
   selector: 'app-player',
   standalone: true,
   templateUrl: './player.component.html',
@@ -69,6 +81,7 @@ export default class PlayerComponent implements OnInit {
   }
 
   @ViewChild('gridstack', { static: true }) gridstack!: ElementRef;
+  @ViewChild('advgridstack', { static: true }) advGrid!: AdvancedGrid;
 
   ngOnInit() {
     if (!(window as any).YT) {
@@ -107,11 +120,13 @@ export default class PlayerComponent implements OnInit {
             if (!w.selector && !w.content && !w.subGridOpts) w.content = `item ${ids}`;
             w.id = String(ids++);
           });
-          const grid = GridStack.init(this.gridOptions, this.gridstack.nativeElement);
           for (var widget of widgets) {
-            widget.grid = grid;
-            grid.addWidget(widget);
+            //widget.grid = grid;
+            this.advGrid.addWidget(widget);
           }
+          setTimeout(() => {
+            this.advGrid.allWidgetsAdded();
+          }, 1000);
         },
         error => {
           console.error('Error', error);

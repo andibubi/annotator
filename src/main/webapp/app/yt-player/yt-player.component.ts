@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, AfterViewInit, Input, NgZone } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { DraggableResizableWidget } from '../draggable-resizable-widget/draggable-resizable-widget'; // Importiere die Basisklasse
+import { BaseWidget } from 'gridstack/dist/angular';
 import { NgCompInputs } from 'gridstack/dist/angular';
 
 @Component({
@@ -11,7 +11,7 @@ import { NgCompInputs } from 'gridstack/dist/angular';
   template: `<div [id]="'youtube-player_' + name"></div>`,
   //styleUrls: ['./yt-player.component.scss'],
 })
-export default class YtPlayerComponent extends DraggableResizableWidget implements OnInit, AfterViewInit {
+export default class YtPlayerComponent extends BaseWidget implements OnInit {
   youtubePlayer: any;
 
   @Input() name: string = '';
@@ -20,15 +20,11 @@ export default class YtPlayerComponent extends DraggableResizableWidget implemen
     return this.videoId ? { videoId: this.videoId } : undefined;
   }
 
-  ngAfterViewInit() {
-    this.afterViewInit();
-  }
-
   constructor(
     protected elementRef: ElementRef,
     private ngZone: NgZone,
   ) {
-    super(elementRef);
+    super();
     //GridstackComponent.addComponentToSelectorType([YtPlayerComponent]);
   }
 
