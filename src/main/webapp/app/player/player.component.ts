@@ -77,7 +77,7 @@ export default class PlayerComponent implements OnInit {
     private playerService: PlayerService,
     private ngZone: NgZone,
   ) {
-    GridstackComponent.addComponentToSelectorType([TextoutComponent, YtPlayerComponent, AComponent, BComponent, CComponent]);
+    GridstackComponent.addComponentToSelectorType([TextoutComponent, YtPlayerComponent]);
   }
 
   @ViewChild('gridstack', { static: true }) gridstack!: ElementRef;
@@ -134,15 +134,6 @@ export default class PlayerComponent implements OnInit {
       );
     });
   }
-
-  public gridOptions: NgGridStackOptions = {
-    float: true,
-    cellHeight: 50,
-    margin: 5,
-    minRow: 2, // don't collapse when empty
-    acceptWidgets: true,
-    children: [],
-  };
 
   setFullscreen(fullscreen: boolean) {
     this.isFullscreen = fullscreen;
@@ -216,7 +207,7 @@ export default class PlayerComponent implements OnInit {
     }
   }
 
-  @HostListener('document:mousedown', ['$event'])
+  //@HostListener('document:mousedown', ['$event'])
   onMouseDown(event: MouseEvent) {
     const target = event.target as HTMLElement;
     if (target instanceof HTMLElement && target.classList.contains('draggable')) {
@@ -240,8 +231,9 @@ export default class PlayerComponent implements OnInit {
     }
   }
 
-  @HostListener('document:mousemove', ['$event'])
+  //@HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent) {
+    console.log('---------');
     if (this.resizingElement) {
       event.preventDefault();
       const newWidth = this.resizeStartWidth + (event.clientX - this.resizeStartX);
@@ -259,7 +251,7 @@ export default class PlayerComponent implements OnInit {
     }
   }
 
-  @HostListener('document:mouseup', ['$event'])
+  //@HostListener('document:mouseup', ['$event'])
   onMouseUp(event: MouseEvent) {
     this.draggingElement = null;
     if (this.resizingElement) {
