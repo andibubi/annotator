@@ -6,11 +6,13 @@ import { NgCompInputs } from 'gridstack/dist/angular';
 import { YtPlayerService } from './yt-player.service';
 
 @Component({
-  imports: [CommonModule, FormsModule],
+  imports: [],
   selector: 'app-yt-player',
   standalone: true,
-  template: `<div [id]="'youtube-player_' + name"></div>`,
-  //styleUrls: ['./yt-player.component.scss'],
+  template: `<div>hallo0</div>
+    <div [id]="'youtube-player_' + name"><div>hallo</div></div>`,
+  //template: `<div [id]="'youtube-player_' + name"></div>`,
+  styleUrls: ['./yt-player.component.scss'],
 })
 export default class YtPlayerComponent extends BaseWidget implements OnInit {
   private youtubePlayer: any;
