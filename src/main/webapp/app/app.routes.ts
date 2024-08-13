@@ -10,6 +10,7 @@ import LoginComponent from './login/login.component';
 import CreateAnnotationComponent from './create-annotation/create-annotation.component';
 import ViewerComponent from './viewer/viewer.component';
 import PlayerComponent from './player/player.component';
+//import PlayerAltComponent from './player-alt/player-alt.component';
 import GridComponent from './grid/grid.component';
 
 const routes: Routes = [
@@ -59,6 +60,13 @@ const routes: Routes = [
     component: PlayerComponent,
     title: 'play-annotation.title',
   },
+  /*
+  {
+    path: 'play-alt/:layoutId',
+    component: PlayerAltComponent,
+    title: 'play-annotation.title',
+  },
+  */
   ...errorRoute,
 ];
 

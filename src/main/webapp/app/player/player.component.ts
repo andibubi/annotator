@@ -84,16 +84,17 @@ export default class PlayerComponent implements OnInit {
   @ViewChild('advgridstack', { static: true }) advGrid!: AdvancedGrid;
 
   ngOnInit() {
+    /*
     if (!(window as any).YT) {
       this.loadYoutubeAPI();
     } else {
       this.initYoutubePlayers();
-    }
+    }*/
     this.route.paramMap.subscribe(params => {
       this.playerService.findLayout(Number(params.get('layoutId'))).subscribe(
         response => {
           let sub1: NgGridStackWidgetWithGrid[] = [
-            { x: 0, y: 0, h: 2, selector: 'app-yt-player2', input: { name: 'sec', videoId: '7I0tBlfcg10' } },
+            { x: 0, y: 0, h: 2, selector: 'app-yt-player', input: { name: 'sec', videoId: '7I0tBlfcg10' } },
 
             { x: 1, y: 1, w: 12, h: 8, selector: `app-yt-player`, input: { name: 'horst', videoId: 'NsUWXo8M7UA' } },
             { x: 1, y: 2, selector: 'widget-textout', input: { text: 'bar17' } }, // Kommentar

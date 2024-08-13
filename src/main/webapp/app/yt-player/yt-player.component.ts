@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BaseWidget } from 'gridstack/dist/angular';
 import { NgCompInputs } from 'gridstack/dist/angular';
+import { YtPlayerService } from './yt-player.service';
 
 @Component({
   imports: [CommonModule, FormsModule],
@@ -12,7 +13,7 @@ import { NgCompInputs } from 'gridstack/dist/angular';
   //styleUrls: ['./yt-player.component.scss'],
 })
 export default class YtPlayerComponent extends BaseWidget implements OnInit {
-  youtubePlayer: any;
+  private youtubePlayer: any;
 
   @Input() name: string = '';
   @Input() videoId: string = '';
@@ -20,7 +21,10 @@ export default class YtPlayerComponent extends BaseWidget implements OnInit {
     return this.videoId ? { videoId: this.videoId } : undefined;
   }
 
+  //private ytPlayerService: YtPlayerService|null = null;
+  private laambda: any = null;
   constructor(
+    private ytPlayerService: YtPlayerService,
     protected elementRef: ElementRef,
     private ngZone: NgZone,
   ) {
@@ -29,50 +33,14 @@ export default class YtPlayerComponent extends BaseWidget implements OnInit {
   }
 
   ngOnInit() {
-    if (!(window as any).YT) {
-      this.loadYoutubeAPI();
-    } else {
-      this.initYoutubePlayer();
-    }
-  }
-
-  loadYoutubeAPI() {
-    if (!document.getElementById('script_' + this.name) && !(window as any).YT) {
-      const tag = document.createElement('script');
-      tag.src = 'https://www.youtube.com/iframe_api';
-      tag.id = 'script_' + this.name;
-      const firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag!.parentNode!.insertBefore(tag, firstScriptTag);
-    }
-
-    (window as any).onYouTubeIframeAPIReady = (() => {
-      const previousCallback = (window as any).onYouTubeIframeAPIReady;
-      return () => {
-        if (typeof previousCallback === 'function') {
-          previousCallback();
-        }
-        this.initYoutubePlayer();
-      };
-    })();
-  }
-
-  initYoutubePlayer() {
-    this.youtubePlayer = new (window as any).YT.Player('youtube-player_' + this.name, {
-      height: '100%',
-      width: '100%',
-      videoId: this.videoId,
-      events: {
-        onReady: this.onYoutubePlayerReady.bind(this),
-      },
-    });
-  }
-
-  onYoutubePlayerReady(event: any) {
-    setInterval(() => {
-      this.ngZone.run(() => {
-        this.updateAnnotations(this.youtubePlayer.getCurrentTime());
-      });
-    }, 1000);
+    this.laambda = this.ytPlayerService!.createPlayer(this.name, this.videoId);
+    // TODO aktivieren
+    /*
+      setInterval(() => {
+        this.ngZone.run(() => {
+          this.updateAnnotations(this.youtubePlayer.getCurrentTime());
+        });
+      }, 1000);*/
   }
 
   updateAnnotations(actSec: number) {}

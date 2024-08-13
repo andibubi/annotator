@@ -106,8 +106,9 @@ export class AdvancedGrid implements AfterViewInit {
     console.log(de);
   }
   private isDraggable(targetElement: HTMLElement) {
-    const gridItemElement = targetElement.closest('.grid-stack .grid-stack-item');
-    for (let c of this.draggableElements) if (c == gridItemElement || c == targetElement) return true;
+    const gridItemElement = targetElement.closest('.grid-stack .grid-stack-item')!;
+    var q = gridItemElement.querySelector('.grid-stack-item-content')! as HTMLElement;
+    for (let c of this.draggableElements) if (c == q) return true;
     return false;
   }
 
