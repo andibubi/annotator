@@ -1,8 +1,7 @@
 <div>
   <h1>Player</h1>
 
-  <!--<gridstack [options]="nestedGridOptions" (changeCB)="onChange($event)" (resizeStopCB)="onResizeStop($event)"> -->
-  <adv-gridstack #advgridstack>
+  <adv-gridstack *ngIf="emptyGridOptions" #advgridstack [gridOptions$]="gridOptions$" [emptyGridOptions]="emptyGridOptions">
     <div empty-content>Add items here or reload the grid</div>
   </adv-gridstack>
 

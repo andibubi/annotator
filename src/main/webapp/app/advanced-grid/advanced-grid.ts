@@ -1,18 +1,32 @@
-import { ViewChild, Component, OnInit, AfterViewInit, ElementRef, HostListener } from '@angular/core';
+import { ViewChild, Component, Input, AfterViewInit, ElementRef, HostListener } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { GridStack, GridStackNode, GridStackElement } from 'gridstack';
-import { BaseWidget, NgGridStackOptions, GridstackComponent, GridstackModule } from 'gridstack/dist/angular';
+import { BaseWidget, NgGridStackOptions, NgGridStackWidget, GridstackComponent, GridstackModule } from 'gridstack/dist/angular';
+import { Observable, of } from 'rxjs';
+import { PlayerService } from '../player/player.service';
 
 @Component({
-  imports: [GridstackModule],
+  imports: [CommonModule, GridstackModule],
   selector: 'adv-gridstack',
   standalone: true,
-  template: `<gridstack #gridstack [options]="gridOptions">
+  template: ` <gridstack #gridstack [options]="currentOptions">
     <div empty-content>Add items here or reload the grid</div>
   </gridstack>`,
 })
-export class AdvancedGrid implements AfterViewInit {
+export class AdvancedGrid {
   @ViewChild('gridstack', { static: true }) gridstackElement!: any;
   private outerGrid!: GridStack;
+  @Input() gridOptions$: Observable<NgGridStackOptions> = of();
+  @Input() emptyGridOptions!: NgGridStackOptions;
+
+  currentOptions!: NgGridStackOptions;
+
+  ngOnInit() {
+    this.gridOptions$.subscribe(options => {
+      this.currentOptions = options || this.emptyGridOptions;
+    });
+  }
+
   private timerId: any;
   protected startX = 0;
   protected startY = 0;
@@ -27,17 +41,8 @@ export class AdvancedGrid implements AfterViewInit {
   protected movementThreshold = 20;
   protected gridDraggingElement: HTMLElement | null = null;
 
-  public gridOptions: NgGridStackOptions = {
-    cellHeight: 50,
-    margin: 5,
-    minRow: 2, // don't collapse when empty
-    acceptWidgets: true,
-    children: [],
-  };
+  constructor(private playerService: PlayerService) {}
 
-  addWidget(widget: any) {
-    this.outerGrid!.addWidget(widget);
-  }
   recursiveAddEventHandlers(grid: GridStack) {
     this.addEvents(grid);
     for (let node of grid.engine.nodes) {
@@ -65,12 +70,14 @@ export class AdvancedGrid implements AfterViewInit {
     }
   }
 
-  allWidgetsAdded() {
-    this.recursiveAddEventHandlers(this.outerGrid);
-  }
-
-  public ngAfterViewInit() {
-    this.outerGrid = GridStack.init(this.gridOptions, this.gridstackElement.nativeElement);
+  allWidgetsAdded() {}
+  // TODO Diese Funktionaltät sollte von dieser Klasse initiiert werden.
+  public work(gridOptions: NgGridStackOptions) {
+    this.outerGrid = GridStack.init(gridOptions, this.gridstackElement.nativeElement);
+    // TODO Warum geht das nicht ohne Extra-Zyklus?
+    setTimeout(() => {
+      this.recursiveAddEventHandlers(this.outerGrid);
+    }, 1000);
   }
 
   private startTimer() {

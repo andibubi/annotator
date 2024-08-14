@@ -2,6 +2,7 @@ import {
   Component,
   OnInit,
   AfterViewInit,
+  AfterViewChecked,
   HostListener,
   Input,
   ElementRef,
@@ -17,7 +18,7 @@ import { ITextAnnotationElement } from '../entities/text-annotation-element/text
 import { IVideoAnnotationElement } from '../entities/video-annotation-element/video-annotation-element.model';
 import { IAnnotationWithElements } from './annotation-with-elements.model';
 import { PlayerService } from './player.service';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { GridStack, GridStackOptions } from 'gridstack';
@@ -49,7 +50,7 @@ export interface NgGridStackWidgetWithGrid extends NgGridStackWidget {
   styleUrls: ['./player.component.scss', './gridstack.scss', './demo.scss', 'gridstack-extra.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export default class PlayerComponent implements OnInit {
+export default class PlayerComponent implements OnInit, AfterViewChecked {
   annotation: IAnnotation | null = null;
 
   textAnnotations = new Array<ITextAnnotationElement>();
@@ -71,6 +72,11 @@ export default class PlayerComponent implements OnInit {
   resizeStartHeight: number = 0;
   resizeStartX: number = 0;
   resizeStartY: number = 0;
+  gridOptions$: Observable<NgGridStackOptions> = of();
+  emptyGridOptions!: NgGridStackOptions;
+
+  private initialGridOptions: NgGridStackOptions | null = null; // Temporäre Variable zum Speichern der Optionen
+  private isGridInitialized = false; // Flag zur Überprüfung, ob die Methode bereits aufgerufen wurde
 
   constructor(
     private route: ActivatedRoute,
@@ -79,9 +85,16 @@ export default class PlayerComponent implements OnInit {
   ) {
     GridstackComponent.addComponentToSelectorType([TextoutComponent, YtPlayerComponent]);
   }
-
   @ViewChild('gridstack', { static: true }) gridstack!: ElementRef;
-  @ViewChild('advgridstack', { static: true }) advGrid!: AdvancedGrid;
+  @ViewChild('advgridstack', { static: false }) advGrid!: AdvancedGrid;
+
+  ngAfterViewChecked() {
+    // Überprüfe, ob die View vollständig initialisiert ist und die Daten verfügbar sind
+    if (this.advGrid && this.initialGridOptions && !this.isGridInitialized) {
+      this.advGrid.work(this.initialGridOptions);
+      this.isGridInitialized = true; // Verhindert, dass die Methode mehrfach aufgerufen wird
+    }
+  }
 
   ngOnInit() {
     /*
@@ -90,49 +103,12 @@ export default class PlayerComponent implements OnInit {
     } else {
       this.initYoutubePlayers();
     }*/
+    this.emptyGridOptions = this.playerService.getEmptyGridOptions();
     this.route.paramMap.subscribe(params => {
-      this.playerService.findLayout(Number(params.get('layoutId'))).subscribe(
-        response => {
-          let sub1: NgGridStackWidgetWithGrid[] = [
-            { x: 0, y: 0, h: 2, selector: 'app-yt-player', input: { name: 'sec', videoId: '7I0tBlfcg10' } },
-
-            { x: 1, y: 1, w: 12, h: 8, selector: `app-yt-player`, input: { name: 'horst', videoId: 'NsUWXo8M7UA' } },
-            { x: 1, y: 2, selector: 'widget-textout', input: { text: 'bar17' } }, // Kommentar
-          ];
-
-          let sub2: NgGridStackWidgetWithGrid[] = [
-            { x: 0, y: 0 },
-            { x: 0, y: 1, w: 2 },
-          ];
-          let subOptions: NgGridStackOptions = {
-            cellHeight: 50, // should be 50 - top/bottom
-            column: 'auto', // size to match container. make sure to include gridstack-extra.min.css
-            acceptWidgets: true, // will accept .grid-stack-item by default
-            margin: 5,
-          };
-          let widgets: NgGridStackWidgetWithGrid[] = [
-            { x: 0, y: 0, w: 1, h: 1, content: 'Hallo' },
-            { x: 1, y: 0, w: 10, h: 11, subGridOpts: { children: sub1, class: 'sub1', ...subOptions } },
-            { x: 11, y: 0, w: 1, h: 2, subGridOpts: { children: sub2, class: 'sub2', ...subOptions } },
-          ];
-          // give them content and unique id to make sure we track them during changes below...
-          let ids = 0;
-          [...widgets, ...sub1, ...sub2].forEach((w: NgGridStackWidget) => {
-            if (!w.selector && !w.content && !w.subGridOpts) w.content = `item ${ids}`;
-            w.id = String(ids++);
-          });
-          for (var widget of widgets) {
-            //widget.grid = grid;
-            this.advGrid.addWidget(widget);
-          }
-          setTimeout(() => {
-            this.advGrid.allWidgetsAdded();
-          }, 1000);
-        },
-        error => {
-          console.error('Error', error);
-        },
-      );
+      this.gridOptions$ = this.playerService.getInitialSched$(Number(params.get('layoutId')));
+      this.gridOptions$.subscribe(gridOptions => {
+        this.initialGridOptions = gridOptions;
+      });
     });
   }
 
