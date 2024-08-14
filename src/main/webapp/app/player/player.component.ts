@@ -10,6 +10,7 @@ import {
   NgZone,
   ViewChild,
   ViewEncapsulation,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -79,6 +80,7 @@ export default class PlayerComponent implements OnInit, AfterViewChecked {
   private isGridInitialized = false; // Flag zur Überprüfung, ob die Methode bereits aufgerufen wurde
 
   constructor(
+    private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private playerService: PlayerService,
     private ngZone: NgZone,
@@ -97,17 +99,12 @@ export default class PlayerComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
-    /*
-    if (!(window as any).YT) {
-      this.loadYoutubeAPI();
-    } else {
-      this.initYoutubePlayers();
-    }*/
     this.emptyGridOptions = this.playerService.getEmptyGridOptions();
     this.route.paramMap.subscribe(params => {
       this.gridOptions$ = this.playerService.getInitialSched$(Number(params.get('layoutId')));
       this.gridOptions$.subscribe(gridOptions => {
         this.initialGridOptions = gridOptions;
+        this.advGrid.work(this.initialGridOptions);
       });
     });
   }

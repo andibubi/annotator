@@ -44,14 +44,14 @@ export class AdvancedGrid {
   constructor(private playerService: PlayerService) {}
 
   recursiveAddEventHandlers(grid: GridStack) {
-    this.addEvents(grid);
+    this.addEventHandlers(grid);
     for (let node of grid.engine.nodes) {
       if ('subGrid' in node) {
         this.recursiveAddEventHandlers(node.subGrid!);
       }
     }
   }
-  addEvents(grid: GridStack) {
+  addEventHandlers(grid: GridStack) {
     grid.on('dragstart', (event: any, el: HTMLElement) => {
       this.onGridDragStart(grid, event, el);
     });
