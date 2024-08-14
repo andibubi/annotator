@@ -7,6 +7,8 @@ import { ApplicationConfigService } from 'app/core/config/application-config.ser
 import { createRequestOption } from 'app/core/request/request-util';
 import { IAnnotationWithElements } from './annotation-with-elements.model';
 import { NgGridStackWidget, NgGridStackOptions } from 'gridstack/dist/angular';
+import { LayoutService } from 'app/entities/layout/service/layout.service';
+import { GridElementService } from 'app/entities/grid-element/service/grid-element.service';
 
 export type EntityResponseType = HttpResponse<IAnnotationWithElements>;
 
@@ -14,6 +16,11 @@ export type EntityResponseType = HttpResponse<IAnnotationWithElements>;
 export class PlayerService {
   protected http = inject(HttpClient);
   protected applicationConfigService = inject(ApplicationConfigService);
+
+  constructor(
+    private layoutService: LayoutService,
+    private gridElementService: GridElementService,
+  ) {}
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/view');
 
@@ -28,6 +35,10 @@ export class PlayerService {
   }
   getInitialSched$(id: number): Observable<NgGridStackOptions> {
     let bla = this.http.get<IAnnotationWithElements>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+    this.layoutService.find(id).subscribe(r => {});
+    this.gridElementService.query({ 'layoutId.equals': id }).subscribe(r => {
+      debugger;
+    });
 
     let sub1: NgGridStackWidget[] = [
       { x: 0, y: 0, h: 2, selector: 'app-yt-player', input: { name: 'sec', videoId: '7I0tBlfcg10' } },
