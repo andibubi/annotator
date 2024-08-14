@@ -79,7 +79,7 @@ class LayoutCriteriaTest {
         layoutCriteria.created_at();
         layoutCriteria.updated_at();
         layoutCriteria.userId();
-        layoutCriteria.grtidWElementsId();
+        layoutCriteria.gridElementsId();
         layoutCriteria.distinct();
     }
 
@@ -91,7 +91,7 @@ class LayoutCriteriaTest {
                 condition.apply(criteria.getCreated_at()) &&
                 condition.apply(criteria.getUpdated_at()) &&
                 condition.apply(criteria.getUserId()) &&
-                condition.apply(criteria.getGrtidWElementsId()) &&
+                condition.apply(criteria.getGridElementsId()) &&
                 condition.apply(criteria.getDistinct()),
             "every filter matches"
         );
@@ -105,7 +105,7 @@ class LayoutCriteriaTest {
                 condition.apply(criteria.getCreated_at(), copy.getCreated_at()) &&
                 condition.apply(criteria.getUpdated_at(), copy.getUpdated_at()) &&
                 condition.apply(criteria.getUserId(), copy.getUserId()) &&
-                condition.apply(criteria.getGrtidWElementsId(), copy.getGrtidWElementsId()) &&
+                condition.apply(criteria.getGridElementsId(), copy.getGridElementsId()) &&
                 condition.apply(criteria.getDistinct(), copy.getDistinct()),
             "every filter matches"
         );

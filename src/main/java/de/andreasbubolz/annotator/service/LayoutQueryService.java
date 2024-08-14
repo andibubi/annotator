@@ -91,10 +91,10 @@ public class LayoutQueryService extends QueryService<Layout> {
                     buildSpecification(criteria.getUserId(), root -> root.join(Layout_.user, JoinType.LEFT).get(User_.id))
                 );
             }
-            if (criteria.getGrtidWElementsId() != null) {
+            if (criteria.getGridElementsId() != null) {
                 specification = specification.and(
                     buildSpecification(
-                        criteria.getGrtidWElementsId(),
+                        criteria.getGridElementsId(),
                         root -> root.join(Layout_.gridElements, JoinType.LEFT).get(GridElement_.id)
                     )
                 );

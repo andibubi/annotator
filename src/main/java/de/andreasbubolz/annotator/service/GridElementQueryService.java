@@ -89,6 +89,12 @@ public class GridElementQueryService extends QueryService<GridElement> {
             if (criteria.getH() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getH(), GridElement_.h));
             }
+            if (criteria.getChannel() != null) {
+                specification = specification.and(buildStringSpecification(criteria.getChannel(), GridElement_.channel));
+            }
+            if (criteria.getRenderer() != null) {
+                specification = specification.and(buildStringSpecification(criteria.getRenderer(), GridElement_.renderer));
+            }
             if (criteria.getContent() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getContent(), GridElement_.content));
             }

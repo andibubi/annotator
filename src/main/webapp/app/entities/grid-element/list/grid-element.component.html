@@ -70,6 +70,20 @@
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
+            <th scope="col" jhiSortBy="channel">
+              <div class="d-flex">
+                <span>Channel</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="renderer">
+              <div class="d-flex">
+                <span>Renderer</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
             <th scope="col" jhiSortBy="content">
               <div class="d-flex">
                 <span>Content</span>
@@ -116,6 +130,8 @@
               <td>{{ gridElement.y }}</td>
               <td>{{ gridElement.w }}</td>
               <td>{{ gridElement.h }}</td>
+              <td>{{ gridElement.channel }}</td>
+              <td>{{ gridElement.renderer }}</td>
               <td>{{ gridElement.content }}</td>
               <td>{{ gridElement.displayAfterMillis }}</td>
               <td>{{ gridElement.displayDurationMillis }}</td>

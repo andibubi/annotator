@@ -110,11 +110,11 @@ public class Layout implements Serializable {
         return this;
     }
 
-    public Set<GridElement> getGrtidWElements() {
+    public Set<GridElement> getGridElements() {
         return this.gridElements;
     }
 
-    public void setGrtidWElements(Set<GridElement> gridElements) {
+    public void setGridElements(Set<GridElement> gridElements) {
         if (this.gridElements != null) {
             this.gridElements.forEach(i -> i.setLayout(null));
         }
@@ -125,17 +125,17 @@ public class Layout implements Serializable {
     }
 
     public Layout gridElements(Set<GridElement> gridElements) {
-        this.setGrtidWElements(gridElements);
+        this.setGridElements(gridElements);
         return this;
     }
 
-    public Layout addGrtidWElements(GridElement gridElement) {
+    public Layout addGridElements(GridElement gridElement) {
         this.gridElements.add(gridElement);
         gridElement.setLayout(this);
         return this;
     }
 
-    public Layout removeGrtidWElements(GridElement gridElement) {
+    public Layout removeGridElements(GridElement gridElement) {
         this.gridElements.remove(gridElement);
         gridElement.setLayout(null);
         return this;

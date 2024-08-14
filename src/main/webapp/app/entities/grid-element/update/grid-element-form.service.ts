@@ -22,6 +22,8 @@ type GridElementFormGroupContent = {
   y: FormControl<IGridElement['y']>;
   w: FormControl<IGridElement['w']>;
   h: FormControl<IGridElement['h']>;
+  channel: FormControl<IGridElement['channel']>;
+  renderer: FormControl<IGridElement['renderer']>;
   content: FormControl<IGridElement['content']>;
   displayAfterMillis: FormControl<IGridElement['displayAfterMillis']>;
   displayDurationMillis: FormControl<IGridElement['displayDurationMillis']>;
@@ -50,6 +52,8 @@ export class GridElementFormService {
       y: new FormControl(gridElementRawValue.y),
       w: new FormControl(gridElementRawValue.w),
       h: new FormControl(gridElementRawValue.h),
+      channel: new FormControl(gridElementRawValue.channel),
+      renderer: new FormControl(gridElementRawValue.renderer),
       content: new FormControl(gridElementRawValue.content),
       displayAfterMillis: new FormControl(gridElementRawValue.displayAfterMillis),
       displayDurationMillis: new FormControl(gridElementRawValue.displayDurationMillis),

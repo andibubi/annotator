@@ -37,6 +37,12 @@ public class GridElement implements Serializable {
     @Column(name = "h")
     private Integer h;
 
+    @Column(name = "channel")
+    private String channel;
+
+    @Column(name = "renderer")
+    private String renderer;
+
     @Column(name = "content")
     private String content;
 
@@ -52,13 +58,11 @@ public class GridElement implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "layout", "gridElement", "gridElements" }, allowSetters = true)
-    //parent
     private GridElement gridElement;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "gridElement")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "layout", "gridElement", "gridElements" }, allowSetters = true)
-    // children
     private Set<GridElement> gridElements = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -126,6 +130,32 @@ public class GridElement implements Serializable {
 
     public void setH(Integer h) {
         this.h = h;
+    }
+
+    public String getChannel() {
+        return this.channel;
+    }
+
+    public GridElement channel(String channel) {
+        this.setChannel(channel);
+        return this;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
+
+    public String getRenderer() {
+        return this.renderer;
+    }
+
+    public GridElement renderer(String renderer) {
+        this.setRenderer(renderer);
+        return this;
+    }
+
+    public void setRenderer(String renderer) {
+        this.renderer = renderer;
     }
 
     public String getContent() {
@@ -252,6 +282,8 @@ public class GridElement implements Serializable {
             ", y=" + getY() +
             ", w=" + getW() +
             ", h=" + getH() +
+            ", channel='" + getChannel() + "'" +
+            ", renderer='" + getRenderer() + "'" +
             ", content='" + getContent() + "'" +
             ", displayAfterMillis=" + getDisplayAfterMillis() +
             ", displayDurationMillis=" + getDisplayDurationMillis() +

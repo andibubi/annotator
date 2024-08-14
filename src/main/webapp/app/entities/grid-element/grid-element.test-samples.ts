@@ -1,25 +1,28 @@
 import { IGridElement, NewGridElement } from './grid-element.model';
 
 export const sampleWithRequiredData: IGridElement = {
-  id: 7582,
+  id: 13888,
 };
 
 export const sampleWithPartialData: IGridElement = {
-  id: 4582,
-  x: 16782,
-  y: 20980,
-  w: 5000,
+  id: 10601,
+  w: 31608,
+  h: 7896,
+  displayAfterMillis: 18217,
+  displayDurationMillis: 5878,
 };
 
 export const sampleWithFullData: IGridElement = {
-  id: 15934,
-  x: 12481,
-  y: 15035,
-  w: 17186,
-  h: 30649,
-  content: 'honeymoon',
-  displayAfterMillis: 20973,
-  displayDurationMillis: 22971,
+  id: 28028,
+  x: 11883,
+  y: 32598,
+  w: 21006,
+  h: 4412,
+  channel: 'vascular hem blah',
+  renderer: 'except absolute',
+  content: 'second boo icky',
+  displayAfterMillis: 5403,
+  displayDurationMillis: 4754,
 };
 
 export const sampleWithNewData: NewGridElement = {

@@ -32,7 +32,7 @@ public class LayoutCriteria implements Serializable, Criteria {
 
     private LongFilter userId;
 
-    private LongFilter grtidWElementsId;
+    private LongFilter gridElementsId;
 
     private Boolean distinct;
 
@@ -44,7 +44,7 @@ public class LayoutCriteria implements Serializable, Criteria {
         this.created_at = other.optionalCreated_at().map(InstantFilter::copy).orElse(null);
         this.updated_at = other.optionalUpdated_at().map(InstantFilter::copy).orElse(null);
         this.userId = other.optionalUserId().map(LongFilter::copy).orElse(null);
-        this.grtidWElementsId = other.optionalGrtidWElementsId().map(LongFilter::copy).orElse(null);
+        this.gridElementsId = other.optionalGridElementsId().map(LongFilter::copy).orElse(null);
         this.distinct = other.distinct;
     }
 
@@ -148,23 +148,23 @@ public class LayoutCriteria implements Serializable, Criteria {
         this.userId = userId;
     }
 
-    public LongFilter getGrtidWElementsId() {
-        return grtidWElementsId;
+    public LongFilter getGridElementsId() {
+        return gridElementsId;
     }
 
-    public Optional<LongFilter> optionalGrtidWElementsId() {
-        return Optional.ofNullable(grtidWElementsId);
+    public Optional<LongFilter> optionalGridElementsId() {
+        return Optional.ofNullable(gridElementsId);
     }
 
-    public LongFilter grtidWElementsId() {
-        if (grtidWElementsId == null) {
-            setGrtidWElementsId(new LongFilter());
+    public LongFilter gridElementsId() {
+        if (gridElementsId == null) {
+            setGridElementsId(new LongFilter());
         }
-        return grtidWElementsId;
+        return gridElementsId;
     }
 
-    public void setGrtidWElementsId(LongFilter grtidWElementsId) {
-        this.grtidWElementsId = grtidWElementsId;
+    public void setGridElementsId(LongFilter gridElementsId) {
+        this.gridElementsId = gridElementsId;
     }
 
     public Boolean getDistinct() {
@@ -201,14 +201,14 @@ public class LayoutCriteria implements Serializable, Criteria {
             Objects.equals(created_at, that.created_at) &&
             Objects.equals(updated_at, that.updated_at) &&
             Objects.equals(userId, that.userId) &&
-            Objects.equals(grtidWElementsId, that.grtidWElementsId) &&
+            Objects.equals(gridElementsId, that.gridElementsId) &&
             Objects.equals(distinct, that.distinct)
         );
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, created_at, updated_at, userId, grtidWElementsId, distinct);
+        return Objects.hash(id, name, created_at, updated_at, userId, gridElementsId, distinct);
     }
 
     // prettier-ignore
@@ -220,7 +220,7 @@ public class LayoutCriteria implements Serializable, Criteria {
             optionalCreated_at().map(f -> "created_at=" + f + ", ").orElse("") +
             optionalUpdated_at().map(f -> "updated_at=" + f + ", ").orElse("") +
             optionalUserId().map(f -> "userId=" + f + ", ").orElse("") +
-            optionalGrtidWElementsId().map(f -> "grtidWElementsId=" + f + ", ").orElse("") +
+            optionalGridElementsId().map(f -> "gridElementsId=" + f + ", ").orElse("") +
             optionalDistinct().map(f -> "distinct=" + f + ", ").orElse("") +
         "}";
     }

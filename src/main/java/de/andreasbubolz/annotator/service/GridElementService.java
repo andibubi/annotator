@@ -4,11 +4,6 @@ import de.andreasbubolz.annotator.domain.GridElement;
 import de.andreasbubolz.annotator.repository.GridElementRepository;
 import de.andreasbubolz.annotator.service.dto.GridElementDTO;
 import de.andreasbubolz.annotator.service.mapper.GridElementMapper;
-import jakarta.annotation.PostConstruct;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.metamodel.Attribute;
-import jakarta.persistence.metamodel.EntityType;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,21 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class GridElementService {
-
-    // Nur temp:
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    @PostConstruct
-    public void printMappings() {
-        EntityType<GridElement> entityType = entityManager.getMetamodel().entity(GridElement.class);
-        System.out.println("GridElement Mappings:");
-        for (Attribute<?, ?> attribute : entityType.getAttributes()) {
-            System.out.println("Attribute: " + attribute.getName() + ", Type: " + attribute.getJavaType());
-        }
-    }
-
-    // /Nur temp
 
     private static final Logger log = LoggerFactory.getLogger(GridElementService.class);
 

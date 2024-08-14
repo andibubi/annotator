@@ -26,6 +26,12 @@
             <column name="h" type="integer">
                 <constraints nullable="true" />
             </column>
+            <column name="channel" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="renderer" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
             <column name="content" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
@@ -66,6 +72,8 @@
             <column name="y" type="numeric"/>
             <column name="w" type="numeric"/>
             <column name="h" type="numeric"/>
+            <column name="channel" type="string"/>
+            <column name="renderer" type="string"/>
             <column name="content" type="string"/>
             <column name="display_after_millis" type="numeric"/>
             <column name="display_duration_millis" type="numeric"/>

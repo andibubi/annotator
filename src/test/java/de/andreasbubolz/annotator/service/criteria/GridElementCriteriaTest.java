@@ -79,6 +79,8 @@ class GridElementCriteriaTest {
         gridElementCriteria.y();
         gridElementCriteria.w();
         gridElementCriteria.h();
+        gridElementCriteria.channel();
+        gridElementCriteria.renderer();
         gridElementCriteria.content();
         gridElementCriteria.displayAfterMillis();
         gridElementCriteria.displayDurationMillis();
@@ -96,6 +98,8 @@ class GridElementCriteriaTest {
                 condition.apply(criteria.getY()) &&
                 condition.apply(criteria.getW()) &&
                 condition.apply(criteria.getH()) &&
+                condition.apply(criteria.getChannel()) &&
+                condition.apply(criteria.getRenderer()) &&
                 condition.apply(criteria.getContent()) &&
                 condition.apply(criteria.getDisplayAfterMillis()) &&
                 condition.apply(criteria.getDisplayDurationMillis()) &&
@@ -115,6 +119,8 @@ class GridElementCriteriaTest {
                 condition.apply(criteria.getY(), copy.getY()) &&
                 condition.apply(criteria.getW(), copy.getW()) &&
                 condition.apply(criteria.getH(), copy.getH()) &&
+                condition.apply(criteria.getChannel(), copy.getChannel()) &&
+                condition.apply(criteria.getRenderer(), copy.getRenderer()) &&
                 condition.apply(criteria.getContent(), copy.getContent()) &&
                 condition.apply(criteria.getDisplayAfterMillis(), copy.getDisplayAfterMillis()) &&
                 condition.apply(criteria.getDisplayDurationMillis(), copy.getDisplayDurationMillis()) &&

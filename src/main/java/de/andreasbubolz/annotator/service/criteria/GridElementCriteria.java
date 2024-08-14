@@ -32,6 +32,10 @@ public class GridElementCriteria implements Serializable, Criteria {
 
     private IntegerFilter h;
 
+    private StringFilter channel;
+
+    private StringFilter renderer;
+
     private StringFilter content;
 
     private LongFilter displayAfterMillis;
@@ -54,6 +58,8 @@ public class GridElementCriteria implements Serializable, Criteria {
         this.y = other.optionalY().map(IntegerFilter::copy).orElse(null);
         this.w = other.optionalW().map(IntegerFilter::copy).orElse(null);
         this.h = other.optionalH().map(IntegerFilter::copy).orElse(null);
+        this.channel = other.optionalChannel().map(StringFilter::copy).orElse(null);
+        this.renderer = other.optionalRenderer().map(StringFilter::copy).orElse(null);
         this.content = other.optionalContent().map(StringFilter::copy).orElse(null);
         this.displayAfterMillis = other.optionalDisplayAfterMillis().map(LongFilter::copy).orElse(null);
         this.displayDurationMillis = other.optionalDisplayDurationMillis().map(LongFilter::copy).orElse(null);
@@ -161,6 +167,44 @@ public class GridElementCriteria implements Serializable, Criteria {
 
     public void setH(IntegerFilter h) {
         this.h = h;
+    }
+
+    public StringFilter getChannel() {
+        return channel;
+    }
+
+    public Optional<StringFilter> optionalChannel() {
+        return Optional.ofNullable(channel);
+    }
+
+    public StringFilter channel() {
+        if (channel == null) {
+            setChannel(new StringFilter());
+        }
+        return channel;
+    }
+
+    public void setChannel(StringFilter channel) {
+        this.channel = channel;
+    }
+
+    public StringFilter getRenderer() {
+        return renderer;
+    }
+
+    public Optional<StringFilter> optionalRenderer() {
+        return Optional.ofNullable(renderer);
+    }
+
+    public StringFilter renderer() {
+        if (renderer == null) {
+            setRenderer(new StringFilter());
+        }
+        return renderer;
+    }
+
+    public void setRenderer(StringFilter renderer) {
+        this.renderer = renderer;
     }
 
     public StringFilter getContent() {
@@ -311,6 +355,8 @@ public class GridElementCriteria implements Serializable, Criteria {
             Objects.equals(y, that.y) &&
             Objects.equals(w, that.w) &&
             Objects.equals(h, that.h) &&
+            Objects.equals(channel, that.channel) &&
+            Objects.equals(renderer, that.renderer) &&
             Objects.equals(content, that.content) &&
             Objects.equals(displayAfterMillis, that.displayAfterMillis) &&
             Objects.equals(displayDurationMillis, that.displayDurationMillis) &&
@@ -329,6 +375,8 @@ public class GridElementCriteria implements Serializable, Criteria {
             y,
             w,
             h,
+            channel,
+            renderer,
             content,
             displayAfterMillis,
             displayDurationMillis,
@@ -348,6 +396,8 @@ public class GridElementCriteria implements Serializable, Criteria {
             optionalY().map(f -> "y=" + f + ", ").orElse("") +
             optionalW().map(f -> "w=" + f + ", ").orElse("") +
             optionalH().map(f -> "h=" + f + ", ").orElse("") +
+            optionalChannel().map(f -> "channel=" + f + ", ").orElse("") +
+            optionalRenderer().map(f -> "renderer=" + f + ", ").orElse("") +
             optionalContent().map(f -> "content=" + f + ", ").orElse("") +
             optionalDisplayAfterMillis().map(f -> "displayAfterMillis=" + f + ", ").orElse("") +
             optionalDisplayDurationMillis().map(f -> "displayDurationMillis=" + f + ", ").orElse("") +

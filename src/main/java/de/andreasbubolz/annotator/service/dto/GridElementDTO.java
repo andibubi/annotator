@@ -19,6 +19,10 @@ public class GridElementDTO implements Serializable {
 
     private Integer h;
 
+    private String channel;
+
+    private String renderer;
+
     private String content;
 
     private Long displayAfterMillis;
@@ -67,6 +71,22 @@ public class GridElementDTO implements Serializable {
 
     public void setH(Integer h) {
         this.h = h;
+    }
+
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
+
+    public String getRenderer() {
+        return renderer;
+    }
+
+    public void setRenderer(String renderer) {
+        this.renderer = renderer;
     }
 
     public String getContent() {
@@ -139,6 +159,8 @@ public class GridElementDTO implements Serializable {
             ", y=" + getY() +
             ", w=" + getW() +
             ", h=" + getH() +
+            ", channel='" + getChannel() + "'" +
+            ", renderer='" + getRenderer() + "'" +
             ", content='" + getContent() + "'" +
             ", displayAfterMillis=" + getDisplayAfterMillis() +
             ", displayDurationMillis=" + getDisplayDurationMillis() +

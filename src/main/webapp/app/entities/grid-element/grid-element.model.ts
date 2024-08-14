@@ -6,6 +6,8 @@ export interface IGridElement {
   y?: number | null;
   w?: number | null;
   h?: number | null;
+  channel?: string | null;
+  renderer?: string | null;
   content?: string | null;
   displayAfterMillis?: number | null;
   displayDurationMillis?: number | null;

@@ -49,10 +49,10 @@ describe('GridElement Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call Layout query and add missing value', () => {
       const gridElement: IGridElement = { id: 456 };
-      const layout: ILayout = { id: 12743 };
+      const layout: ILayout = { id: 20355 };
       gridElement.layout = layout;
 
-      const layoutCollection: ILayout[] = [{ id: 18235 }];
+      const layoutCollection: ILayout[] = [{ id: 30541 }];
       jest.spyOn(layoutService, 'query').mockReturnValue(of(new HttpResponse({ body: layoutCollection })));
       const additionalLayouts = [layout];
       const expectedCollection: ILayout[] = [...additionalLayouts, ...layoutCollection];
@@ -71,10 +71,10 @@ describe('GridElement Management Update Component', () => {
 
     it('Should call GridElement query and add missing value', () => {
       const gridElement: IGridElement = { id: 456 };
-      const gridElement: IGridElement = { id: 29042 };
+      const gridElement: IGridElement = { id: 25487 };
       gridElement.gridElement = gridElement;
 
-      const gridElementCollection: IGridElement[] = [{ id: 6468 }];
+      const gridElementCollection: IGridElement[] = [{ id: 24527 }];
       jest.spyOn(gridElementService, 'query').mockReturnValue(of(new HttpResponse({ body: gridElementCollection })));
       const additionalGridElements = [gridElement];
       const expectedCollection: IGridElement[] = [...additionalGridElements, ...gridElementCollection];
@@ -93,9 +93,9 @@ describe('GridElement Management Update Component', () => {
 
     it('Should update editForm', () => {
       const gridElement: IGridElement = { id: 456 };
-      const layout: ILayout = { id: 12338 };
+      const layout: ILayout = { id: 27878 };
       gridElement.layout = layout;
-      const gridElement: IGridElement = { id: 29535 };
+      const gridElement: IGridElement = { id: 12500 };
       gridElement.gridElement = gridElement;
 
       activatedRoute.data = of({ gridElement });

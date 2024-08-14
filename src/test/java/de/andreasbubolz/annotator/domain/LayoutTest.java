@@ -26,24 +26,24 @@ class LayoutTest {
     }
 
     @Test
-    void grtidWElementsTest() {
+    void gridElementsTest() {
         Layout layout = getLayoutRandomSampleGenerator();
         GridElement gridElementBack = getGridElementRandomSampleGenerator();
 
-        layout.addGrtidWElements(gridElementBack);
-        assertThat(layout.getGrtidWElements()).containsOnly(gridElementBack);
+        layout.addGridElements(gridElementBack);
+        assertThat(layout.getGridElements()).containsOnly(gridElementBack);
         assertThat(gridElementBack.getLayout()).isEqualTo(layout);
 
-        layout.removeGrtidWElements(gridElementBack);
-        assertThat(layout.getGrtidWElements()).doesNotContain(gridElementBack);
+        layout.removeGridElements(gridElementBack);
+        assertThat(layout.getGridElements()).doesNotContain(gridElementBack);
         assertThat(gridElementBack.getLayout()).isNull();
 
         layout.gridElements(new HashSet<>(Set.of(gridElementBack)));
-        assertThat(layout.getGrtidWElements()).containsOnly(gridElementBack);
+        assertThat(layout.getGridElements()).containsOnly(gridElementBack);
         assertThat(gridElementBack.getLayout()).isEqualTo(layout);
 
-        layout.setGrtidWElements(new HashSet<>());
-        assertThat(layout.getGrtidWElements()).doesNotContain(gridElementBack);
+        layout.setGridElements(new HashSet<>());
+        assertThat(layout.getGridElements()).doesNotContain(gridElementBack);
         assertThat(gridElementBack.getLayout()).isNull();
     }
 }

@@ -21,6 +21,14 @@
       "fieldType": "Integer"
     },
     {
+      "fieldName": "channel",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "renderer",
+      "fieldType": "String"
+    },
+    {
       "fieldName": "content",
       "fieldType": "String"
     },
