@@ -17,13 +17,12 @@ export class AdvancedGrid {
   @ViewChild('gridstack', { static: true }) gridstackElement!: any;
   private outerGrid!: GridStack;
   @Input() gridOptions$: Observable<NgGridStackOptions> = of();
-  @Input() emptyGridOptions!: NgGridStackOptions;
 
   currentOptions!: NgGridStackOptions;
 
   ngOnInit() {
     this.gridOptions$.subscribe(options => {
-      this.currentOptions = options || this.emptyGridOptions;
+      this.currentOptions = options;
     });
   }
 
@@ -70,10 +69,10 @@ export class AdvancedGrid {
     }
   }
 
-  allWidgetsAdded() {}
   // TODO Diese Funktionaltät sollte von dieser Klasse initiiert werden.
   public work(gridOptions: NgGridStackOptions) {
     this.outerGrid = GridStack.init(gridOptions, this.gridstackElement.nativeElement);
+    for (let child of gridOptions.children!) this.outerGrid.addWidget(child);
     // TODO Warum geht das nicht ohne Extra-Zyklus?
     setTimeout(() => {
       this.recursiveAddEventHandlers(this.outerGrid);

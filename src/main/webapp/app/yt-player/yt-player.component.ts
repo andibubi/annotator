@@ -9,7 +9,7 @@ import { YtPlayerService } from './yt-player.service';
   imports: [],
   selector: 'app-yt-player',
   standalone: true,
-  template: `<div>hallo0</div>
+  template: `<div>&nbsp;</div>
     <div [id]="'youtube-player_' + name"><div>hallo</div></div>`,
   //template: `<div [id]="'youtube-player_' + name"></div>`,
   styleUrls: ['./yt-player.component.scss'],
