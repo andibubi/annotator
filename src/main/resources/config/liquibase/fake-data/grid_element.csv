@@ -1,9 +1,9 @@
 id;grid_element_id;layout_id;x;y;w;h;channel;renderer;content;display_after_millis;display_duration_millis
-1;NULL;1;0;0;1;1;Left;wdget-textout;Hallo;0;-1
+1;NULL;1;0;0;1;1;Left;wdget-textout;Hallo 4711;0;-1
 2;NULL;1;1;0;10;11;NULL;NULL;NULL;NULL;NULL
 3;2;1;0;0;NULL;2;sec;app-yt-player;7I0tBlfcg10;NULL;NULL
-4;2;1;1;1;12;NULL;org;app-yt-player;NsUWXo8M7UA;10000;15000
-5;2;1;11;0;1;2;cmt;widget-textout;bar17;50000;10000
+4;2;1;1;1;12;8;org;app-yt-player;NsUWXo8M7UA;10000;15000
+5;2;1;1;2;NULL;NULL;cmt;widget-textout;bar1717;50000;10000
 6;NULL;1;11;0;1;2;NULL;NULL;NULL;NULL;NULL
 7;6;1;0;0;NULL;NULL;NULL;NULL;NULL;NULL;NULL
 8;6;1;0;1;2;NULL;NULL;NULL;NULL;NULL;NULL

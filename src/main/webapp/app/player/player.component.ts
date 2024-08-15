@@ -51,7 +51,7 @@ export interface NgGridStackWidgetWithGrid extends NgGridStackWidget {
   styleUrls: ['./player.component.scss', './gridstack.scss', './demo.scss', 'gridstack-extra.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export default class PlayerComponent implements OnInit, AfterViewChecked {
+export default class PlayerComponent implements OnInit {
   annotation: IAnnotation | null = null;
 
   textAnnotations = new Array<ITextAnnotationElement>();
@@ -87,9 +87,10 @@ export default class PlayerComponent implements OnInit, AfterViewChecked {
   ) {
     GridstackComponent.addComponentToSelectorType([TextoutComponent, YtPlayerComponent]);
   }
-  @ViewChild('gridstack', { static: true }) gridstack!: ElementRef;
+  @ViewChild('gridstack', { static: true }) gridstack!: ElementRef; // TODO Im debugger undefined, wird nicht verwendet=>weg
   @ViewChild('advgridstack', { static: false }) advGrid!: AdvancedGrid;
 
+  /*
   ngAfterViewChecked() {
     // Überprüfe, ob die View vollständig initialisiert ist und die Daten verfügbar sind
     if (this.advGrid && this.initialGridOptions && !this.isGridInitialized) {
@@ -97,7 +98,7 @@ export default class PlayerComponent implements OnInit, AfterViewChecked {
       this.isGridInitialized = true; // Verhindert, dass die Methode mehrfach aufgerufen wird
     }
   }
-
+*/
   ngOnInit() {
     this.emptyGridOptions = this.playerService.getEmptyGridOptions();
     this.route.paramMap.subscribe(params => {
