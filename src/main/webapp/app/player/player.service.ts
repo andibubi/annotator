@@ -73,16 +73,6 @@ export class PlayerService {
     );
     return r;
   }
-  private createInput(item: any) {
-    switch (item.renderer) {
-      case 'app-yt-player':
-        return { name: item.channel, videoId: item.content };
-      case 'widget-textout':
-        return { text: item.content };
-      default:
-        return {};
-    }
-  }
   private createGridOptions(items: any[]) {
     let result: NgGridStackOptions[] = [];
     let subOptions: NgGridStackOptions = {
@@ -103,5 +93,15 @@ export class PlayerService {
       result.push(r as NgGridStackOptions);
     }
     return result;
+  }
+  private createInput(item: any) {
+    switch (item.renderer) {
+      case 'app-yt-player':
+        return { name: item.channel, videoId: item.content };
+      case 'widget-textout':
+        return { text: item.content };
+      default:
+        return {};
+    }
   }
 }

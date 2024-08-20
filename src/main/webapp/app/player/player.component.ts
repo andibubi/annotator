@@ -93,15 +93,6 @@ export default class PlayerComponent implements OnInit {
   @ViewChild('gridstack', { static: true }) gridstack!: ElementRef; // TODO Im debugger undefined, wird nicht verwendet=>weg
   @ViewChild('advgridstack', { static: false }) advGrid!: AdvancedGrid;
 
-  /*
-  ngAfterViewChecked() {
-    // Überprüfe, ob die View vollständig initialisiert ist und die Daten verfügbar sind
-    if (this.advGrid && this.initialGridOptions && !this.isGridInitialized) {
-      this.advGrid.work(this.initialGridOptions);
-      this.isGridInitialized = true; // Verhindert, dass die Methode mehrfach aufgerufen wird
-    }
-  }
-*/
   ngOnInit() {
     this.emptyGridOptions = this.playerService.getEmptyGridOptions();
     this.route.paramMap.subscribe(params => {
@@ -115,46 +106,6 @@ export default class PlayerComponent implements OnInit {
 
   setFullscreen(fullscreen: boolean) {
     this.isFullscreen = fullscreen;
-  }
-
-  loadYoutubeAPI() {
-    console.log('player.loadToutubeApi');
-    const tag = document.createElement('script');
-    tag.src = 'https://www.youtube.com/iframe_api';
-    const firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag!.parentNode!.insertBefore(tag, firstScriptTag);
-
-    (window as any).onYouTubeIframeAPIReady = () => {
-      this.initYoutubePlayers();
-    };
-  }
-
-  initYoutubePlayers() {
-    this.youtubePlayer = new (window as any).YT.Player('youtube-player', {
-      height: '100%',
-      width: '100%',
-      //videoId: this.annotation!.videoId,
-      events: {
-        onReady: this.onYoutubePlayerReady.bind(this),
-      },
-    });
-
-    this.annotationYoutubePlayer = new (window as any).YT.Player('annotation-youtube-player', {
-      height: '10%',
-      width: '100%',
-      //videoId: 'nqRtzQOf0Xk',
-      events: {
-        onReady: this.onAnnotationYoutubePlayerReady.bind(this),
-      },
-    });
-  }
-
-  onYoutubePlayerReady(event: any) {
-    setInterval(() => {
-      this.ngZone.run(() => {
-        this.updateAnnotations(this.youtubePlayer.getCurrentTime());
-      });
-    }, 1000);
   }
 
   onAnnotationYoutubePlayerReady(event: any) {
