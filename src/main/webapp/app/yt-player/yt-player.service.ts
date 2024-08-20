@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { NgZone, inject, Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -16,6 +16,10 @@ export class YtPlayerService {
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/view');
 
+  nameSuffix2player: Map<string, any> = new Map();
+
+  constructor(private ngZone: NgZone) {}
+
   findAnnotationWithElements(id: number): Observable<EntityResponseType> {
     return this.http.get<IAnnotationWithElements>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
@@ -25,10 +29,10 @@ export class YtPlayerService {
     if (!document.getElementById('script') && !(window as any).YT) this.appendScriptToDom(nameSuffix);
 
     return ((window as any).onYouTubeIframeAPIReady = (() => {
-      const previousCallback = (window as any).onYouTubeIframeAPIReady;
+      const previousOnYouTubeIframeAPIReady = (window as any).onYouTubeIframeAPIReady;
       return () => {
-        if (typeof previousCallback === 'function') {
-          previousCallback();
+        if (typeof previousOnYouTubeIframeAPIReady === 'function') {
+          previousOnYouTubeIframeAPIReady();
         }
         return this.doCreatePlayer(nameSuffix, videoId);
       };
@@ -42,13 +46,12 @@ export class YtPlayerService {
     this.firstScriptTag!.parentNode!.insertBefore(tag, this.firstScriptTag);
   }
   private doCreatePlayer(nameSuffix: string, videoId: string) {
-    return new (window as any).YT.Player('youtube-player_' + nameSuffix, {
+    let youtubePlayer = new (window as any).YT.Player('youtube-player_' + nameSuffix, {
       height: '100%',
       width: '100%',
       videoId: videoId,
-      events: {
-        // onReady: this.onYoutubePlayerReady.bind(this),
-      },
+      events: {},
     });
+    this.nameSuffix2player.set(nameSuffix, youtubePlayer);
   }
 }

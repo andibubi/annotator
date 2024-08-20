@@ -48,9 +48,10 @@ export default class ViewerComponent implements OnInit {
 
   ngOnInit() {
     if (!(window as any).YT) {
-      this.loadYoutubeAPI();
+      debugger;
+      //this.loadYoutubeAPI();
     } else {
-      this.initYoutubePlayers();
+      //this.initYoutubePlayers();
     }
     this.route.paramMap.subscribe(params => {
       this.viewerService.findAnnotationWithElements(Number(params.get('annotationId'))).subscribe(
@@ -69,38 +70,6 @@ export default class ViewerComponent implements OnInit {
 
   setFullscreen(fullscreen: boolean) {
     this.isFullscreen = fullscreen;
-  }
-
-  loadYoutubeAPI() {
-    debugger;
-    const tag = document.createElement('script');
-    tag.src = 'https://www.youtube.com/iframe_api';
-    const firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag!.parentNode!.insertBefore(tag, firstScriptTag);
-
-    (window as any).onYouTubeIframeAPIReady = () => {
-      this.initYoutubePlayers();
-    };
-  }
-
-  initYoutubePlayers() {
-    this.youtubePlayer = new (window as any).YT.Player('youtube-player', {
-      height: '100%',
-      width: '100%',
-      videoId: this.annotation!.videoId,
-      events: {
-        onReady: this.onYoutubePlayerReady.bind(this),
-      },
-    });
-
-    this.annotationYoutubePlayer = new (window as any).YT.Player('annotation-youtube-player', {
-      height: '10%',
-      width: '100%',
-      //videoId: 'nqRtzQOf0Xk',
-      events: {
-        onReady: this.onAnnotationYoutubePlayerReady.bind(this),
-      },
-    });
   }
 
   onYoutubePlayerReady(event: any) {

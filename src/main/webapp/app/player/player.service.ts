@@ -9,7 +9,10 @@ import { IAnnotationWithElements } from './annotation-with-elements.model';
 import { NgGridStackWidget, NgGridStackOptions } from 'gridstack/dist/angular';
 import { LayoutService } from 'app/entities/layout/service/layout.service';
 import { GridElementService } from 'app/entities/grid-element/service/grid-element.service';
+import { YtPlayerService } from 'app/yt-player/yt-player.service';
 import { IGridElement } from '../entities/grid-element/grid-element.model';
+import { TextoutComponent } from './textout.component';
+import YtPlayerComponent from '../yt-player/yt-player.component';
 
 export type EntityResponseType = HttpResponse<IAnnotationWithElements>;
 
@@ -21,6 +24,7 @@ export class PlayerService {
   constructor(
     private layoutService: LayoutService,
     private gridElementService: GridElementService,
+    private ytPlayerService: YtPlayerService,
   ) {}
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/view');
@@ -73,6 +77,28 @@ export class PlayerService {
     );
     return r;
   }
+
+  startUpdateTimer() {
+    setInterval(this.timerTick.bind(this), 1000);
+  }
+  timerTick() {
+    let org = this.ytPlayerService.nameSuffix2player.get('org');
+    if (org) {
+      var secs = org.getCurrentTime();
+      for (let [name, textout] of this.name2textout) textout.update(secs);
+      for (let [name, ytPlayer] of this.name2ytPlayer) ytPlayer.update(secs);
+    }
+  }
+
+  name2textout: Map<string, TextoutComponent> = new Map();
+  registerTextout(name: string, textout: TextoutComponent) {
+    this.name2textout.set(name, textout);
+  }
+
+  name2ytPlayer: Map<string, YtPlayerComponent> = new Map();
+  registerYtPlayer(name: string, ytPlayer: YtPlayerComponent) {
+    this.name2ytPlayer.set(name, ytPlayer);
+  }
   private createGridOptions(items: any[]) {
     let result: NgGridStackOptions[] = [];
     let subOptions: NgGridStackOptions = {
@@ -97,9 +123,21 @@ export class PlayerService {
   private createInput(item: any) {
     switch (item.renderer) {
       case 'app-yt-player':
-        return { name: item.channel, videoId: item.content };
+        return {
+          name: item.channel,
+          videoId: item.content,
+          commands: item.channel == 'sec' ? [{ timeSec: 10, videoId: 'a5hZstgIiRY' }] : [],
+        };
       case 'widget-textout':
-        return { text: item.content };
+        return {
+          name: item.channel,
+          text: item.content,
+          commands: [
+            { timeSec: 0, text: 'Dieses Fensterchen kann man vergrößern...' },
+            { timeSec: 3, text: '...oder verschieben.' },
+            { timeSec: 10, text: 'Oben startet ein anderes Video.' },
+          ],
+        };
       default:
         return {};
     }

@@ -100,6 +100,7 @@ export default class PlayerComponent implements OnInit {
       this.gridOptions$.subscribe(gridOptions => {
         this.initialGridOptions = gridOptions;
         this.advGrid.work(this.initialGridOptions);
+        this.playerService.startUpdateTimer();
       });
     });
   }
@@ -110,30 +111,6 @@ export default class PlayerComponent implements OnInit {
 
   onAnnotationYoutubePlayerReady(event: any) {
     setInterval(() => {}, 1000);
-  }
-
-  updateAnnotations(actSec: number) {
-    var nearestTextAnnotation = undefined;
-    for (const textAnnotation of this.textAnnotations)
-      if (actSec >= textAnnotation.startSec! && (!nearestTextAnnotation || nearestTextAnnotation.startSec! < textAnnotation.startSec!))
-        nearestTextAnnotation = textAnnotation;
-
-    if (nearestTextAnnotation && nearestTextAnnotation != this.actTextAnnotation) {
-      document.getElementById('text-annotations')!.innerHTML = nearestTextAnnotation.text!;
-      this.actTextAnnotation = nearestTextAnnotation;
-    }
-
-    var nearestVideoAnnotation = undefined;
-    for (const videoAnnotation of this.videoAnnotations)
-      if (actSec >= videoAnnotation.startSec! && actSec < videoAnnotation.stopSec!) nearestVideoAnnotation = videoAnnotation;
-
-    if (nearestVideoAnnotation && nearestVideoAnnotation != this.actVideoAnnotation) {
-      this.annotationYoutubePlayer.loadVideoById(nearestVideoAnnotation.videoId, nearestVideoAnnotation.videoStartSec, 'large');
-      this.actVideoAnnotation = nearestVideoAnnotation;
-    } else if (!nearestVideoAnnotation && this.actVideoAnnotation) {
-      this.annotationYoutubePlayer.stopVideo();
-      this.actVideoAnnotation = undefined;
-    }
   }
 
   //@HostListener('document:mousedown', ['$event'])

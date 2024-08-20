@@ -1,9 +1,10 @@
-import { Component, ElementRef, OnInit, AfterViewInit, Input, NgZone } from '@angular/core';
+import { Component, ElementRef, OnInit, AfterViewInit, Input, NgZone, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BaseWidget } from 'gridstack/dist/angular';
 import { NgCompInputs } from 'gridstack/dist/angular';
 import { YtPlayerService } from './yt-player.service';
+import { PlayerService } from '../player/player.service';
 
 @Component({
   imports: [],
@@ -11,7 +12,6 @@ import { YtPlayerService } from './yt-player.service';
   standalone: true,
   template: `<div>&nbsp;</div>
     <div [id]="'youtube-player_' + name"><div>hallo</div></div>`,
-  //template: `<div [id]="'youtube-player_' + name"></div>`,
   styleUrls: ['./yt-player.component.scss'],
 })
 export default class YtPlayerComponent extends BaseWidget implements OnInit {
@@ -19,13 +19,14 @@ export default class YtPlayerComponent extends BaseWidget implements OnInit {
 
   @Input() name: string = '';
   @Input() videoId: string = '';
+  @Input() commands: any[] = [];
   public override serialize(): NgCompInputs | undefined {
     return this.videoId ? { videoId: this.videoId } : undefined;
   }
 
-  //private ytPlayerService: YtPlayerService|null = null;
-  private laambda: any = null;
   constructor(
+    private cdr: ChangeDetectorRef,
+    private playerService: PlayerService,
     private ytPlayerService: YtPlayerService,
     protected elementRef: ElementRef,
     private ngZone: NgZone,
@@ -35,17 +36,31 @@ export default class YtPlayerComponent extends BaseWidget implements OnInit {
   }
 
   ngOnInit() {
-    this.laambda = this.ytPlayerService!.createPlayer(this.name, this.videoId);
-    // TODO aktivieren
-    /*
-      setInterval(() => {
-        this.ngZone.run(() => {
-          this.updateAnnotations(this.youtubePlayer.getCurrentTime());
-        });
-      }, 1000);*/
+    this.ytPlayerService!.createPlayer(this.name, this.videoId);
+    this.playerService.registerYtPlayer(this.name, this);
   }
 
-  updateAnnotations(actSec: number) {}
+  // TODO ineffizient und doof, siehe textout.component
+  prevSecs: any = null;
+  public update(secs: number) {
+    let lower = this.prevSecs && this.prevSecs < secs ? this.prevSecs : 0;
+    let orgVideoId = this.videoId;
+    for (let replaySecs = lower; replaySecs <= secs; replaySecs++) {
+      let lastCommand = null;
+      for (let command of this.commands)
+        if (command.timeSec <= replaySecs && replaySecs < command.timeSec + 1) {
+          this.videoId = command.videoId;
+          lastCommand = command;
+        }
+      if (this.videoId != orgVideoId) {
+        this.cdr.detectChanges();
+        // TODO entweder oder
+        this.ytPlayerService.nameSuffix2player.get(this.name).loadVideoById(this.videoId, lastCommand.timeSec);
+      }
+    }
+    this.prevSecs = secs;
+  }
+
   /*
   resizeYoutubePlayer() {
     if (this.annotationYoutubePlayer) {
