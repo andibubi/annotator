@@ -34,37 +34,6 @@ export class PlayerService {
       children: [],
     };
   }
-  private createInput(item: any) {
-    switch (item.renderer) {
-      case 'app-yt-player':
-        return { name: item.channel, videoId: item.content };
-      case 'widget-textout':
-        return { text: item.content };
-      default:
-        return {};
-    }
-  }
-  private createGridOptions(items: any[]) {
-    let result: NgGridStackOptions[] = [];
-    let subOptions: NgGridStackOptions = {
-      cellHeight: 50, // should be 50 - top/bottom
-      column: 'auto', // size to match container. make sure to include gridstack-extra.min.css
-      acceptWidgets: true, // will accept .grid-stack-item by default
-      margin: 5,
-    };
-    for (let item of items) {
-      var r = { x: item.x, y: item.y, w: item.w, h: item.h };
-      if (item.children.length > 0) {
-        let ccc = this.createGridOptions(item.children);
-        (r as any).subGridOpts = { children: ccc, class: 'sub1', ...subOptions };
-      } else {
-        (r as any).selector = item.renderer;
-        (r as any).input = this.createInput(item);
-      }
-      result.push(r as NgGridStackOptions);
-    }
-    return result;
-  }
   getInitialSched$(id: number): Observable<NgGridStackOptions> {
     this.layoutService.find(id).subscribe(r => {});
 
@@ -103,5 +72,36 @@ export class PlayerService {
       }),
     );
     return r;
+  }
+  private createInput(item: any) {
+    switch (item.renderer) {
+      case 'app-yt-player':
+        return { name: item.channel, videoId: item.content };
+      case 'widget-textout':
+        return { text: item.content };
+      default:
+        return {};
+    }
+  }
+  private createGridOptions(items: any[]) {
+    let result: NgGridStackOptions[] = [];
+    let subOptions: NgGridStackOptions = {
+      cellHeight: 50, // should be 50 - top/bottom
+      column: 'auto', // size to match container. make sure to include gridstack-extra.min.css
+      acceptWidgets: true, // will accept .grid-stack-item by default
+      margin: 5,
+    };
+    for (let item of items) {
+      var r = { x: item.x, y: item.y, w: item.w, h: item.h };
+      if (item.children.length > 0) {
+        let ccc = this.createGridOptions(item.children);
+        (r as any).subGridOpts = { children: ccc, class: 'sub1', ...subOptions };
+      } else {
+        (r as any).selector = item.renderer;
+        (r as any).input = this.createInput(item);
+      }
+      result.push(r as NgGridStackOptions);
+    }
+    return result;
   }
 }

@@ -74,6 +74,9 @@ export default class PlayerComponent implements OnInit {
   resizeStartX: number = 0;
   resizeStartY: number = 0;
   gridOptions$: Observable<NgGridStackOptions> = of();
+
+  // TODO Den ganzen emptyGrid-Kram rausschmeißen?
+  // Gibt es einen Zusammenhang zum Bug beim Float-Verschieben?
   emptyGridOptions!: NgGridStackOptions;
 
   private initialGridOptions: NgGridStackOptions | null = null; // Temporäre Variable zum Speichern der Optionen
