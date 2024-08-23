@@ -40,7 +40,9 @@ export class AdvancedGrid {
   protected movementThreshold = 20;
   protected gridDraggingElement: HTMLElement | null = null;
 
-  constructor(private playerService: PlayerService) {}
+  constructor(private playerService: PlayerService) {
+    playerService.advGrid = this;
+  }
 
   recursiveAddEventHandlers(grid: GridStack) {
     this.addEventHandlers(grid);
@@ -83,7 +85,7 @@ export class AdvancedGrid {
     console.log('startTimer');
     this.timerId = setTimeout(() => {
       console.log('timeout');
-      this.makeFloating();
+      this.makeFloating(this.gridDraggingElement!);
     }, 3000);
   }
 
@@ -93,9 +95,9 @@ export class AdvancedGrid {
     this.startTimer();
   }
 
-  private makeFloating() {
-    const gridElement = this.gridDraggingElement!.closest('.grid-stack')! as HTMLElement & { gridstack?: any };
-    const gridItemElement = this.gridDraggingElement!.closest('.grid-stack .grid-stack-item')! as HTMLElement & { gridstackNode?: any };
+  public makeFloating(element: HTMLElement) {
+    const gridElement = element.closest('.grid-stack')! as HTMLElement & { gridstack?: any };
+    const gridItemElement = element.closest('.grid-stack .grid-stack-item')! as HTMLElement & { gridstackNode?: any };
     gridElement.gridstack.removeWidget(gridItemElement, false, true);
 
     let de = gridItemElement.querySelector('.grid-stack-item-content')! as HTMLElement;
@@ -107,7 +109,7 @@ export class AdvancedGrid {
     de.addEventListener('mousemove', (e: MouseEvent) => this.onMouseMove(e));
     de.addEventListener('mouseup', (e: MouseEvent) => this.onMouseUp(e));
 
-    alert('floating');
+    //alert('floating');
     console.log('floating element');
     console.log(de);
   }

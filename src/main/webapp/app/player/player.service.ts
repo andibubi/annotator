@@ -12,6 +12,7 @@ import { GridElementService } from 'app/entities/grid-element/service/grid-eleme
 import { YtPlayerService } from 'app/yt-player/yt-player.service';
 import { IGridElement } from '../entities/grid-element/grid-element.model';
 import { TextoutComponent } from './textout.component';
+import { AdvancedGrid } from '../advanced-grid/advanced-grid';
 import YtPlayerComponent from '../yt-player/yt-player.component';
 
 export type EntityResponseType = HttpResponse<IAnnotationWithElements>;
@@ -28,6 +29,8 @@ export class PlayerService {
   ) {}
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/view');
+
+  advGrid: AdvancedGrid | null = null;
 
   getEmptyGridOptions(): NgGridStackOptions {
     return {
@@ -133,6 +136,7 @@ export class PlayerService {
           name: item.channel,
           text: item.content,
           commands: [
+            { timeSec: 0, x: 12, y: 13, w: 100, h: 10 },
             { timeSec: 0, text: 'Dieses Fensterchen kann man vergrößern...' },
             { timeSec: 3, text: '...oder verschieben.' },
             { timeSec: 10, text: 'Oben startet ein anderes Video.' },
