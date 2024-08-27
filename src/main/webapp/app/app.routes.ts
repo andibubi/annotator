@@ -11,7 +11,6 @@ import CreateAnnotationComponent from './create-annotation/create-annotation.com
 import ViewerComponent from './viewer/viewer.component';
 import PlayerComponent from './player/player.component';
 //import PlayerAltComponent from './player-alt/player-alt.component';
-import GridComponent from './grid/grid.component';
 
 const routes: Routes = [
   {
@@ -49,11 +48,6 @@ const routes: Routes = [
     path: 'create-annotation',
     component: CreateAnnotationComponent,
     title: 'create-annotation.title',
-  },
-  {
-    path: 'view/:layoutId',
-    component: GridComponent,
-    title: 'view-annotation.title',
   },
   {
     path: 'play/:layoutId',
