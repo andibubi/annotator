@@ -107,6 +107,8 @@ export default class PlayerComponent implements OnInit {
 
   setFullscreen(fullscreen: boolean) {
     this.isFullscreen = fullscreen;
+    var a = document.getElementsByTagName('jhi-navbar');
+    (a[0] as any).style.display = fullscreen ? 'none' : 'unset';
   }
 
   startTextAnnotation() {
