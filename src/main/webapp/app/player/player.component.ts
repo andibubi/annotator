@@ -109,6 +109,77 @@ export default class PlayerComponent implements OnInit {
     this.isFullscreen = fullscreen;
   }
 
+  startTextAnnotation() {
+    /*
+    this.youtubePlayer.pauseVideo();
+    this.showTextAnnotationDialog = true;
+    */
+  }
+
+  startVideoAnnotation() {
+    /*
+    this.youtubePlayer.pauseVideo();
+    this.showVideoAnnotationDialog = true;
+    */
+  }
+
+  showAnnotationUrl() {
+    /*
+    this.annotationService.getQrCode(this.annotation!.id).subscribe(
+      data => {
+        this.qrCodeData = data;
+      },
+      error => {
+        console.error('Error generating QR code', error);
+      },
+    );
+    */
+  }
+
+  saveTextAnnotation() {
+    /*
+    this.textAnnotationElementService
+      .create({
+        id: null,
+        startSec: this.youtubePlayer.getCurrentTime(),
+        text: this.newTextAnnotationText,
+        annotation: this.annotation,
+      })
+      .subscribe(
+        (response: HttpResponse<ITextAnnotationElement>) => {
+          this.textAnnotations.push(response.body!);
+          this.newTextAnnotationText = '';
+          this.showTextAnnotationDialog = false;
+        },
+        (res: HttpResponse<any>) => this.onSaveError(),
+      );
+    this.youtubePlayer.playVideo();
+    */
+  }
+
+  saveVideoAnnotation() {
+    /*
+    this.videoAnnotationElementService
+      .create({
+        id: null,
+        startSec: this.youtubePlayer.getCurrentTime(),
+        stopSec: this.youtubePlayer.getCurrentTime() + this.newVideoAnnotationStopSec - this.newVideoAnnotationStartSec,
+        videoId: this.newVideoAnnotationUrl,
+        videoStartSec: this.newVideoAnnotationStartSec,
+        annotation: this.annotation,
+      })
+      .subscribe(
+        (response: HttpResponse<IVideoAnnotationElement>) => {
+          this.videoAnnotations.push(response.body!);
+          //this.videoAnnotations.push({ startSec: 5, stopSec: 8, videoId: 'nqRtzQOf0Xk', videoStartSec: 100 });
+          this.showVideoAnnotationDialog = false;
+        },
+        (res: HttpResponse<any>) => this.onSaveError(),
+      );
+    this.youtubePlayer.playVideo();
+    */
+  }
+
   onAnnotationYoutubePlayerReady(event: any) {
     setInterval(() => {}, 1000);
   }

@@ -85,12 +85,14 @@ export class PlayerService {
     setInterval(this.timerTick.bind(this), 1000);
   }
   timerTick() {
-    let org = this.ytPlayerService.nameSuffix2player.get('org');
-    if (org) {
-      var secs = org.getCurrentTime();
-      for (let [name, textout] of this.name2textout) textout.update(secs);
-      for (let [name, ytPlayer] of this.name2ytPlayer) ytPlayer.update(secs);
-    }
+    let orgPlayer = this.ytPlayerService.nameSuffix2player.get('org');
+    // TODO: orgPlayer.getCurrentTime sollte hier immer definiert sein.
+    if (orgPlayer)
+      if (orgPlayer.getCurrentTime) {
+        var secs = orgPlayer.getCurrentTime();
+        for (let [name, textout] of this.name2textout) textout.update(secs);
+        for (let [name, ytPlayer] of this.name2ytPlayer) ytPlayer.update(secs);
+      }
   }
 
   name2textout: Map<string, TextoutComponent> = new Map();
