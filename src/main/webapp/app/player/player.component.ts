@@ -15,6 +15,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { IAnnotation } from '../entities/annotation/annotation.model';
+import { AccountService } from 'app/core/auth/account.service';
 import { ITextAnnotationElement } from '../entities/text-annotation-element/text-annotation-element.model';
 import { IVideoAnnotationElement } from '../entities/video-annotation-element/video-annotation-element.model';
 import { IAnnotationWithElements } from './annotation-with-elements.model';
@@ -85,6 +86,7 @@ export default class PlayerComponent implements OnInit {
   private isGridInitialized = false; // Flag zur Überprüfung, ob die Methode bereits aufgerufen wurde
 
   constructor(
+    private accountService: AccountService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private playerService: PlayerService,
@@ -95,7 +97,9 @@ export default class PlayerComponent implements OnInit {
   @ViewChild('gridstack', { static: true }) gridstack!: ElementRef; // TODO Im debugger undefined, wird nicht verwendet=>weg
   @ViewChild('advgridstack', { static: false }) advGrid!: AdvancedGrid;
 
+  isAuthenticated = false;
   ngOnInit() {
+    this.isAuthenticated = this.accountService.isAuthenticated();
     this.emptyGridOptions = this.playerService.getEmptyGridOptions();
     this.route.paramMap.subscribe(params => {
       this.gridOptions$ = this.playerService.getInitialSched$(Number(params.get('layoutId')));

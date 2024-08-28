@@ -15,9 +15,9 @@
   </div>
   @if (!isFullscreen) {
     <button class="btn btn-primary" (click)="setFullscreen(true)">Fullscreen</button>
-    <button class="btn btn-primary" (click)="startTextAnnotation()">Textannotation</button>
-    <button class="btn btn-primary" (click)="startVideoAnnotation()">Videoannotation</button>
-    <button class="btn btn-primary" (click)="showAnnotationUrl()">URL erzeugen</button>
+    <button *ngIf="isAuthenticated" class="btn btn-primary" (click)="startTextAnnotation()">Textannotation</button>
+    <button *ngIf="isAuthenticated" class="btn btn-primary" (click)="startVideoAnnotation()">Videoannotation</button>
+    <button *ngIf="isAuthenticated" class="btn btn-primary" (click)="showAnnotationUrl()">URL erzeugen</button>
   }
 
   <div class="annotation-input-container" [style.display]="showTextAnnotationDialog ? 'block' : 'none'">
