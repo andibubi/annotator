@@ -11,7 +11,7 @@ import { PlayerService } from '../player/player.service';
   selector: 'app-yt-player',
   standalone: true,
   template: `<div>&nbsp;</div>
-    <div [id]="'youtube-player_' + name"><div>hallo</div></div>`,
+    <div [id]="'youtube-player_' + name"></div>`,
   styleUrls: ['./yt-player.component.scss'],
 })
 // TODO CodeDups in TextoutComponent
@@ -41,6 +41,17 @@ export default class YtPlayerComponent extends BaseWidget implements OnInit {
   ngOnInit() {
     this.ytPlayerService!.createPlayer(this.name, this.content.videoId);
     this.playerService.registerYtPlayer(this.name, this);
+    this.setVisible(this.content.videoId != null);
+  }
+
+  setVisible(visible: boolean) {
+    // TODO Nicht an Angular vorbei
+    this.elementRef.nativeElement.closest('.grid-stack-item')!.style.display = visible ? 'unset' : 'none';
+    // TODO in sccs-File verschieben
+    debugger;
+    let s = this.elementRef.nativeElement.closest('app-yt-player').style;
+    s.height = '100%';
+    s.width = '100%';
   }
 
   // TODO ineffizient und doof, siehe textout.component
@@ -68,9 +79,10 @@ export default class YtPlayerComponent extends BaseWidget implements OnInit {
           }
 
     if (this.videoId != orgVideoId) {
+      this.setVisible(this.videoId != null);
       this.cdr.detectChanges();
       // TODO entweder oder
-      this.ytPlayerService.nameSuffix2player.get(this.name).loadVideoById(this.videoId, videoStartSec);
+      if (this.videoId != null) this.ytPlayerService.nameSuffix2player.get(this.name).loadVideoById(this.videoId, videoStartSec);
     }
     this.prevSecs = secs;
   }
