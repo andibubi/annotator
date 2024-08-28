@@ -14,14 +14,17 @@ import { PlayerService } from '../player/player.service';
     <div [id]="'youtube-player_' + name"><div>hallo</div></div>`,
   styleUrls: ['./yt-player.component.scss'],
 })
+// TODO CodeDups in TextoutComponent
 export default class YtPlayerComponent extends BaseWidget implements OnInit {
+  videoId: string = '';
   private youtubePlayer: any;
-
   @Input() name: string = '';
-  @Input() videoId: string = '';
-  @Input() commands: any[] = [];
+  @Input() content: any = {};
   public override serialize(): NgCompInputs | undefined {
-    return this.videoId ? { videoId: this.videoId } : undefined;
+    //return this.videoId ? { videoId: this.videoId } : undefined;
+    debugger;
+    // TODO
+    return undefined;
   }
 
   constructor(
@@ -36,29 +39,46 @@ export default class YtPlayerComponent extends BaseWidget implements OnInit {
   }
 
   ngOnInit() {
-    this.ytPlayerService!.createPlayer(this.name, this.videoId);
+    this.ytPlayerService!.createPlayer(this.name, this.content.videoId);
     this.playerService.registerYtPlayer(this.name, this);
   }
 
   // TODO ineffizient und doof, siehe textout.component
   prevSecs: any = null;
+
+  floating = false;
   public update(secs: number) {
-    let lower = this.prevSecs && this.prevSecs < secs ? this.prevSecs : 0;
+    let replayStartSecs = this.prevSecs && this.prevSecs < secs ? this.prevSecs : 0;
     let orgVideoId = this.videoId;
-    for (let replaySecs = lower; replaySecs <= secs; replaySecs++) {
-      let lastCommand = null;
-      for (let command of this.commands)
-        if (command.timeSec <= replaySecs && replaySecs < command.timeSec + 1) {
-          this.videoId = command.videoId;
-          lastCommand = command;
-        }
-      if (this.videoId != orgVideoId) {
-        this.cdr.detectChanges();
-        // TODO entweder oder
-        this.ytPlayerService.nameSuffix2player.get(this.name).loadVideoById(this.videoId, lastCommand.timeSec);
-      }
+    let videoStartSec = 0;
+    for (let replaySecs = replayStartSecs; replaySecs <= secs; replaySecs++)
+      for (let command of this.content.commands)
+        if (command.timeSec <= replaySecs && replaySecs < command.timeSec + 1)
+          if (command.videoId) {
+            this.videoId = command.videoId;
+            videoStartSec = secs - command.timeSec;
+          } else if (!this.floating) {
+            let n = this.elementRef.nativeElement;
+            this.playerService.advGrid!.makeFloating(n);
+            n.parentElement.parentElement.style.left = command.x + '%';
+            n.parentElement.parentElement.style.top = command.y + '%';
+            n.parentElement.parentElement.style.width = command.w + '%';
+            n.parentElement.parentElement.style.height = command.h + '%';
+            this.floating = true;
+          }
+
+    if (this.videoId != orgVideoId) {
+      this.cdr.detectChanges();
+      // TODO entweder oder
+      this.ytPlayerService.nameSuffix2player.get(this.name).loadVideoById(this.videoId, videoStartSec);
     }
     this.prevSecs = secs;
+  }
+
+  public pause(pause: boolean) {
+    let p = this.ytPlayerService.nameSuffix2player.get(this.name);
+    if (pause) p.pauseVideo();
+    else p.playVideo();
   }
 
   /*

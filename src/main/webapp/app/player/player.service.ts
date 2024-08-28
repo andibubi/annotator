@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable, of, map } from 'rxjs';
+import { Observable, of, map, catchError } from 'rxjs';
+//import { map, catchError } from 'rxjs/operators';
 
 import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
@@ -10,6 +11,7 @@ import { NgGridStackWidget, NgGridStackOptions } from 'gridstack/dist/angular';
 import { LayoutService } from 'app/entities/layout/service/layout.service';
 import { GridElementService } from 'app/entities/grid-element/service/grid-element.service';
 import { YtPlayerService } from 'app/yt-player/yt-player.service';
+import { ITextAnnotationElement } from '../entities/text-annotation-element/text-annotation-element.model';
 import { IGridElement } from '../entities/grid-element/grid-element.model';
 import { TextoutComponent } from './textout.component';
 import { AdvancedGrid } from '../advanced-grid/advanced-grid';
@@ -41,6 +43,7 @@ export class PlayerService {
       children: [],
     };
   }
+  channel2gridElement: Map<string, IGridElement> = new Map();
   getInitialSched$(id: number): Observable<NgGridStackOptions> {
     this.layoutService.find(id).subscribe(r => {});
 
@@ -53,6 +56,7 @@ export class PlayerService {
         // Items in die Map speichern und Wurzeln identifizieren
         for (let item of items) {
           id2item.set(item.id, item);
+          this.channel2gridElement.set(item.channel!, item);
           if (!item.gridElement) {
             roots.push(item);
           }
@@ -80,29 +84,53 @@ export class PlayerService {
     );
     return r;
   }
+  pauseAll(pause: boolean) {
+    for (let [name, ytPlayer] of this.channel2ytPlayer) ytPlayer.pause(pause);
+  }
 
   startUpdateTimer() {
     setInterval(this.timerTick.bind(this), 1000);
   }
   timerTick() {
-    let orgPlayer = this.ytPlayerService.nameSuffix2player.get('org');
+    let orgPlayer = this.getOrgPlayer();
     // TODO: orgPlayer.getCurrentTime sollte hier immer definiert sein.
     if (orgPlayer)
       if (orgPlayer.getCurrentTime) {
         var secs = orgPlayer.getCurrentTime();
-        for (let [name, textout] of this.name2textout) textout.update(secs);
-        for (let [name, ytPlayer] of this.name2ytPlayer) ytPlayer.update(secs);
+        for (let [name, textout] of this.channel2textout) textout.update(secs);
+        for (let [name, ytPlayer] of this.channel2ytPlayer) ytPlayer.update(secs);
       }
   }
-
-  name2textout: Map<string, TextoutComponent> = new Map();
-  registerTextout(name: string, textout: TextoutComponent) {
-    this.name2textout.set(name, textout);
+  getOrgPlayer() {
+    return this.ytPlayerService.nameSuffix2player.get('org');
   }
 
-  name2ytPlayer: Map<string, YtPlayerComponent> = new Map();
-  registerYtPlayer(name: string, ytPlayer: YtPlayerComponent) {
-    this.name2ytPlayer.set(name, ytPlayer);
+  channel2textout: Map<string, TextoutComponent> = new Map();
+  registerTextout(channel: string, textout: TextoutComponent) {
+    this.channel2textout.set(channel, textout);
+  }
+
+  channel2ytPlayer: Map<string, YtPlayerComponent> = new Map();
+  registerYtPlayer(channel: string, ytPlayer: YtPlayerComponent) {
+    this.channel2ytPlayer.set(channel, ytPlayer);
+  }
+  createTextAnnotation(text: string): Observable<boolean> {
+    let orgPlayer = this.getOrgPlayer();
+
+    let channel = 'cmt'; // TODO Param
+    let gridElement = this.channel2gridElement.get(channel)!;
+    debugger;
+    let content = JSON.parse(gridElement.content!);
+    content.commands.push({ timeSec: orgPlayer.getCurrentTime(), text: text });
+    gridElement.content = JSON.stringify(content);
+    return this.gridElementService.update(gridElement).pipe(
+      map((response: HttpResponse<IGridElement>) => {
+        let textout = this.channel2textout.get(channel)!;
+        textout.content = JSON.parse(response.body!.content!);
+        return true;
+      }),
+      catchError((error: any) => of(false)),
+    );
   }
   private createGridOptions(items: any[]) {
     let result: NgGridStackOptions[] = [];
@@ -126,26 +154,9 @@ export class PlayerService {
     return result;
   }
   private createInput(item: any) {
-    switch (item.renderer) {
-      case 'app-yt-player':
-        return {
-          name: item.channel,
-          videoId: item.content,
-          commands: item.channel == 'sec' ? [{ timeSec: 10, videoId: 'a5hZstgIiRY' }] : [],
-        };
-      case 'widget-textout':
-        return {
-          name: item.channel,
-          text: item.content,
-          commands: [
-            { timeSec: 0, x: 12, y: 13, w: 100, h: 10 },
-            { timeSec: 0, text: 'Dieses Fensterchen kann man vergrößern...' },
-            { timeSec: 3, text: '...oder verschieben.' },
-            { timeSec: 10, text: 'Oben startet ein anderes Video.' },
-          ],
-        };
-      default:
-        return {};
-    }
+    return {
+      name: item.channel,
+      content: JSON.parse(item.content),
+    };
   }
 }

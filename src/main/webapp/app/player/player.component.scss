@@ -9,6 +9,15 @@ html {
   height: 200px;
 }
 
+//.grid-stack-item-content {
+//  background-color: rgba(255, 255, 255, 0.5); /* Transparenter Hintergrund */
+//}
+widget-textout {
+  //background-color: rgba(255, 255, 255, 0.5); /* Transparenter Hintergrund */
+  font-size: 2rem;
+  //mix-blend-mode: difference;
+}
+
 #text-annotations {
   position: absolute;
   bottom: 50px;

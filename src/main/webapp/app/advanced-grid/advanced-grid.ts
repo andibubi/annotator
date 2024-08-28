@@ -26,6 +26,7 @@ export class AdvancedGrid {
     });
   }
 
+  private log: boolean = false; // TODO Logger statt boolean+ifs
   private timerId: any;
   protected startX = 0;
   protected startY = 0;
@@ -62,8 +63,10 @@ export class AdvancedGrid {
   }
   recursiveEnableGridMove(grid: GridStack, enable: boolean) {
     grid.enableMove(enable);
-    console.log(enable ? 'enable' : 'disable');
-    console.log(grid);
+    if (this.log) {
+      console.log(enable ? 'enable' : 'disable');
+      console.log(grid);
+    }
     for (let node of grid.engine.nodes) {
       if ('subGrid' in node) {
         this.recursiveEnableGridMove(node.subGrid!, enable);
@@ -82,15 +85,15 @@ export class AdvancedGrid {
   }
 
   private startTimer() {
-    console.log('startTimer');
+    if (this.log) console.log('startTimer');
     this.timerId = setTimeout(() => {
-      console.log('timeout');
+      if (this.log) console.log('timeout');
       this.makeFloating(this.gridDraggingElement!);
     }, 3000);
   }
 
   private resetTimer() {
-    console.log('resetTimer');
+    if (this.log) console.log('resetTimer');
     clearTimeout(this.timerId);
     this.startTimer();
   }
@@ -110,8 +113,10 @@ export class AdvancedGrid {
     de.addEventListener('mouseup', (e: MouseEvent) => this.onMouseUp(e));
 
     //alert('floating');
-    console.log('floating element');
-    console.log(de);
+    if (this.log) {
+      console.log('floating element');
+      console.log(de);
+    }
   }
   private isDraggable(targetElement: HTMLElement) {
     const gridItemElement = targetElement.closest('.grid-stack .grid-stack-item')!;
@@ -122,17 +127,19 @@ export class AdvancedGrid {
 
   private onGridDragStart(grid: any, event: Event, node: any) {
     const targetElement = event.target as HTMLElement;
-    console.log('onGridDragStart targetElement:');
-    console.log(targetElement);
+    if (this.log) {
+      console.log('onGridDragStart targetElement:');
+      console.log(targetElement);
+    }
     if (this.nonGridDraggingElement) {
-      console.log('exit nonGridDragging');
+      if (this.log) console.log('exit nonGridDragging');
       return;
     }
     if (this.isDraggable(targetElement)) {
-      console.log('exiting draggable');
+      if (this.log) console.log('exiting draggable');
       return;
     }
-    console.log('continue');
+    if (this.log) console.log('continue');
     this.gridDraggingElement = targetElement;
     this.startX = (event as MouseEvent).clientX;
     this.startY = (event as MouseEvent).clientY;
@@ -140,19 +147,24 @@ export class AdvancedGrid {
   }
 
   private onGridDragStop() {
-    console.log('onGridDragStop');
+    if (this.log) console.log('onGridDragStop');
     this.gridDraggingElement = null;
     clearTimeout(this.timerId);
   }
 
-  @HostListener('document:mousedown', ['$event'])
+  // TODO: Nur während isDragging auf document lauschen. Sonst auf this
+  //@HostListener('document:mousedown', ['$event'])
   onMouseDown(event: MouseEvent) {
-    console.log('onMouseDown target');
-    console.log(event.target);
+    if (this.log) {
+      console.log('onMouseDown target');
+      console.log(event.target);
+    }
     const target = event.target! as HTMLElement;
     if (!this.isDraggable(target)) {
-      console.log('exit non draggable target');
-      console.log(event.target);
+      if (this.log) {
+        console.log('exit non draggable target');
+        console.log(event.target);
+      }
       return;
     }
 
@@ -181,11 +193,13 @@ export class AdvancedGrid {
   onMouseMove(event: MouseEvent) {
     let eventTarget = event.target as HTMLElement;
 
-    console.log('onMouseMove');
+    if (this.log) console.log('onMouseMove');
     const gridItemElement = eventTarget.closest('.grid-stack .grid-stack-item') as HTMLElement;
     if (this.gridDraggingElement == eventTarget) {
-      console.log('onMouseMove timer targetElement');
-      console.log(eventTarget);
+      if (this.log) {
+        console.log('onMouseMove timer targetElement');
+        console.log(eventTarget);
+      }
 
       const deltaX = Math.abs(event.clientX - this.startX);
       const deltaY = Math.abs(event.clientY - this.startY);
@@ -198,16 +212,18 @@ export class AdvancedGrid {
     }
 
     if (!this.nonGridDraggingElement) {
-      console.log('exit nonGridDraggingElement != gridItemElement');
-      console.log(this.nonGridDraggingElement);
-      console.log(gridItemElement);
+      if (this.log) {
+        console.log('exit nonGridDraggingElement != gridItemElement');
+        console.log(this.nonGridDraggingElement);
+        console.log(gridItemElement);
+      }
       //if (this.nonGridDraggingElement)
       //debugger
       // sonst reissts ab, wen man schnell draggt
       return;
     }
 
-    console.log('onMouseMove dragging');
+    if (this.log) console.log('onMouseMove dragging');
     event.stopPropagation();
     event.preventDefault();
     if (this.resizing) {
@@ -226,7 +242,7 @@ export class AdvancedGrid {
   onMouseUp(event: MouseEvent) {
     //if (!this.isDraggable(event.target)) return;
 
-    console.log('onMouseUp');
+    if (this.log) console.log('onMouseUp');
     this.gridDraggingElement = null;
     this.nonGridDraggingElement = null;
     this.resizing = false;

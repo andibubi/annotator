@@ -1,4 +1,4 @@
 id;grid_element_id;layout_id;x;y;w;h;channel;renderer;content;display_after_millis;display_duration_millis
-2;NULL;1;0;0;12;5;org;app-yt-player;NsUWXo8M7UA;10000;15000
-3;NULL;1;0;11;12;1;cmt;widget-textout;bar1717;50000;10000
-1;NULL;1;0;12;3;2;sec;app-yt-player;7I0tBlfcg10;NULL;NULL
+2;NULL;1;0;0;12;5;org;app-yt-player;{"videoId": "NsUWXo8M7UA", "commands": []};10000;15000
+3;NULL;1;0;11;12;1;cmt;widget-textout;{"text": "_bar1717", "commands": [{ "timeSec": 0, "x": 0, "y": 90, "w": 100, "h": 10 }, { "timeSec": 0, "text": "Dieses Fensterchen kann man vergrößern..." }, { "timeSec": 3, "text": "...oder verschieben." }, { "timeSec": 10, "text": "Oben startet ein anderes Video." } ]};50000;10000
+1;NULL;1;0;12;3;2;sec;app-yt-player;{"videoId": "7I0tBlfcg10", "commands": [{ "timeSec": 0, "x": 0, "y": 0, "h": 30 }, { "timeSec": 10, "videoId": "a5hZstgIiRY" }]};NULL;NULL

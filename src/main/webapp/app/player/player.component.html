@@ -19,4 +19,15 @@
     <button class="btn btn-primary" (click)="startVideoAnnotation()">Videoannotation</button>
     <button class="btn btn-primary" (click)="showAnnotationUrl()">URL erzeugen</button>
   }
+
+  <div class="annotation-input-container" [style.display]="showTextAnnotationDialog ? 'block' : 'none'">
+    <input
+      type="text"
+      class="annotation-input"
+      placeholder="Neuer Textkommentar"
+      [(ngModel)]="newTextAnnotationText"
+      (keyup.enter)="saveTextAnnotation()"
+    />
+    <button id="save-subtitle" (click)="saveTextAnnotation()">Speichern</button>
+  </div>
 </div>

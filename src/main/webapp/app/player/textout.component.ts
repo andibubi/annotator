@@ -10,9 +10,9 @@ import { AdvancedGrid } from '../advanced-grid/advanced-grid';
   template: '{{ text }}',
 })
 export class TextoutComponent extends BaseWidget implements OnInit {
-  @Input() text: string = '';
+  text: string = '';
   @Input() name: string = '';
-  @Input() commands: any[] = [];
+  @Input() content: any = {};
   constructor(
     protected elementRef: ElementRef,
     private playerService: PlayerService,
@@ -21,7 +21,10 @@ export class TextoutComponent extends BaseWidget implements OnInit {
     super();
   }
   public serialize(): NgCompInputs | undefined {
-    return this.text ? { text: this.text } : undefined;
+    //return this.text ? { text: this.text } : undefined;
+    debugger;
+    // TODO
+    return undefined;
   }
 
   ngOnInit(): void {
@@ -32,18 +35,19 @@ export class TextoutComponent extends BaseWidget implements OnInit {
   prevSecs: any = null;
   floating = false;
   public update(secs: number) {
-    let lower = this.prevSecs && this.prevSecs < secs ? this.prevSecs : 0;
+    let replayStartSecs = this.prevSecs && this.prevSecs < secs ? this.prevSecs : 0;
     let orgText = this.text;
-    for (let replaySecs = lower; replaySecs <= secs; replaySecs++)
-      for (let command of this.commands)
+    for (let replaySecs = replayStartSecs; replaySecs <= secs; replaySecs++)
+      for (let command of this.content.commands)
         if (command.timeSec <= replaySecs && replaySecs < command.timeSec + 1)
           if (command.text) this.text = command.text;
           else if (!this.floating) {
             let n = this.elementRef.nativeElement;
             this.playerService.advGrid!.makeFloating(n);
-            n.parentElement.parentElement.style.width = '100%';
-            n.parentElement.parentElement.style.left = '0px';
-            n.parentElement.parentElement.style.top = '20%';
+            n.parentElement.parentElement.style.left = command.x + '%';
+            n.parentElement.parentElement.style.top = command.y + '%';
+            n.parentElement.parentElement.style.width = command.w + '%';
+            n.parentElement.parentElement.style.height = command.h + '%';
             this.floating = true;
           }
     if (this.text != orgText) this.cdr.detectChanges();

@@ -44,7 +44,7 @@ export interface NgGridStackWidgetWithGrid extends NgGridStackWidget {
 }
 
 @Component({
-  imports: [CommonModule, GridstackModule, YtPlayerComponent, AdvancedGrid],
+  imports: [CommonModule, GridstackModule, YtPlayerComponent, AdvancedGrid, FormsModule],
   selector: 'app-player',
   standalone: true,
   templateUrl: './player.component.html',
@@ -61,6 +61,8 @@ export default class PlayerComponent implements OnInit {
   actVideoAnnotation: any = undefined;
 
   isFullscreen: boolean = false;
+  showTextAnnotationDialog: boolean = false;
+  newTextAnnotationText: string = '';
 
   youtubePlayer: any;
   annotationYoutubePlayer: any;
@@ -112,13 +114,12 @@ export default class PlayerComponent implements OnInit {
   }
 
   startTextAnnotation() {
-    /*
-    this.youtubePlayer.pauseVideo();
+    this.playerService.pauseAll(true);
     this.showTextAnnotationDialog = true;
-    */
   }
 
   startVideoAnnotation() {
+    this.playerService.pauseAll(true);
     /*
     this.youtubePlayer.pauseVideo();
     this.showVideoAnnotationDialog = true;
@@ -139,24 +140,17 @@ export default class PlayerComponent implements OnInit {
   }
 
   saveTextAnnotation() {
-    /*
-    this.textAnnotationElementService
-      .create({
-        id: null,
-        startSec: this.youtubePlayer.getCurrentTime(),
-        text: this.newTextAnnotationText,
-        annotation: this.annotation,
-      })
-      .subscribe(
-        (response: HttpResponse<ITextAnnotationElement>) => {
-          this.textAnnotations.push(response.body!);
-          this.newTextAnnotationText = '';
-          this.showTextAnnotationDialog = false;
-        },
-        (res: HttpResponse<any>) => this.onSaveError(),
-      );
-    this.youtubePlayer.playVideo();
-    */
+    this.playerService.createTextAnnotation(this.newTextAnnotationText).subscribe((success: boolean) => {
+      if (success) {
+        console.log('Textannotation erfolgreich erstellt!');
+        this.playerService.pauseAll(false);
+        this.showTextAnnotationDialog = false;
+        this.newTextAnnotationText = '';
+      } else {
+        debugger;
+        console.log('Fehler beim Erstellen der Textannotation.');
+      }
+    });
   }
 
   saveVideoAnnotation() {

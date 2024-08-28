@@ -31,7 +31,8 @@ h1 {
 
 .grid-stack-item-content {
   text-align: center;
-  background-color: #4089c1;
+  //background-color: #4089c1;
+  background-color: rgba(255, 255, 255, 0.5); /* Transparenter Hintergrund */
 }
 
 .grid-stack-item-removing {
