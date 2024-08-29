@@ -17,7 +17,10 @@ widget-textout {
   font-size: 2rem;
   //mix-blend-mode: difference;
 }
-
+.container-fluid .jh-card {
+  padding: 0px;
+  margin: 0px;
+}
 #text-annotations {
   position: absolute;
   bottom: 50px;

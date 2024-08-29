@@ -1,4 +1,4 @@
 id;grid_element_id;layout_id;x;y;w;h;channel;renderer;content;display_after_millis;display_duration_millis
-2;NULL;1;0;0;12;5;org;app-yt-player;{"videoId": "NsUWXo8M7UA", "commands": []};10000;15000
-3;NULL;1;0;11;12;1;cmt;widget-textout;{"text": "_bar1717", "commands": [{ "timeSec": 0, "x": 0, "y": 80, "w": 100, "h": 20 }, { "timeSec": 0, "text": "Dieses Fensterchen kann man vergrößern..." }, { "timeSec": 3, "text": "...oder verschieben." }, { "timeSec": 10, "text": "Oben startet ein anderes Video." } ]};50000;10000
-1;NULL;1;0;12;3;2;sec;app-yt-player;{"videoId": null, "commands": [{ "timeSec": 0, "x": 0, "y": 0, "h": 50 }, { "timeSec": 10, "videoId": "a5hZstgIiRY" }]};NULL;NULL
+2;NULL;1;0;0;12;6;org;app-yt-player;{"videoId": "NsUWXo8M7UA", "commands": []};10000;15000
+3;NULL;1;0;11;12;1;cmt;widget-textout;{"text": "_bar1717", "commands": [{ "timeSec": 0, "x": 0, "y": 80, "w": 100, "h": 20 }, { "timeSec": 0, "text": "Hier könnte Ihr Text stehen..." }, { "timeSec": 3, "text": "Das Gebimmel muss nicht sein, ist nur zur Demo." }, { "timeSec": 10, "text": "Oben läuft für 10s ein anderes Video." }, { "timeSec": 20, "text": "Das war es." }, { "timeSec": 25, "text": null } ]};50000;10000
+1;NULL;1;0;12;3;2;sec;app-yt-player;{"videoId": null, "commands": [{ "timeSec": 0, "x": 0, "y": 0, "h": 50 }, { "timeSec": 10, "videoId": "a5hZstgIiRY" }, { "timeSec": 20, "videoId": null }]};NULL;NULL

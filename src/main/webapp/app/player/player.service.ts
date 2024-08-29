@@ -11,6 +11,7 @@ import { NgGridStackWidget, NgGridStackOptions } from 'gridstack/dist/angular';
 import { LayoutService } from 'app/entities/layout/service/layout.service';
 import { GridElementService } from 'app/entities/grid-element/service/grid-element.service';
 import { YtPlayerService } from 'app/yt-player/yt-player.service';
+import { AudioService } from './audio.service';
 import { ITextAnnotationElement } from '../entities/text-annotation-element/text-annotation-element.model';
 import { IGridElement } from '../entities/grid-element/grid-element.model';
 import { TextoutComponent } from './textout.component';
@@ -28,6 +29,7 @@ export class PlayerService {
     private layoutService: LayoutService,
     private gridElementService: GridElementService,
     private ytPlayerService: YtPlayerService,
+    private audioService: AudioService,
   ) {}
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/view');
@@ -152,6 +154,20 @@ export class PlayerService {
       result.push(r as NgGridStackOptions);
     }
     return result;
+  }
+
+  onYtPlayerStateChange(name: string, event: any) {
+    /*
+    -1 (unstarted)
+    0 (ended)
+    1 (playing)
+    2 (paused)
+    3 (buffering)
+    5 (video cued).
+    */
+    if (name == 'org' && event.data == 1)
+      //this.playSound(event)
+      this.audioService.playMP3('content/oops.mp3');
   }
   private createInput(item: any) {
     return {

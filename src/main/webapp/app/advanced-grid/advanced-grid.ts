@@ -27,6 +27,7 @@ export class AdvancedGrid {
   }
 
   private log: boolean = false; // TODO Logger statt boolean+ifs
+  private locked: boolean = true;
   private timerId: any;
   protected startX = 0;
   protected startY = 0;
@@ -105,14 +106,15 @@ export class AdvancedGrid {
 
     let de = gridItemElement.querySelector('.grid-stack-item-content')! as HTMLElement;
     de.style.position = 'absolute';
-    de.classList.add('draggable');
-    this.draggableElements.push(de);
+    if (!this.locked) {
+      de.classList.add('draggable');
+      this.draggableElements.push(de);
 
-    de.addEventListener('mousedown', (e: MouseEvent) => this.onMouseDown(e));
-    de.addEventListener('mousemove', (e: MouseEvent) => this.onMouseMove(e));
-    de.addEventListener('mouseup', (e: MouseEvent) => this.onMouseUp(e));
+      de.addEventListener('mousedown', (e: MouseEvent) => this.onMouseDown(e));
+      de.addEventListener('mousemove', (e: MouseEvent) => this.onMouseMove(e));
+      de.addEventListener('mouseup', (e: MouseEvent) => this.onMouseUp(e));
+    }
 
-    //alert('floating');
     if (this.log) {
       console.log('floating element');
       console.log(de);
@@ -126,6 +128,8 @@ export class AdvancedGrid {
   }
 
   private onGridDragStart(grid: any, event: Event, node: any) {
+    if (this.locked) return;
+
     const targetElement = event.target as HTMLElement;
     if (this.log) {
       console.log('onGridDragStart targetElement:');
@@ -147,6 +151,8 @@ export class AdvancedGrid {
   }
 
   private onGridDragStop() {
+    if (this.locked) return;
+
     if (this.log) console.log('onGridDragStop');
     this.gridDraggingElement = null;
     clearTimeout(this.timerId);
@@ -155,6 +161,8 @@ export class AdvancedGrid {
   // TODO: Nur während isDragging auf document lauschen. Sonst auf this
   //@HostListener('document:mousedown', ['$event'])
   onMouseDown(event: MouseEvent) {
+    if (this.locked) return;
+
     if (this.log) {
       console.log('onMouseDown target');
       console.log(event.target);
@@ -191,6 +199,8 @@ export class AdvancedGrid {
 
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent) {
+    if (this.locked) return;
+
     let eventTarget = event.target as HTMLElement;
 
     if (this.log) console.log('onMouseMove');
@@ -240,6 +250,8 @@ export class AdvancedGrid {
 
   @HostListener('document:mouseup', ['$event'])
   onMouseUp(event: MouseEvent) {
+    if (this.locked) return;
+
     //if (!this.isDraggable(event.target)) return;
 
     if (this.log) console.log('onMouseUp');

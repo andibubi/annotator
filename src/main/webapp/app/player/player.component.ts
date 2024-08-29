@@ -86,6 +86,8 @@ export default class PlayerComponent implements OnInit {
   private isGridInitialized = false; // Flag zur Überprüfung, ob die Methode bereits aufgerufen wurde
 
   constructor(
+    private el: ElementRef,
+    private renderer: Renderer2,
     private accountService: AccountService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
@@ -99,7 +101,9 @@ export default class PlayerComponent implements OnInit {
 
   isAuthenticated = false;
   ngOnInit() {
-    this.isAuthenticated = this.accountService.isAuthenticated();
+    this.accountService.getAuthenticationState().subscribe(account => {
+      this.isAuthenticated = !!account;
+    });
     this.emptyGridOptions = this.playerService.getEmptyGridOptions();
     this.route.paramMap.subscribe(params => {
       this.gridOptions$ = this.playerService.getInitialSched$(Number(params.get('layoutId')));
@@ -113,8 +117,9 @@ export default class PlayerComponent implements OnInit {
 
   setFullscreen(fullscreen: boolean) {
     this.isFullscreen = fullscreen;
-    var a = document.getElementsByTagName('jhi-navbar');
-    (a[0] as any).style.display = fullscreen ? 'none' : 'unset';
+    // TODO Nicht an Angular vorbei
+    let display = fullscreen ? 'none' : 'unset';
+    Array.from(document.getElementsByClassName('not-fullscreen')).forEach(nfs => ((nfs as HTMLElement).style.display = display));
   }
 
   startTextAnnotation() {

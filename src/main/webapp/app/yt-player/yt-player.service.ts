@@ -17,6 +17,7 @@ export class YtPlayerService {
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/view');
 
   nameSuffix2player: Map<string, any> = new Map();
+  nameSuffix2listener: Map<string, any> = new Map();
 
   constructor(private ngZone: NgZone) {}
 
@@ -25,7 +26,7 @@ export class YtPlayerService {
   }
   //////////////////////////////////////
   firstScriptTag: any;
-  public createPlayer(nameSuffix: string, videoId: string) {
+  public createPlayer(nameSuffix: string, videoId: string, onStateChangeCallback: (event: any) => void) {
     if (!document.getElementById('script') && !(window as any).YT) this.appendScriptToDom(nameSuffix);
 
     return ((window as any).onYouTubeIframeAPIReady = (() => {
@@ -34,7 +35,7 @@ export class YtPlayerService {
         if (typeof previousOnYouTubeIframeAPIReady === 'function') {
           previousOnYouTubeIframeAPIReady();
         }
-        return this.doCreatePlayer(nameSuffix, videoId);
+        return this.doCreatePlayer(nameSuffix, videoId, onStateChangeCallback);
       };
     })());
   }
@@ -45,12 +46,18 @@ export class YtPlayerService {
     this.firstScriptTag = document.getElementsByTagName('script')[0];
     this.firstScriptTag!.parentNode!.insertBefore(tag, this.firstScriptTag);
   }
-  private doCreatePlayer(nameSuffix: string, videoId: string) {
+  private doCreatePlayer(nameSuffix: string, videoId: string, onStateChangeCallback: (event: any) => void) {
     let youtubePlayer = new (window as any).YT.Player('youtube-player_' + nameSuffix, {
       height: '100%',
       width: '100%',
       videoId: videoId,
-      events: {},
+      events: {
+        onStateChange: (event: any) => {
+          if (onStateChangeCallback) {
+            onStateChangeCallback(event);
+          }
+        },
+      },
     });
     this.nameSuffix2player.set(nameSuffix, youtubePlayer);
   }
