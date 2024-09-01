@@ -1,7 +1,9 @@
 package de.andreasbubolz.annotator.service;
 
 import de.andreasbubolz.annotator.domain.Layout;
+import de.andreasbubolz.annotator.domain.User;
 import de.andreasbubolz.annotator.repository.LayoutRepository;
+import de.andreasbubolz.annotator.service.dto.GridElementDTO;
 import de.andreasbubolz.annotator.service.dto.LayoutDTO;
 import de.andreasbubolz.annotator.service.mapper.LayoutMapper;
 import java.util.Optional;
@@ -22,25 +24,89 @@ public class LayoutService {
     private static final Logger log = LoggerFactory.getLogger(LayoutService.class);
 
     private final LayoutRepository layoutRepository;
+    private final GridElementService gridElementService;
 
     private final LayoutMapper layoutMapper;
 
-    public LayoutService(LayoutRepository layoutRepository, LayoutMapper layoutMapper) {
+    public LayoutService(LayoutRepository layoutRepository, GridElementService gridElementService, LayoutMapper layoutMapper) {
         this.layoutRepository = layoutRepository;
+        this.gridElementService = gridElementService;
         this.layoutMapper = layoutMapper;
     }
 
     /**
      * Save a layout.
      *
+     * @param user
      * @param layoutDTO the entity to save.
+     * @param videoId
      * @return the persisted entity.
      */
-    public LayoutDTO save(LayoutDTO layoutDTO) {
+    public LayoutDTO createLayoutWithSomeGridItems(User user, LayoutDTO layoutDTO, String videoId) {
         log.debug("Request to save Layout : {}", layoutDTO);
         Layout layout = layoutMapper.toEntity(layoutDTO);
+        layout.setUser(user);
         layout = layoutRepository.save(layout);
-        return layoutMapper.toDto(layout);
+        var savedLayoutDto = layoutMapper.toDto(layout);
+
+        createGridElement(
+            videoId,
+            savedLayoutDto,
+            "org",
+            "app-yt-player",
+            0,
+            0,
+            12,
+            6,
+            "{\"videoId\": \"" + videoId + "\", \"commands\": []}"
+        );
+        createGridElement(
+            videoId,
+            savedLayoutDto,
+            "cmt",
+            "widget-textout",
+            0,
+            11,
+            12,
+            1,
+            "{\"commands\": [{ \"timeSec\": 0, \"x\": 0, \"y\": 80, \"w\": 100, \"h\": 20 }]}"
+        );
+        createGridElement(
+            videoId,
+            savedLayoutDto,
+            "sec",
+            "app-yt-player",
+            0,
+            12,
+            3,
+            2,
+            "{\"commands\": [{\"timeSec\": 0, \"x\": 0, \"y\": 0, \"h\": 50 }]}"
+        );
+
+        return savedLayoutDto;
+    }
+
+    private void createGridElement(
+        String videoId,
+        LayoutDTO savedLayoutDto,
+        String channel,
+        String renderer,
+        int x,
+        int y,
+        int w,
+        int h,
+        String content
+    ) {
+        var gridElement = new GridElementDTO();
+        gridElement.setLayout(savedLayoutDto);
+        gridElement.setChannel(channel);
+        gridElement.setRenderer(renderer);
+        gridElement.setX(x);
+        gridElement.setY(y);
+        gridElement.setW(w);
+        gridElement.setH(h);
+        gridElement.setContent(content);
+        gridElementService.save(gridElement);
     }
 
     /**

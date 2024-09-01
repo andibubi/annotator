@@ -4,16 +4,22 @@ import de.andreasbubolz.annotator.service.LayoutQueryService;
 import de.andreasbubolz.annotator.service.LayoutService;
 import de.andreasbubolz.annotator.service.criteria.LayoutCriteria;
 import de.andreasbubolz.annotator.service.dto.LayoutDTO;
+import de.andreasbubolz.annotator.web.rest.errors.BadRequestAlertException;
+import jakarta.validation.Valid;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
@@ -26,13 +32,20 @@ public class LayoutResource {
 
     private static final Logger log = LoggerFactory.getLogger(LayoutResource.class);
 
+    private static final String ENTITY_NAME = "layout";
+
+    @Value("${jhipster.clientApp.name}")
+    private String applicationName;
+
     private final LayoutService layoutService;
 
     private final LayoutQueryService layoutQueryService;
+    private final UserUtil userUtil;
 
-    public LayoutResource(LayoutService layoutService, LayoutQueryService layoutQueryService) {
+    public LayoutResource(LayoutService layoutService, LayoutQueryService layoutQueryService, UserUtil userUtil) {
         this.layoutService = layoutService;
         this.layoutQueryService = layoutQueryService;
+        this.userUtil = userUtil;
     }
 
     /**
@@ -77,5 +90,24 @@ public class LayoutResource {
         log.debug("REST request to get Layout : {}", id);
         Optional<LayoutDTO> layoutDTO = layoutService.findOne(id);
         return ResponseUtil.wrapOrNotFound(layoutDTO);
+    }
+
+    @PostMapping("")
+    public ResponseEntity<LayoutDTO> createLayout(
+        @RequestParam(value = "videoId", required = false) String videoId,
+        @Valid @RequestBody LayoutDTO layout
+    ) throws URISyntaxException {
+        var currentUser = userUtil.getCurrentUser();
+        if (currentUser == null) {
+            throw new BadRequestAlertException("A new layout cannot be created anonymouslyalready have an ID", ENTITY_NAME, "idexists");
+        }
+        if (layout.getId() != null) {
+            throw new BadRequestAlertException("A new layout cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        layout = layoutService.createLayoutWithSomeGridItems(currentUser, layout, videoId);
+
+        return ResponseEntity.created(new URI("/api/layouts/" + layout.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, layout.getId().toString()))
+            .body(layout);
     }
 }

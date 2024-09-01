@@ -8,6 +8,7 @@ import HomeComponent from './home/home.component';
 import NavbarComponent from './layouts/navbar/navbar.component';
 import LoginComponent from './login/login.component';
 import CreateAnnotationComponent from './create-annotation/create-annotation.component';
+import CreateLayoutComponent from './create-layout/create-layout.component';
 import ViewerComponent from './viewer/viewer.component';
 import PlayerComponent from './player/player.component';
 //import PlayerAltComponent from './player-alt/player-alt.component';
@@ -48,6 +49,11 @@ const routes: Routes = [
     path: 'create-annotation',
     component: CreateAnnotationComponent,
     title: 'create-annotation.title',
+  },
+  {
+    path: 'create-layout',
+    component: CreateLayoutComponent,
+    title: 'create-layout.title',
   },
   {
     path: 'play/:layoutId',
