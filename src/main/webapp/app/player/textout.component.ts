@@ -43,6 +43,7 @@ export class TextoutComponent extends BaseWidget implements OnInit {
     let replayStartSecs = this.prevSecs && this.prevSecs < secs ? this.prevSecs : 0;
     let orgText = this.text;
     let n = this.elementRef.nativeElement;
+    let closest = n.closest('gridstack-item');
     for (let replaySecs = replayStartSecs; replaySecs <= secs; replaySecs++)
       for (let command of this.content.commands)
         if (command.timeSec <= replaySecs && replaySecs < command.timeSec + 1) {
@@ -57,11 +58,13 @@ export class TextoutComponent extends BaseWidget implements OnInit {
           }
         }
 
-    if (this.text != orgText) {
-      this.audioService.playMP3('content/oops.mp3');
-      this.cdr.detectChanges();
-      if (!this.text && orgText) {
-        let closest = n.closest('gridstack-item');
+    if (this.text == undefined) this.text = '';
+    if (this.prevSecs == null || this.text != orgText) {
+      if (this.text != orgText) {
+        this.audioService.playMP3('content/oops.mp3');
+        this.cdr.detectChanges();
+      }
+      if (!this.text && (this.prevSecs == null || orgText)) {
         this.orgStyleDisplay = window.getComputedStyle(closest).getPropertyValue('display');
         this.renderer.setStyle(closest, 'display', 'none');
       }
