@@ -121,7 +121,6 @@ export class PlayerService {
 
     let channel = 'cmt'; // TODO Param
     let gridElement = this.channel2gridElement.get(channel)!;
-    debugger;
     let content = JSON.parse(gridElement.content!);
     content.commands.push({ timeSec: orgPlayer.getCurrentTime(), text: text });
     gridElement.content = JSON.stringify(content);
@@ -165,9 +164,8 @@ export class PlayerService {
     3 (buffering)
     5 (video cued).
     */
-    if (name == 'org' && event.data == 1)
-      //this.playSound(event)
-      this.audioService.playMP3('content/oops.mp3');
+    // if (name == 'org' && event.data == 1)
+    // this.audioService.playMP3('content/oops.mp3');
   }
   private createInput(item: any) {
     return {

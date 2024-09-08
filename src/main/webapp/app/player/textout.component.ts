@@ -40,14 +40,16 @@ export class TextoutComponent extends BaseWidget implements OnInit {
   prevSecs: any = null;
   floating = false;
   public update(secs: number) {
-    let replayStartSecs = this.prevSecs && this.prevSecs < secs ? this.prevSecs : 0;
     let orgText = this.text;
+    let replayStartSecs = this.prevSecs && this.prevSecs < secs ? this.prevSecs : 0;
+    if (replayStartSecs == 0) this.text = '';
     let n = this.elementRef.nativeElement;
-    let closest = n.closest('gridstack-item');
+    let gridItemElement = n.closest('gridstack-item');
+    this.renderer.setStyle(gridItemElement, 'pointer-events', 'none');
     for (let replaySecs = replayStartSecs; replaySecs <= secs; replaySecs++)
       for (let command of this.content.commands)
         if (command.timeSec <= replaySecs && replaySecs < command.timeSec + 1) {
-          this.text = command.text;
+          if (command.text != undefined) this.text = command.text;
           if (!command.text && !this.floating && typeof command.x !== 'undefined') {
             this.playerService.advGrid!.makeFloating(n);
             n.parentElement.parentElement.style.left = command.x + '%';
@@ -65,11 +67,12 @@ export class TextoutComponent extends BaseWidget implements OnInit {
         this.cdr.detectChanges();
       }
       if (!this.text && (this.prevSecs == null || orgText)) {
-        this.orgStyleDisplay = window.getComputedStyle(closest).getPropertyValue('display');
-        this.renderer.setStyle(closest, 'display', 'none');
+        this.orgStyleDisplay = window.getComputedStyle(gridItemElement).getPropertyValue('display');
+        this.renderer.setStyle(gridItemElement, 'display', 'none');
       }
       if (this.text && !orgText) {
-        this.renderer.setStyle(n.closest('gridstack-item'), 'display', this.orgStyleDisplay);
+        // TODO "block" raus
+        this.renderer.setStyle(gridItemElement, 'display', this.orgStyleDisplay != 'none' ? this.orgStyleDisplay : 'unset');
       }
     }
     this.prevSecs = secs;

@@ -51,9 +51,9 @@ export default class YtPlayerComponent extends BaseWidget implements OnInit {
     this.ytPlayerService!.createPlayer(this.name, this.content.videoId, (event: any) =>
       this.playerService.onYtPlayerStateChange(this.name, event),
     );
-    this.setVisible(this.content.videoId != null);
+    //this.setVisible(this.content.videoId != null);
   }
-
+  /*
   setVisible(visible: boolean) {
     // TODO Nicht an Angular vorbei
     this.elementRef.nativeElement.closest('.grid-stack-item')!.style.display = visible ? 'unset' : 'none';
@@ -62,21 +62,25 @@ export default class YtPlayerComponent extends BaseWidget implements OnInit {
     s.height = '100%';
     s.width = '100%';
   }
-
+*/
   // TODO ineffizient und doof, siehe textout.component
   prevSecs: any = null;
 
   floating = false;
   public update(secs: number) {
+    if (this.name == 'org') console.log('updateorg');
     let replayStartSecs = this.prevSecs && this.prevSecs < secs ? this.prevSecs : 0;
     let orgVideoId = this.videoId;
     let videoStartSec = 0;
     let n = this.elementRef.nativeElement;
+    let closest = n.closest('gridstack-item');
     for (let replaySecs = replayStartSecs; replaySecs <= secs; replaySecs++)
       for (let command of this.content.commands)
         if (command.timeSec <= replaySecs && replaySecs < command.timeSec + 1) {
-          this.videoId = command.videoId;
-          videoStartSec = secs - command.timeSec;
+          if (command.videoId != undefined) {
+            this.videoId = command.videoId;
+            videoStartSec = secs - command.timeSec;
+          }
           if (!command.videoId && !this.floating && typeof command.x !== 'undefined') {
             this.playerService.advGrid!.makeFloating(n);
             n.parentElement.parentElement.style.left = command.x + '%';
@@ -87,10 +91,11 @@ export default class YtPlayerComponent extends BaseWidget implements OnInit {
           }
         }
 
-    if (this.videoId != orgVideoId) {
-      this.cdr.detectChanges();
-      if (!this.videoId && orgVideoId) {
-        let closest = n.closest('gridstack-item');
+    if (this.prevSecs == null || this.videoId != orgVideoId) {
+      if (this.videoId != orgVideoId) {
+        this.cdr.detectChanges();
+      }
+      if (!this.videoId && (this.prevSecs == null || orgVideoId)) {
         this.orgStyleDisplay = window.getComputedStyle(closest).getPropertyValue('display');
         this.renderer.setStyle(closest, 'display', 'none');
       }

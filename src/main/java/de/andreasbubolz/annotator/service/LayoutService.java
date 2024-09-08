@@ -58,7 +58,7 @@ public class LayoutService {
             0,
             12,
             6,
-            "{\"videoId\": \"" + videoId + "\", \"commands\": []}"
+            "{\"commands\": [{ \"timeSec\": 0, \"videoId\": \"" + videoId + "\"}]}"
         );
         createGridElement(
             videoId,
