@@ -77,9 +77,10 @@ export default class YtPlayerComponent extends BaseWidget implements OnInit {
     for (let replaySecs = replayStartSecs; replaySecs <= secs; replaySecs++)
       for (let command of this.content.commands)
         if (command.timeSec <= replaySecs && replaySecs < command.timeSec + 1) {
-          if (command.videoId != undefined) {
+          if (typeof command.videoId != 'undefined') {
+            // null wird sonst als undefined erkannt
             this.videoId = command.videoId;
-            videoStartSec = secs - command.timeSec;
+            videoStartSec = (command.videoStartSec ? command.videoStartSec : 0) + secs - command.timeSec;
           }
           if (!command.videoId && !this.floating && typeof command.x !== 'undefined') {
             this.playerService.advGrid!.makeFloating(n);
@@ -103,7 +104,11 @@ export default class YtPlayerComponent extends BaseWidget implements OnInit {
         this.renderer.setStyle(n.closest('gridstack-item'), 'display', this.orgStyleDisplay);
       }
       // TODO entweder oder
-      if (this.videoId != null) this.ytPlayerService.nameSuffix2player.get(this.name).loadVideoById(this.videoId, videoStartSec);
+      let player = this.ytPlayerService.nameSuffix2player.get(this.name);
+      if (this.videoId != null) {
+        player.loadVideoById(this.videoId, videoStartSec);
+        player.playVideo();
+      } else player.pauseVideo();
     }
     this.prevSecs = secs;
   }

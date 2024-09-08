@@ -133,6 +133,23 @@ export class PlayerService {
       catchError((error: any) => of(false)),
     );
   }
+  createVideoAnnotation(videoId: string, startSec: number): Observable<boolean> {
+    let orgPlayer = this.getOrgPlayer();
+
+    let channel = 'sec'; // TODO Param
+    let gridElement = this.channel2gridElement.get(channel)!;
+    let content = JSON.parse(gridElement.content!);
+    content.commands.push({ timeSec: orgPlayer.getCurrentTime(), videoId: videoId, videoStartSec: startSec });
+    gridElement.content = JSON.stringify(content);
+    return this.gridElementService.update(gridElement).pipe(
+      map((response: HttpResponse<IGridElement>) => {
+        let ytPlayer = this.channel2ytPlayer.get(channel)!;
+        ytPlayer.content = JSON.parse(response.body!.content!);
+        return true;
+      }),
+      catchError((error: any) => of(false)),
+    );
+  }
   private createGridOptions(items: any[]) {
     let result: NgGridStackOptions[] = [];
     let subOptions: NgGridStackOptions = {

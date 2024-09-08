@@ -17,7 +17,7 @@
     <button class="btn btn-primary" (click)="setFullscreen(true)">Fullscreen</button>
     <button *ngIf="isAuthenticated" class="btn btn-primary" (click)="startTextAnnotation()">Textannotation</button>
     <button *ngIf="isAuthenticated" class="btn btn-primary" (click)="startVideoAnnotation()">Videoannotation</button>
-    <button *ngIf="isAuthenticated" class="btn btn-primary" (click)="showAnnotationUrl()">URL erzeugen</button>
+    <!--<button *ngIf="isAuthenticated" class="btn btn-primary" (click)="showAnnotationUrl()">URL erzeugen</button>-->
   }
 
   <div class="annotation-input-container" [style.display]="showTextAnnotationDialog ? 'block' : 'none'">
@@ -29,5 +29,32 @@
       (keyup.enter)="saveTextAnnotation()"
     />
     <button id="save-subtitle" (click)="saveTextAnnotation()">Speichern</button>
+  </div>
+
+  <div class="annotation-input-container" [style.display]="showVideoAnnotationDialog ? 'block' : 'none'">
+    <label class="form-label" for="videoId">Url oder ID des Youtube-Videos</label>
+    <input
+      id="videoId"
+      type="text"
+      class="form-control"
+      placeholder="Eine Url oder eine Video-Id"
+      [(ngModel)]="newVideoAnnotationIdOrUrl"
+      (input)="validateVideoAnnotationIdOrUrlPattern()"
+    />
+    <br />
+    <span class="form-text text-danger" *ngIf="invalidVideoAnnotationIdOrUrl">Ungültige Url oder ID</span>
+    <br />
+    <label class="form-label" for="annotation-start-sec">Start Sec</label>
+    <input
+      id="annotation-start-sec"
+      type="text"
+      class="annotation.input"
+      placeholder="0"
+      [(ngModel)]="newVideoAnnotationStartSec"
+      (keyup.enter)="saveVideoAnnotation()"
+    />
+    <button class="btn btn-primary" [disabled]="invalidVideoAnnotationIdOrUrl" id="saveVideoAnnotation" (click)="saveVideoAnnotation()">
+      Speichern
+    </button>
   </div>
 </div>

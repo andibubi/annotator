@@ -37,6 +37,7 @@ import {
 
 import { AComponent, BComponent, CComponent } from './dummy.component';
 import YtPlayerComponent from '../yt-player/yt-player.component';
+import { YService } from '../yt-player/y.service';
 import { TextoutComponent } from './textout.component';
 
 // Neues Interface, das das Original erweitert
@@ -53,20 +54,14 @@ export interface NgGridStackWidgetWithGrid extends NgGridStackWidget {
   encapsulation: ViewEncapsulation.None,
 })
 export default class PlayerComponent implements OnInit {
-  annotation: IAnnotation | null = null;
-
-  textAnnotations = new Array<ITextAnnotationElement>();
-  actTextAnnotation: any = undefined;
-
-  videoAnnotations = new Array<IVideoAnnotationElement>();
-  actVideoAnnotation: any = undefined;
-
   isFullscreen: boolean = false;
+
   showTextAnnotationDialog: boolean = false;
   newTextAnnotationText: string = '';
 
-  youtubePlayer: any;
-  annotationYoutubePlayer: any;
+  showVideoAnnotationDialog: boolean = false;
+  newVideoAnnotationIdOrUrl: string = '';
+  newVideoAnnotationStartSec: number = 0;
 
   draggingElement: HTMLElement | null = null;
   dragInfos: Map<HTMLElement, any> = new Map();
@@ -86,6 +81,7 @@ export default class PlayerComponent implements OnInit {
   private isGridInitialized = false; // Flag zur Überprüfung, ob die Methode bereits aufgerufen wurde
 
   constructor(
+    private yService: YService,
     private el: ElementRef,
     private renderer: Renderer2,
     private accountService: AccountService,
@@ -129,10 +125,7 @@ export default class PlayerComponent implements OnInit {
 
   startVideoAnnotation() {
     this.playerService.pauseAll(true);
-    /*
-    this.youtubePlayer.pauseVideo();
     this.showVideoAnnotationDialog = true;
-    */
   }
 
   showAnnotationUrl() {
@@ -162,31 +155,25 @@ export default class PlayerComponent implements OnInit {
     });
   }
 
-  saveVideoAnnotation() {
-    /*
-    this.videoAnnotationElementService
-      .create({
-        id: null,
-        startSec: this.youtubePlayer.getCurrentTime(),
-        stopSec: this.youtubePlayer.getCurrentTime() + this.newVideoAnnotationStopSec - this.newVideoAnnotationStartSec,
-        videoId: this.newVideoAnnotationUrl,
-        videoStartSec: this.newVideoAnnotationStartSec,
-        annotation: this.annotation,
-      })
-      .subscribe(
-        (response: HttpResponse<IVideoAnnotationElement>) => {
-          this.videoAnnotations.push(response.body!);
-          //this.videoAnnotations.push({ startSec: 5, stopSec: 8, videoId: 'nqRtzQOf0Xk', videoStartSec: 100 });
-          this.showVideoAnnotationDialog = false;
-        },
-        (res: HttpResponse<any>) => this.onSaveError(),
-      );
-    this.youtubePlayer.playVideo();
-    */
+  invalidVideoAnnotationIdOrUrl = false;
+  validateVideoAnnotationIdOrUrlPattern() {
+    this.invalidVideoAnnotationIdOrUrl = this.yService.getVideoId(this.newVideoAnnotationIdOrUrl) == null;
   }
 
-  onAnnotationYoutubePlayerReady(event: any) {
-    setInterval(() => {}, 1000);
+  saveVideoAnnotation() {
+    this.playerService
+      .createVideoAnnotation(this.yService.getVideoId(this.newVideoAnnotationIdOrUrl)!, this.newVideoAnnotationStartSec)
+      .subscribe((success: boolean) => {
+        if (success) {
+          console.log('Videoannotation erfolgreich erstellt!');
+          this.playerService.pauseAll(false);
+          this.showVideoAnnotationDialog = false;
+          this.newVideoAnnotationIdOrUrl = '';
+        } else {
+          debugger;
+          console.log('Fehler beim Erstellen der Videoannotation.');
+        }
+      });
   }
 
   //@HostListener('document:mousedown', ['$event'])
@@ -242,6 +229,7 @@ export default class PlayerComponent implements OnInit {
     }
   }
   resizeYoutubePlayer() {
+    /*
     if (this.annotationYoutubePlayer) {
       const overlay = document.getElementById('video-overlay');
       if (overlay) {
@@ -250,5 +238,6 @@ export default class PlayerComponent implements OnInit {
         this.annotationYoutubePlayer.setSize(newWidth, newHeight);
       }
     }
+  */
   }
 }
