@@ -15,17 +15,21 @@ services:
     networks:
       - mynetwork
 
-  nginx:
-    image: nginx:alpine
-    container_name: nginx
-    ports:
-      - '443:443'
-      - '80:80'
+  jhipster-app:
+    image: openjdk:17-jdk-slim
+    container_name: jhipster-app
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./certs:/etc/nginx/certs
+      - ./app.jar:/app.jar
+    environment:
+      - JAVA_OPTS=-Xmx512m
+      - YOUTUBE_API_KEY=$YOUTUBE_API_KEY
+      - SPRING_DATASOURCE_PASSWORD=jhfvb7834kd4356%& #${POSTGRES_PASSWORD}
+    ports:
+      - '8080:8080'
     depends_on:
-      - jhipster-app
+      - postgres
+    command: 'java -jar app.jar --spring.profiles.active=prod'
+    restart: always
     networks:
       - mynetwork
 
