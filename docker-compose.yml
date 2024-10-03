@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3.8'
 
 services:
   postgres:
@@ -6,8 +6,8 @@ services:
     container_name: postgres
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: annotator
+      POSTGRES_PASSWORD: jhfvb7834kd4356%&
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -15,15 +15,17 @@ services:
     networks:
       - mynetwork
 
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    environment:
-      PGADMIN_DEFAULT_EMAIL: mail@andreas-bubolz.de
-      PGADMIN_DEFAULT_PASSWORD: pgadmin
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
     ports:
-      - '5050:80'
+      - '443:443'
+      - '80:80'
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./certs:/etc/nginx/certs
     depends_on:
-      - postgres
+      - jhipster-app
     networks:
       - mynetwork
 

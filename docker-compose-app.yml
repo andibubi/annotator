@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  jhipster-app:
+    image: openjdk:17-jdk-slim
+    container_name: jhipster-app
+    volumes:
+      - ./app.jar:/app.jar
+    environment:
+      - JAVA_OPTS=-Xmx512m
+      - YOUTUBE_API_KEY=$YOUTUBE_API_KEY
+      - SPRING_DATASOURCE_PASSWORD=jhfvb7834kd4356%& #${POSTGRES_PASSWORD}
+    ports:
+      - '8080:8080'
+    depends_on:
+      - postgres
+    command: 'java -jar app.jar --spring.profiles.active=prod'
+    restart: always
+    networks:
+      - mynetwork
