@@ -32,7 +32,7 @@
             <column name="renderer" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
-            <column name="content" type="varchar(255)">
+            <column name="content" type="text">
                 <constraints nullable="true" />
             </column>
             <column name="display_after_millis" type="bigint">
