@@ -19,6 +19,14 @@
           <dd>
             <span>{{ annotation()!.videoId }}</span>
           </dd>
+          <dt><span>Ancestor</span></dt>
+          <dd>
+            @if (annotation()!.ancestor) {
+              <div>
+                <a [routerLink]="['/annotation', annotation()!.ancestor?.id, 'view']">{{ annotation()!.ancestor?.id }}</a>
+              </div>
+            }
+          </dd>
           <dt><span>User</span></dt>
           <dd>
             <span>{{ annotation()!.user?.id }}</span>

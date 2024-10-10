@@ -55,9 +55,7 @@ public class SecurityConfiguration {
                     headers
                         .contentSecurityPolicy(csp -> csp.policyDirectives(jHipsterProperties.getSecurity().getContentSecurityPolicy()))
                         .frameOptions(FrameOptionsConfig::sameOrigin)
-                        .referrerPolicy(
-                            referrer -> referrer.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
-                        )
+                        .referrerPolicy(referrer -> referrer.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.UNSAFE_URL))
                         .permissionsPolicy(
                             permissions ->
                                 permissions.policy(

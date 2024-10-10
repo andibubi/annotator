@@ -2,6 +2,7 @@ package de.andreasbubolz.annotator.domain;
 
 import static de.andreasbubolz.annotator.domain.AnnotationTestSamples.*;
 import static de.andreasbubolz.annotator.domain.TextAnnotationElementTestSamples.*;
+import static de.andreasbubolz.annotator.domain.VideoAnnotationElementTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import de.andreasbubolz.annotator.web.rest.TestUtil;
@@ -45,5 +46,61 @@ class AnnotationTest {
         annotation.setTextAnnotationElements(new HashSet<>());
         assertThat(annotation.getTextAnnotationElements()).doesNotContain(textAnnotationElementBack);
         assertThat(textAnnotationElementBack.getAnnotation()).isNull();
+    }
+
+    @Test
+    void videoAnnotationElementTest() {
+        Annotation annotation = getAnnotationRandomSampleGenerator();
+        VideoAnnotationElement videoAnnotationElementBack = getVideoAnnotationElementRandomSampleGenerator();
+
+        annotation.addVideoAnnotationElement(videoAnnotationElementBack);
+        assertThat(annotation.getVideoAnnotationElements()).containsOnly(videoAnnotationElementBack);
+        assertThat(videoAnnotationElementBack.getAnnotation()).isEqualTo(annotation);
+
+        annotation.removeVideoAnnotationElement(videoAnnotationElementBack);
+        assertThat(annotation.getVideoAnnotationElements()).doesNotContain(videoAnnotationElementBack);
+        assertThat(videoAnnotationElementBack.getAnnotation()).isNull();
+
+        annotation.videoAnnotationElements(new HashSet<>(Set.of(videoAnnotationElementBack)));
+        assertThat(annotation.getVideoAnnotationElements()).containsOnly(videoAnnotationElementBack);
+        assertThat(videoAnnotationElementBack.getAnnotation()).isEqualTo(annotation);
+
+        annotation.setVideoAnnotationElements(new HashSet<>());
+        assertThat(annotation.getVideoAnnotationElements()).doesNotContain(videoAnnotationElementBack);
+        assertThat(videoAnnotationElementBack.getAnnotation()).isNull();
+    }
+
+    @Test
+    void ancestorTest() {
+        Annotation annotation = getAnnotationRandomSampleGenerator();
+        Annotation annotationBack = getAnnotationRandomSampleGenerator();
+
+        annotation.setAncestor(annotationBack);
+        assertThat(annotation.getAncestor()).isEqualTo(annotationBack);
+
+        annotation.ancestor(null);
+        assertThat(annotation.getAncestor()).isNull();
+    }
+
+    @Test
+    void descendantsTest() {
+        Annotation annotation = getAnnotationRandomSampleGenerator();
+        Annotation annotationBack = getAnnotationRandomSampleGenerator();
+
+        annotation.addDescendants(annotationBack);
+        assertThat(annotation.getDescendants()).containsOnly(annotationBack);
+        assertThat(annotationBack.getAncestor()).isEqualTo(annotation);
+
+        annotation.removeDescendants(annotationBack);
+        assertThat(annotation.getDescendants()).doesNotContain(annotationBack);
+        assertThat(annotationBack.getAncestor()).isNull();
+
+        annotation.descendants(new HashSet<>(Set.of(annotationBack)));
+        assertThat(annotation.getDescendants()).containsOnly(annotationBack);
+        assertThat(annotationBack.getAncestor()).isEqualTo(annotation);
+
+        annotation.setDescendants(new HashSet<>());
+        assertThat(annotation.getDescendants()).doesNotContain(annotationBack);
+        assertThat(annotationBack.getAncestor()).isNull();
     }
 }

@@ -15,6 +15,10 @@ entity Annotation {
 	videoId String required
 }
 
+relationship ManyToOne {
+    Annotation{ancestor} to Annotation{descendants}
+}
+
 entity TextAnnotationElement {
 	startSec Integer required
     text String required

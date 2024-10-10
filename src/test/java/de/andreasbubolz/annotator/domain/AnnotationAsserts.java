@@ -56,5 +56,9 @@ public class AnnotationAsserts {
      * @param expected the expected entity
      * @param actual the actual entity
      */
-    public static void assertAnnotationUpdatableRelationshipsEquals(Annotation expected, Annotation actual) {}
+    public static void assertAnnotationUpdatableRelationshipsEquals(Annotation expected, Annotation actual) {
+        assertThat(expected)
+            .as("Verify Annotation relationships")
+            .satisfies(e -> assertThat(e.getAncestor()).as("check ancestor").isEqualTo(actual.getAncestor()));
+    }
 }

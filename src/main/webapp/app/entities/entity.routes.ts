@@ -17,11 +17,6 @@ const routes: Routes = [
     loadChildren: () => import('./text-annotation-element/text-annotation-element.routes'),
   },
   {
-    path: 'video-annotation-element',
-    data: { pageTitle: 'VideoAnnotationElements' },
-    loadChildren: () => import('./video-annotation-element/video-annotation-element.routes'),
-  },
-  {
     path: 'layout',
     data: { pageTitle: 'Layouts' },
     loadChildren: () => import('./layout/layout.routes'),
@@ -30,6 +25,11 @@ const routes: Routes = [
     path: 'grid-element',
     data: { pageTitle: 'GridElements' },
     loadChildren: () => import('./grid-element/grid-element.routes'),
+  },
+  {
+    path: 'video-annotation-element',
+    data: { pageTitle: 'VideoAnnotationElements' },
+    loadChildren: () => import('./video-annotation-element/video-annotation-element.routes'),
   },
   /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
 ];

@@ -21,6 +21,7 @@ describe('Annotation Form Service', () => {
           expect.objectContaining({
             id: expect.any(Object),
             videoId: expect.any(Object),
+            ancestor: expect.any(Object),
             user: expect.any(Object),
           }),
         );
@@ -33,6 +34,7 @@ describe('Annotation Form Service', () => {
           expect.objectContaining({
             id: expect.any(Object),
             videoId: expect.any(Object),
+            ancestor: expect.any(Object),
             user: expect.any(Object),
           }),
         );

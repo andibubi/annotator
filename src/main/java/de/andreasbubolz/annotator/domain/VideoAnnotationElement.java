@@ -2,13 +2,13 @@ package de.andreasbubolz.annotator.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
- * A TextAnnotationElement.
+ * A VideoAnnotationElement.
  */
 @Entity
 @Table(name = "video_annotation_element")
@@ -41,7 +41,10 @@ public class VideoAnnotationElement implements Serializable {
     private Integer videoStartSec;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "videoAnnotationElements", "user" }, allowSetters = true)
+    @JsonIgnoreProperties(
+        value = { "textAnnotationElements", "videoAnnotationElements", "ancestor", "user", "descendants" },
+        allowSetters = true
+    )
     private Annotation annotation;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -63,26 +66,8 @@ public class VideoAnnotationElement implements Serializable {
         return this.startSec;
     }
 
-    public Integer getVideoStartSec() {
-        return this.videoStartSec;
-    }
-
-    public Integer getStopSec() {
-        return this.stopSec;
-    }
-
     public VideoAnnotationElement startSec(Integer startSec) {
         this.setStartSec(startSec);
-        return this;
-    }
-
-    public VideoAnnotationElement videoStartSec(Integer videoStartSec) {
-        this.setVideoStartSec(videoStartSec);
-        return this;
-    }
-
-    public VideoAnnotationElement stopSec(Integer stopSec) {
-        this.setStopSec(stopSec);
         return this;
     }
 
@@ -90,8 +75,13 @@ public class VideoAnnotationElement implements Serializable {
         this.startSec = startSec;
     }
 
-    public void setVideoStartSec(Integer videoStartSec) {
-        this.videoStartSec = videoStartSec;
+    public Integer getStopSec() {
+        return this.stopSec;
+    }
+
+    public VideoAnnotationElement stopSec(Integer stopSec) {
+        this.setStopSec(stopSec);
+        return this;
     }
 
     public void setStopSec(Integer stopSec) {
@@ -109,6 +99,19 @@ public class VideoAnnotationElement implements Serializable {
 
     public void setVideoId(String videoId) {
         this.videoId = videoId;
+    }
+
+    public Integer getVideoStartSec() {
+        return this.videoStartSec;
+    }
+
+    public VideoAnnotationElement videoStartSec(Integer videoStartSec) {
+        this.setVideoStartSec(videoStartSec);
+        return this;
+    }
+
+    public void setVideoStartSec(Integer videoStartSec) {
+        this.videoStartSec = videoStartSec;
     }
 
     public Annotation getAnnotation() {

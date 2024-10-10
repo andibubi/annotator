@@ -10,6 +10,13 @@
     -->
     <changeSet id="20240730103500-2" author="jhipster">
 
+        <addForeignKeyConstraint baseColumnNames="ancestor_id"
+                                 baseTableName="annotation"
+                                 constraintName="fk_annotation__ancestor_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="annotation"
+                                 />
+
         <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="annotation"
                                  constraintName="fk_annotation__user_id"

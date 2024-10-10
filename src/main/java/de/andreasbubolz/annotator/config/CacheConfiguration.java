@@ -52,12 +52,14 @@ public class CacheConfiguration {
             createCache(cm, de.andreasbubolz.annotator.domain.User.class.getName() + ".authorities");
             createCache(cm, de.andreasbubolz.annotator.domain.Annotation.class.getName());
             createCache(cm, de.andreasbubolz.annotator.domain.Annotation.class.getName() + ".textAnnotationElements");
+            createCache(cm, de.andreasbubolz.annotator.domain.Annotation.class.getName() + ".videoAnnotationElements");
+            createCache(cm, de.andreasbubolz.annotator.domain.Annotation.class.getName() + ".descendants");
             createCache(cm, de.andreasbubolz.annotator.domain.TextAnnotationElement.class.getName());
-            createCache(cm, de.andreasbubolz.annotator.domain.VideoAnnotationElement.class.getName());
             createCache(cm, de.andreasbubolz.annotator.domain.Layout.class.getName());
             createCache(cm, de.andreasbubolz.annotator.domain.Layout.class.getName() + ".gridElements");
             createCache(cm, de.andreasbubolz.annotator.domain.GridElement.class.getName());
             createCache(cm, de.andreasbubolz.annotator.domain.GridElement.class.getName() + ".gridElements");
+            createCache(cm, de.andreasbubolz.annotator.domain.VideoAnnotationElement.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

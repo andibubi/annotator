@@ -49,6 +49,12 @@
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
+            <th scope="col" jhiSortBy="ancestor.id">
+              <div class="d-flex">
+                <span>Ancestor</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
             <th scope="col" jhiSortBy="user.id">
               <div class="d-flex">
                 <span>User</span>
@@ -65,6 +71,13 @@
                 <a [routerLink]="['/annotation', annotation.id, 'view']">{{ annotation.id }}</a>
               </td>
               <td>{{ annotation.videoId }}</td>
+              <td>
+                @if (annotation.ancestor) {
+                  <div>
+                    <a [routerLink]="['/annotation', annotation.ancestor.id, 'view']">{{ annotation.ancestor.id }}</a>
+                  </div>
+                }
+              </td>
               <td>
                 {{ annotation.user?.id }}
               </td>

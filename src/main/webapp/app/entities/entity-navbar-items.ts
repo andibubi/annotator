@@ -10,6 +10,18 @@ export const EntityNavbarItems: NavbarItem[] = [
     route: '/text-annotation-element',
   },
   {
+    name: 'Layout',
+    route: '/layout',
+  },
+  {
+    name: 'GridElement',
+    route: '/grid-element',
+  },
+  {
+    name: 'TextAnnotationElement',
+    route: '/text-annotation-element',
+  },
+  {
     name: 'VideoAnnotationElement',
     route: '/video-annotation-element',
   },

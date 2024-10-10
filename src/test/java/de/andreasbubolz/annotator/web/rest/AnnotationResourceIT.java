@@ -278,6 +278,8 @@ class AnnotationResourceIT {
         Annotation partialUpdatedAnnotation = new Annotation();
         partialUpdatedAnnotation.setId(annotation.getId());
 
+        partialUpdatedAnnotation.videoId(UPDATED_VIDEO_ID);
+
         restAnnotationMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedAnnotation.getId())

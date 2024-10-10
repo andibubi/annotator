@@ -19,6 +19,7 @@ type AnnotationFormDefaults = Pick<NewAnnotation, 'id'>;
 type AnnotationFormGroupContent = {
   id: FormControl<IAnnotation['id'] | NewAnnotation['id']>;
   videoId: FormControl<IAnnotation['videoId']>;
+  ancestor: FormControl<IAnnotation['ancestor']>;
   user: FormControl<IAnnotation['user']>;
 };
 
@@ -42,6 +43,7 @@ export class AnnotationFormService {
       videoId: new FormControl(annotationRawValue.videoId, {
         validators: [Validators.required],
       }),
+      ancestor: new FormControl(annotationRawValue.ancestor),
       user: new FormControl(annotationRawValue.user),
     });
   }

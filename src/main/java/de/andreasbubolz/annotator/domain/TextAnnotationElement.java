@@ -33,7 +33,10 @@ public class TextAnnotationElement implements Serializable {
     private String text;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "textAnnotationElements", "user" }, allowSetters = true)
+    @JsonIgnoreProperties(
+        value = { "textAnnotationElements", "videoAnnotationElements", "ancestor", "user", "descendants" },
+        allowSetters = true
+    )
     private Annotation annotation;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here

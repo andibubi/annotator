@@ -20,11 +20,32 @@
       "relationshipType": "one-to-many"
     },
     {
+      "otherEntityName": "videoAnnotationElement",
+      "otherEntityRelationshipName": "annotation",
+      "relationshipName": "videoAnnotationElement",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "annotation",
+      "otherEntityRelationshipName": "descendants",
+      "relationshipName": "ancestor",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
       "otherEntityName": "user",
       "relationshipName": "user",
       "relationshipSide": "left",
       "relationshipType": "many-to-one",
       "relationshipWithBuiltInEntity": true
+    },
+    {
+      "otherEntityName": "annotation",
+      "otherEntityRelationshipName": "ancestor",
+      "relationshipName": "descendants",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
     }
   ],
   "searchEngine": "no"

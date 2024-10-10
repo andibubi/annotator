@@ -47,6 +47,28 @@ describe('Annotation Management Update Component', () => {
   });
 
   describe('ngOnInit', () => {
+    it('Should call Annotation query and add missing value', () => {
+      const annotation: IAnnotation = { id: 456 };
+      const ancestor: IAnnotation = { id: 10693 };
+      annotation.ancestor = ancestor;
+
+      const annotationCollection: IAnnotation[] = [{ id: 28788 }];
+      jest.spyOn(annotationService, 'query').mockReturnValue(of(new HttpResponse({ body: annotationCollection })));
+      const additionalAnnotations = [ancestor];
+      const expectedCollection: IAnnotation[] = [...additionalAnnotations, ...annotationCollection];
+      jest.spyOn(annotationService, 'addAnnotationToCollectionIfMissing').mockReturnValue(expectedCollection);
+
+      activatedRoute.data = of({ annotation });
+      comp.ngOnInit();
+
+      expect(annotationService.query).toHaveBeenCalled();
+      expect(annotationService.addAnnotationToCollectionIfMissing).toHaveBeenCalledWith(
+        annotationCollection,
+        ...additionalAnnotations.map(expect.objectContaining),
+      );
+      expect(comp.annotationsSharedCollection).toEqual(expectedCollection);
+    });
+
     it('Should call User query and add missing value', () => {
       const annotation: IAnnotation = { id: 456 };
       const user: IUser = { id: 31426 };
@@ -71,12 +93,15 @@ describe('Annotation Management Update Component', () => {
 
     it('Should update editForm', () => {
       const annotation: IAnnotation = { id: 456 };
+      const ancestor: IAnnotation = { id: 5232 };
+      annotation.ancestor = ancestor;
       const user: IUser = { id: 13562 };
       annotation.user = user;
 
       activatedRoute.data = of({ annotation });
       comp.ngOnInit();
 
+      expect(comp.annotationsSharedCollection).toContain(ancestor);
       expect(comp.usersSharedCollection).toContain(user);
       expect(comp.annotation).toEqual(annotation);
     });
@@ -151,6 +176,16 @@ describe('Annotation Management Update Component', () => {
   });
 
   describe('Compare relationships', () => {
+    describe('compareAnnotation', () => {
+      it('Should forward to annotationService', () => {
+        const entity = { id: 123 };
+        const entity2 = { id: 456 };
+        jest.spyOn(annotationService, 'compareAnnotation');
+        comp.compareAnnotation(entity, entity2);
+        expect(annotationService.compareAnnotation).toHaveBeenCalledWith(entity, entity2);
+      });
+    });
+
     describe('compareUser', () => {
       it('Should forward to userService', () => {
         const entity = { id: 123 };

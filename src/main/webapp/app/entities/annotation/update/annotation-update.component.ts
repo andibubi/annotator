@@ -23,6 +23,7 @@ export class AnnotationUpdateComponent implements OnInit {
   isSaving = false;
   annotation: IAnnotation | null = null;
 
+  annotationsSharedCollection: IAnnotation[] = [];
   usersSharedCollection: IUser[] = [];
 
   protected annotationService = inject(AnnotationService);
@@ -32,6 +33,8 @@ export class AnnotationUpdateComponent implements OnInit {
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   editForm: AnnotationFormGroup = this.annotationFormService.createAnnotationFormGroup();
+
+  compareAnnotation = (o1: IAnnotation | null, o2: IAnnotation | null): boolean => this.annotationService.compareAnnotation(o1, o2);
 
   compareUser = (o1: IUser | null, o2: IUser | null): boolean => this.userService.compareUser(o1, o2);
 
@@ -83,10 +86,24 @@ export class AnnotationUpdateComponent implements OnInit {
     this.annotation = annotation;
     this.annotationFormService.resetForm(this.editForm, annotation);
 
+    this.annotationsSharedCollection = this.annotationService.addAnnotationToCollectionIfMissing<IAnnotation>(
+      this.annotationsSharedCollection,
+      annotation.ancestor,
+    );
     this.usersSharedCollection = this.userService.addUserToCollectionIfMissing<IUser>(this.usersSharedCollection, annotation.user);
   }
 
   protected loadRelationshipsOptions(): void {
+    this.annotationService
+      .query()
+      .pipe(map((res: HttpResponse<IAnnotation[]>) => res.body ?? []))
+      .pipe(
+        map((annotations: IAnnotation[]) =>
+          this.annotationService.addAnnotationToCollectionIfMissing<IAnnotation>(annotations, this.annotation?.ancestor),
+        ),
+      )
+      .subscribe((annotations: IAnnotation[]) => (this.annotationsSharedCollection = annotations));
+
     this.userService
       .query()
       .pipe(map((res: HttpResponse<IUser[]>) => res.body ?? []))

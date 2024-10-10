@@ -41,7 +41,22 @@ public class Annotation implements Serializable {
     private Set<VideoAnnotationElement> videoAnnotationElements = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(
+        value = { "textAnnotationElements", "videoAnnotationElements", "ancestor", "user", "descendants" },
+        allowSetters = true
+    )
+    private Annotation ancestor;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "ancestor")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(
+        value = { "textAnnotationElements", "videoAnnotationElements", "ancestor", "user", "descendants" },
+        allowSetters = true
+    )
+    private Set<Annotation> descendants = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -133,6 +148,19 @@ public class Annotation implements Serializable {
         return this;
     }
 
+    public Annotation getAncestor() {
+        return this.ancestor;
+    }
+
+    public void setAncestor(Annotation annotation) {
+        this.ancestor = annotation;
+    }
+
+    public Annotation ancestor(Annotation annotation) {
+        this.setAncestor(annotation);
+        return this;
+    }
+
     public User getUser() {
         return this.user;
     }
@@ -143,6 +171,37 @@ public class Annotation implements Serializable {
 
     public Annotation user(User user) {
         this.setUser(user);
+        return this;
+    }
+
+    public Set<Annotation> getDescendants() {
+        return this.descendants;
+    }
+
+    public void setDescendants(Set<Annotation> annotations) {
+        if (this.descendants != null) {
+            this.descendants.forEach(i -> i.setAncestor(null));
+        }
+        if (annotations != null) {
+            annotations.forEach(i -> i.setAncestor(this));
+        }
+        this.descendants = annotations;
+    }
+
+    public Annotation descendants(Set<Annotation> annotations) {
+        this.setDescendants(annotations);
+        return this;
+    }
+
+    public Annotation addDescendants(Annotation annotation) {
+        this.descendants.add(annotation);
+        annotation.setAncestor(this);
+        return this;
+    }
+
+    public Annotation removeDescendants(Annotation annotation) {
+        this.descendants.remove(annotation);
+        annotation.setAncestor(null);
         return this;
     }
 
