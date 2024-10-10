@@ -1,0 +1,39 @@
+{
+  "annotations": {
+    "changelogDate": "20241003141443"
+  },
+  "applications": ["annotator"],
+  "fields": [
+    {
+      "fieldName": "startSec",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "stopSec",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "videoId",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "videoStartSec",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "VideoAnnotationElement",
+  "relationships": [
+    {
+      "otherEntityName": "annotation",
+      "otherEntityRelationshipName": "videoAnnotationElement",
+      "relationshipName": "annotation",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no"
+}

@@ -1,0 +1,29 @@
+{
+  "annotations": {
+    "changelogDate": "20241003141442"
+  },
+  "applications": ["annotator"],
+  "fields": [
+    {
+      "fieldName": "startSec",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "text",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "TextAnnotationElement",
+  "relationships": [
+    {
+      "otherEntityName": "annotation",
+      "otherEntityRelationshipName": "textAnnotationElement",
+      "relationshipName": "annotation",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no"
+}
