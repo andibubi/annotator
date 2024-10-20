@@ -1,12 +1,18 @@
 package de.andreasbubolz.annotator.service;
 
+import de.andreasbubolz.annotator.domain.GridElement;
 import de.andreasbubolz.annotator.domain.Layout;
 import de.andreasbubolz.annotator.domain.User;
+import de.andreasbubolz.annotator.repository.GridElementRepository;
 import de.andreasbubolz.annotator.repository.LayoutRepository;
 import de.andreasbubolz.annotator.service.dto.GridElementDTO;
 import de.andreasbubolz.annotator.service.dto.LayoutDTO;
 import de.andreasbubolz.annotator.service.mapper.LayoutMapper;
+import de.andreasbubolz.annotator.web.rest.UserUtil;
+import jakarta.persistence.EntityManager;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -25,13 +31,72 @@ public class LayoutService {
 
     private final LayoutRepository layoutRepository;
     private final GridElementService gridElementService;
+    private final GridElementRepository gridElementRepository;
 
     private final LayoutMapper layoutMapper;
+    private final UserUtil userUtil;
+    private final EntityManager entityManager;
 
-    public LayoutService(LayoutRepository layoutRepository, GridElementService gridElementService, LayoutMapper layoutMapper) {
+    public LayoutService(
+        LayoutRepository layoutRepository,
+        GridElementService gridElementService,
+        GridElementRepository gridElementRepository,
+        LayoutMapper layoutMapper,
+        UserUtil userUtil,
+        EntityManager entityManager
+    ) {
         this.layoutRepository = layoutRepository;
         this.gridElementService = gridElementService;
+        this.gridElementRepository = gridElementRepository;
         this.layoutMapper = layoutMapper;
+        this.userUtil = userUtil;
+        this.entityManager = entityManager;
+    }
+
+    public GridElementDTO createOrUpdateGridElement(GridElementDTO gridElementDto) {
+        // TODO gridElements und layout sollten per JPA mit einem Methodenaufruf gesichert werden können
+        var currentUser = userUtil.getCurrentUser();
+        var layout = layoutRepository.findById(gridElementDto.getLayout().getId()).get();
+        if (!layout.getUser().getId().equals(currentUser.getId())) {
+            var orgGridElements = gridElementRepository.findByLayoutId(layout.getId());
+
+            var newLayout = new Layout().user(currentUser);
+            var orgGridElement = orgGridElements.stream().filter(g -> g.getId().equals(gridElementDto.getId())).findFirst().get();
+            var result = new HashSet<GridElement>();
+            for (var gridElement : orgGridElements) {
+                // TODO Sollte per JPA schöner gehen (s.o.)
+                entityManager.detach(gridElement);
+                gridElement.setLayout(newLayout);
+                if (gridElement.equals(orgGridElement)) {
+                    gridElement.setContent(gridElementDto.getContent());
+                }
+                gridElement.setId(null);
+                result.add(gridElement);
+            }
+            newLayout.setGridElements(result);
+            newLayout = layoutRepository.save(newLayout);
+
+            for (var recylcledGridElement : result) gridElementRepository.save(recylcledGridElement);
+
+            // TODO geänderte id ist dirty Kennzeichen für Layout-Wechsel
+            gridElementDto.setLayout(layoutMapper.toDto(newLayout));
+
+            return gridElementDto;
+        } else {
+            return gridElementService.save(gridElementDto);
+        }
+    }
+
+    private Set<GridElement> transform(Set<GridElement> gridElements) {
+        var result = new HashSet<GridElement>();
+        for (var gridElement : gridElements) {
+            // TODO Sollte per JPA schöner gehen (s.o.)
+            entityManager.detach(gridElement);
+            gridElement.setId(null);
+            //entityManager.merge(gridElement);
+            result.add(gridElement);
+        }
+        return result;
     }
 
     /**
@@ -44,10 +109,7 @@ public class LayoutService {
      */
     public LayoutDTO createLayoutWithSomeGridItems(User user, LayoutDTO layoutDTO, String videoId) {
         log.debug("Request to save Layout : {}", layoutDTO);
-        Layout layout = layoutMapper.toEntity(layoutDTO);
-        layout.setUser(user);
-        layout = layoutRepository.save(layout);
-        var savedLayoutDto = layoutMapper.toDto(layout);
+        var savedLayoutDto = layoutMapper.toDto(createLayout(user, layoutDTO));
 
         createGridElement(
             videoId,
@@ -84,6 +146,12 @@ public class LayoutService {
         );
 
         return savedLayoutDto;
+    }
+
+    private Layout createLayout(User user, LayoutDTO layoutDTO) {
+        Layout layout = layoutMapper.toEntity(layoutDTO);
+        layout.setUser(user);
+        return layoutRepository.save(layout);
     }
 
     private void createGridElement(

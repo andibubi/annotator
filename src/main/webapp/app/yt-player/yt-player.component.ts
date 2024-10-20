@@ -105,7 +105,7 @@ export default class YtPlayerComponent extends BaseWidget implements OnInit {
       }
       // TODO entweder oder
       let player = this.ytPlayerService.nameSuffix2player.get(this.name);
-      if (this.videoId != null) {
+      if (this.videoId != null && this.videoId != '') {
         player.loadVideoById(this.videoId, videoStartSec);
         player.playVideo();
       } else player.pauseVideo();

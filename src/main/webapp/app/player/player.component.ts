@@ -71,13 +71,12 @@ export default class PlayerComponent implements OnInit {
   resizeStartHeight: number = 0;
   resizeStartX: number = 0;
   resizeStartY: number = 0;
-  gridOptions$: Observable<NgGridStackOptions> = of();
+  gridOptions$: Observable<NgGridStackOptions> = of(); // Für Html
 
   // TODO Den ganzen emptyGrid-Kram rausschmeißen?
   // Gibt es einen Zusammenhang zum Bug beim Float-Verschieben?
   emptyGridOptions!: NgGridStackOptions;
 
-  private initialGridOptions: NgGridStackOptions | null = null; // Temporäre Variable zum Speichern der Optionen
   private isGridInitialized = false; // Flag zur Überprüfung, ob die Methode bereits aufgerufen wurde
 
   constructor(
@@ -104,8 +103,7 @@ export default class PlayerComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.gridOptions$ = this.playerService.getInitialSched$(Number(params.get('layoutId')));
       this.gridOptions$.subscribe(gridOptions => {
-        this.initialGridOptions = gridOptions;
-        this.advGrid.work(this.initialGridOptions);
+        this.advGrid.work(gridOptions);
         this.playerService.startUpdateTimer();
       });
     });

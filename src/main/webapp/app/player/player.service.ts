@@ -18,8 +18,6 @@ import { TextoutComponent } from './textout.component';
 import { AdvancedGrid } from '../advanced-grid/advanced-grid';
 import YtPlayerComponent from '../yt-player/yt-player.component';
 
-export type EntityResponseType = HttpResponse<IAnnotationWithElements>;
-
 @Injectable({ providedIn: 'root' })
 export class PlayerService {
   protected http = inject(HttpClient);
@@ -51,30 +49,8 @@ export class PlayerService {
 
     let r = this.gridElementService.query({ 'layoutId.equals': id }).pipe(
       map(response => {
-        let roots = [];
-        const items = response.body! as IGridElement[];
-        let id2item: Map<number, any> = new Map();
-
-        // Items in die Map speichern und Wurzeln identifizieren
-        for (let item of items) {
-          id2item.set(item.id, item);
-          this.channel2gridElement.set(item.channel!, item);
-          if (!item.gridElement) {
-            roots.push(item);
-          }
-        }
-
-        // Initialisiere Kinder-Arrays
-        for (let item of items) {
-          (item as any).children = [];
-        }
-
-        // Kinder den entsprechenden Eltern-Items hinzufügen
-        for (let item of items) {
-          if (item.gridElement) {
-            id2item.get(item.gridElement.id).children.push(item);
-          }
-        }
+        this.channel2gridElement = new Map();
+        let roots = this.createGridItemTree(response.body!); // GridItemElement[]
 
         // Erzeuge die NgGridStackOptions aus den Wurzeln (roots)
         const widgets = this.createGridOptions(roots);
@@ -96,12 +72,11 @@ export class PlayerService {
   timerTick() {
     let orgPlayer = this.getOrgPlayer();
     // TODO: orgPlayer.getCurrentTime sollte hier immer definiert sein.
-    if (orgPlayer)
-      if (orgPlayer.getCurrentTime) {
-        var secs = orgPlayer.getCurrentTime();
-        for (let [name, textout] of this.channel2textout) textout.update(secs);
-        for (let [name, ytPlayer] of this.channel2ytPlayer) ytPlayer.update(secs);
-      }
+    if (orgPlayer) {
+      let secs = orgPlayer.getCurrentTime ? orgPlayer.getCurrentTime() : 0;
+      for (let [name, textout] of this.channel2textout) textout.update(secs);
+      for (let [name, ytPlayer] of this.channel2ytPlayer) ytPlayer.update(secs);
+    }
   }
   getOrgPlayer() {
     return this.ytPlayerService.nameSuffix2player.get('org');
@@ -124,10 +99,23 @@ export class PlayerService {
     let content = JSON.parse(gridElement.content!);
     content.commands.push({ timeSec: orgPlayer.getCurrentTime(), text: text });
     gridElement.content = JSON.stringify(content);
-    return this.gridElementService.update(gridElement).pipe(
+
+    return this.http.put<IGridElement>('/api/createBlablubb', gridElement, { observe: 'response' }).pipe(
       map((response: HttpResponse<IGridElement>) => {
-        let textout = this.channel2textout.get(channel)!;
-        textout.content = JSON.parse(response.body!.content!);
+        // TODO Hack: Wenn das Layout nicht dem User zugeordnet ist, dann enthält response.body
+        // ein GridElement dessen Layout neu erstellt wurde (und nun dem Benutzer zugeordnet ist).
+        let newLayoutId = response!.body!.id;
+        if (gridElement.id !== newLayoutId) {
+          this.gridElementService.query({ 'layoutId.equals': newLayoutId }).pipe(
+            map(response => {
+              this.channel2gridElement = new Map();
+              let roots = this.createGridItemTree(response.body!); // GridItemElement[]
+            }),
+          );
+        } else {
+          let textout = this.channel2textout.get(channel)!;
+          textout.content = JSON.parse(response.body!.content!);
+        }
         return true;
       }),
       catchError((error: any) => of(false)),
@@ -137,7 +125,7 @@ export class PlayerService {
     let orgPlayer = this.getOrgPlayer();
 
     let channel = 'sec'; // TODO Param
-    let gridElement = this.channel2gridElement.get(channel)!;
+    let gridElement = this.channel2gridElement!.get(channel)!;
     let content = JSON.parse(gridElement.content!);
     content.commands.push({ timeSec: orgPlayer.getCurrentTime(), videoId: videoId, videoStartSec: startSec });
     gridElement.content = JSON.stringify(content);
@@ -170,6 +158,33 @@ export class PlayerService {
       result.push(r as NgGridStackOptions);
     }
     return result;
+  }
+  private createGridItemTree(items: IGridElement[]) {
+    let roots = [];
+    this.channel2gridElement!.clear();
+    let id2item: Map<number, any> = new Map();
+
+    // Items in die Map speichern und Wurzeln identifizieren
+    for (let item of items) {
+      id2item.set(item.id, item);
+      this.channel2gridElement!.set(item.channel!, item);
+      if (!item.gridElement) {
+        roots.push(item);
+      }
+    }
+
+    // Initialisiere Kinder-Arrays
+    for (let item of items) {
+      (item as any).children = [];
+    }
+
+    // Kinder den entsprechenden Eltern-Items hinzufügen
+    for (let item of items) {
+      if (item.gridElement) {
+        id2item.get(item.gridElement.id).children.push(item);
+      }
+    }
+    return roots;
   }
 
   onYtPlayerStateChange(name: string, event: any) {

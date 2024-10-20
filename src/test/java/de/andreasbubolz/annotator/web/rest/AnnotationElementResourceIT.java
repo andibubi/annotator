@@ -302,6 +302,8 @@ class TextAnnotationElementResourceIT {
         TextAnnotationElement partialUpdatedTextAnnotationElement = new TextAnnotationElement();
         partialUpdatedTextAnnotationElement.setId(textAnnotationElement.getId());
 
+        partialUpdatedTextAnnotationElement.text(UPDATED_TEXT);
+
         restTextAnnotationElementMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedTextAnnotationElement.getId())
