@@ -82,8 +82,6 @@ class GridElementCriteriaTest {
         gridElementCriteria.channel();
         gridElementCriteria.renderer();
         gridElementCriteria.content();
-        gridElementCriteria.displayAfterMillis();
-        gridElementCriteria.displayDurationMillis();
         gridElementCriteria.layoutId();
         gridElementCriteria.gridElementId();
         gridElementCriteria.gridElementsId();
@@ -101,8 +99,6 @@ class GridElementCriteriaTest {
                 condition.apply(criteria.getChannel()) &&
                 condition.apply(criteria.getRenderer()) &&
                 condition.apply(criteria.getContent()) &&
-                condition.apply(criteria.getDisplayAfterMillis()) &&
-                condition.apply(criteria.getDisplayDurationMillis()) &&
                 condition.apply(criteria.getLayoutId()) &&
                 condition.apply(criteria.getGridElementId()) &&
                 condition.apply(criteria.getGridElementsId()) &&
@@ -122,8 +118,6 @@ class GridElementCriteriaTest {
                 condition.apply(criteria.getChannel(), copy.getChannel()) &&
                 condition.apply(criteria.getRenderer(), copy.getRenderer()) &&
                 condition.apply(criteria.getContent(), copy.getContent()) &&
-                condition.apply(criteria.getDisplayAfterMillis(), copy.getDisplayAfterMillis()) &&
-                condition.apply(criteria.getDisplayDurationMillis(), copy.getDisplayDurationMillis()) &&
                 condition.apply(criteria.getLayoutId(), copy.getLayoutId()) &&
                 condition.apply(criteria.getGridElementId(), copy.getGridElementId()) &&
                 condition.apply(criteria.getGridElementsId(), copy.getGridElementsId()) &&

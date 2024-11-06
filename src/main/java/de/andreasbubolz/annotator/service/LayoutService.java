@@ -1,5 +1,7 @@
 package de.andreasbubolz.annotator.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.andreasbubolz.annotator.domain.GridElement;
 import de.andreasbubolz.annotator.domain.Layout;
 import de.andreasbubolz.annotator.domain.User;
@@ -13,12 +15,17 @@ import jakarta.persistence.EntityManager;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.control.DeepClone;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Service Implementation for managing {@link de.andreasbubolz.annotator.domain.Layout}.
@@ -28,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class LayoutService {
 
     private static final Logger log = LoggerFactory.getLogger(LayoutService.class);
+    public static final int Y_DELTA = -20;
 
     private final LayoutRepository layoutRepository;
     private final GridElementService gridElementService;
@@ -53,38 +61,92 @@ public class LayoutService {
         this.entityManager = entityManager;
     }
 
-    public GridElementDTO createOrUpdateGridElement(GridElementDTO gridElementDto) {
+    public static class JsonContent {
+
+        public JsonCommand[] commands;
+    }
+
+    public static class JsonCommand {
+
+        public Long timeSec;
+        public Long x;
+        public Long y;
+        public Long w;
+        public Long h;
+        public String text;
+        public String videoId;
+    }
+
+    @Mapper(mappingControl = DeepClone.class)
+    public interface GridElementCloner {
+        GridElementCloner INSTANCE = Mappers.getMapper(GridElementCloner.class);
+
+        @Mapping(target = "id", ignore = true)
+        @Mapping(target = "layout", ignore = true)
+        GridElement clone(GridElement in);
+    }
+
+    // return LayoutId
+    public Long createOrUpdateGridElement(String commandStr, @RequestParam Long layoutId) throws JsonProcessingException {
         // TODO gridElements und layout sollten per JPA mit einem Methodenaufruf gesichert werden können
         var currentUser = userUtil.getCurrentUser();
-        var layout = layoutRepository.findById(gridElementDto.getLayout().getId()).get();
-        if (!layout.getUser().getId().equals(currentUser.getId())) {
-            var orgGridElements = gridElementRepository.findByLayoutId(layout.getId());
-
+        var orgGridElements = gridElementRepository.findByLayoutId(layoutId);
+        var command = new ObjectMapper().readValue(commandStr, JsonCommand.class);
+        if (true) {
+            //if (!layout.getUser().getId().equals(currentUser.getId())) {
+            // TODO Übler Hack: Bei Besitzwechsel wird im Ergebnis ein neu angelegtes Layout referenziert
+            var newGridElements = new HashSet<GridElement>();
             var newLayout = new Layout().user(currentUser);
-            var orgGridElement = orgGridElements.stream().filter(g -> g.getId().equals(gridElementDto.getId())).findFirst().get();
-            var result = new HashSet<GridElement>();
-            for (var gridElement : orgGridElements) {
+
+            for (var orgGridElement : orgGridElements) {
                 // TODO Sollte per JPA schöner gehen (s.o.)
-                entityManager.detach(gridElement);
-                gridElement.setLayout(newLayout);
-                if (gridElement.equals(orgGridElement)) {
-                    gridElement.setContent(gridElementDto.getContent());
+                var newGridElement = GridElementCloner.INSTANCE.clone(orgGridElement);
+                newGridElements.add(newGridElement);
+                newGridElement.setLayout(newLayout);
+                if (newGridElement.getChannel().equals("cmt")) {
+                    var newCmtGridElement = GridElementCloner.INSTANCE.clone(newGridElement);
+                    newGridElement.setChannel("fix");
+                    newGridElements.add(newCmtGridElement);
+                    newCmtGridElement.setY(newCmtGridElement.getY() + Y_DELTA);
+                    var orgCmtContent = new ObjectMapper().readValue(newCmtGridElement.getContent(), JsonContent.class);
+                    JsonCommand lastCommandWithPosition = null;
+                    for (var orgCommand : orgCmtContent.commands) if (orgCommand.x != null) lastCommandWithPosition = orgCommand;
+                    var newCmtContent = new JsonContent();
+                    if (lastCommandWithPosition != null) {
+                        newCmtContent.commands = new JsonCommand[2];
+                        var newPosCommand = new JsonCommand();
+                        newCmtContent.commands[0] = newPosCommand;
+                        newPosCommand.timeSec = 0L;
+                        newPosCommand.x = lastCommandWithPosition.x;
+                        newPosCommand.y = lastCommandWithPosition.y + Y_DELTA;
+                        newPosCommand.w = lastCommandWithPosition.w;
+                        newPosCommand.h = lastCommandWithPosition.h;
+                    } else newCmtContent.commands = new JsonCommand[1];
+
+                    var newTextCommand = new JsonCommand();
+                    newCmtContent.commands[newCmtContent.commands.length - 1] = newTextCommand;
+                    newTextCommand.timeSec = command.timeSec;
+                    newTextCommand.text = command.text;
+                    newCmtGridElement.setContent(new ObjectMapper().writeValueAsString(newCmtContent));
                 }
-                gridElement.setId(null);
-                result.add(gridElement);
             }
-            newLayout.setGridElements(result);
-            newLayout = layoutRepository.save(newLayout);
+            newLayout.setGridElements(newGridElements);
 
-            for (var recylcledGridElement : result) gridElementRepository.save(recylcledGridElement);
-
-            // TODO geänderte id ist dirty Kennzeichen für Layout-Wechsel
-            gridElementDto.setLayout(layoutMapper.toDto(newLayout));
-
-            return gridElementDto;
+            layoutRepository.save(newLayout);
+            for (var recylcledGridElement : newGridElements) gridElementRepository.save(recylcledGridElement);
+            layoutId = newLayout.getId();
         } else {
-            return gridElementService.save(gridElementDto);
+            var gridElement = orgGridElements.stream().filter(g -> g.getChannel().equals("cmt")).findFirst().get();
+            var orgCmtContent = new ObjectMapper().readValue(gridElement.getContent(), JsonContent.class);
+
+            var newCmtContent = new JsonContent();
+            newCmtContent.commands = new JsonCommand[orgCmtContent.commands.length + 1];
+            for (var idx = 0; idx < orgCmtContent.commands.length; idx++) newCmtContent.commands[idx] = orgCmtContent.commands[idx];
+            newCmtContent.commands[newCmtContent.commands.length - 1] = command;
+            gridElement.setContent(new ObjectMapper().writeValueAsString(newCmtContent));
+            gridElementRepository.save(gridElement);
         }
+        return layoutId;
     }
 
     private Set<GridElement> transform(Set<GridElement> gridElements) {
@@ -114,7 +176,7 @@ public class LayoutService {
         createGridElement(
             videoId,
             savedLayoutDto,
-            "org",
+            "y1",
             "app-yt-player",
             0,
             0,
@@ -125,10 +187,10 @@ public class LayoutService {
         createGridElement(
             videoId,
             savedLayoutDto,
-            "cmt",
+            "text1",
             "widget-textout",
             0,
-            11,
+            10,
             12,
             1,
             "{\"commands\": [{ \"timeSec\": 0, \"x\": 0, \"y\": 80, \"w\": 100, \"h\": 20 }]}"
@@ -136,13 +198,24 @@ public class LayoutService {
         createGridElement(
             videoId,
             savedLayoutDto,
-            "sec",
+            "y2",
             "app-yt-player",
             0,
             12,
             3,
             2,
             "{\"commands\": [{\"timeSec\": 0, \"x\": 0, \"y\": 0, \"h\": 50 }]}"
+        );
+        createGridElement(
+            null,
+            savedLayoutDto,
+            "text2",
+            "widget-textout",
+            0,
+            10,
+            12,
+            1,
+            "{\"commands\": [{ \"timeSec\": 0, \"x\": 0, \"y\": 60, \"w\": 100, \"h\": 20 }]}"
         );
 
         return savedLayoutDto;

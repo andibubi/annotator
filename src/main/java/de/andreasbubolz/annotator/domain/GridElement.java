@@ -46,15 +46,14 @@ public class GridElement implements Serializable {
     @Column(name = "content")
     private String content;
 
-    @Column(name = "display_after_millis")
-    private Long displayAfterMillis;
-
-    @Column(name = "display_duration_millis")
-    private Long displayDurationMillis;
+    @Column(name = "is_createable")
+    private Boolean isCreateable;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "user", "gridElements" }, allowSetters = true)
     private Layout layout;
+
+    // Zur Zeit keine Sub-Elements. Die gab es bis zum 15.8.24 laut Git.
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "layout", "gridElement", "gridElements" }, allowSetters = true)
@@ -171,30 +170,12 @@ public class GridElement implements Serializable {
         this.content = content;
     }
 
-    public Long getDisplayAfterMillis() {
-        return this.displayAfterMillis;
+    public Boolean getIsCreateable() {
+        return this.isCreateable;
     }
 
-    public GridElement displayAfterMillis(Long displayAfterMillis) {
-        this.setDisplayAfterMillis(displayAfterMillis);
-        return this;
-    }
-
-    public void setDisplayAfterMillis(Long displayAfterMillis) {
-        this.displayAfterMillis = displayAfterMillis;
-    }
-
-    public Long getDisplayDurationMillis() {
-        return this.displayDurationMillis;
-    }
-
-    public GridElement displayDurationMillis(Long displayDurationMillis) {
-        this.setDisplayDurationMillis(displayDurationMillis);
-        return this;
-    }
-
-    public void setDisplayDurationMillis(Long displayDurationMillis) {
-        this.displayDurationMillis = displayDurationMillis;
+    public void setIsCreateable(Boolean isCreateable) {
+        this.isCreateable = isCreateable;
     }
 
     public Layout getLayout() {
@@ -285,8 +266,7 @@ public class GridElement implements Serializable {
             ", channel='" + getChannel() + "'" +
             ", renderer='" + getRenderer() + "'" +
             ", content='" + getContent() + "'" +
-            ", displayAfterMillis=" + getDisplayAfterMillis() +
-            ", displayDurationMillis=" + getDisplayDurationMillis() +
+            ", isCreateable=" + getIsCreateable() +
             "}";
     }
 }

@@ -12,6 +12,7 @@ export interface IGridElement {
   displayAfterMillis?: number | null;
   displayDurationMillis?: number | null;
   layout?: Pick<ILayout, 'id'> | null;
+  isCreateable?: boolean | null;
   gridElement?: Pick<IGridElement, 'id'> | null;
 }
 

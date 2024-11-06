@@ -33,12 +33,8 @@
       "fieldType": "String"
     },
     {
-      "fieldName": "displayAfterMillis",
-      "fieldType": "Long"
-    },
-    {
-      "fieldName": "displayDurationMillis",
-      "fieldType": "Long"
+      "fieldName": "isCreateable",
+      "fieldType": "boolean"
     }
   ],
   "jpaMetamodelFiltering": true,

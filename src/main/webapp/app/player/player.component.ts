@@ -101,11 +101,16 @@ export default class PlayerComponent implements OnInit {
     });
     this.emptyGridOptions = this.playerService.getEmptyGridOptions();
     this.route.paramMap.subscribe(params => {
-      this.gridOptions$ = this.playerService.getInitialSched$(Number(params.get('layoutId')));
-      this.gridOptions$.subscribe(gridOptions => {
-        this.advGrid.work(gridOptions);
-        this.playerService.startUpdateTimer();
-      });
+      this.createGrid(Number(params.get('layoutId')), true);
+    });
+  }
+
+  createGrid(layoutId: number, startUpdateTimer: boolean) {
+    this.gridOptions$ = this.playerService.getInitialSched$(layoutId);
+    this.gridOptions$.subscribe(gridOptions => {
+      if (!startUpdateTimer) this.advGrid.destroy();
+      this.advGrid.work(gridOptions);
+      if (startUpdateTimer) this.playerService.startUpdateTimer();
     });
   }
 
@@ -140,12 +145,13 @@ export default class PlayerComponent implements OnInit {
   }
 
   saveTextAnnotation() {
-    this.playerService.createTextAnnotation(this.newTextAnnotationText).subscribe((success: boolean) => {
-      if (success) {
+    this.playerService.createTextAnnotation(this.newTextAnnotationText).subscribe((returnedLayoutId: number) => {
+      if (returnedLayoutId >= 0) {
         console.log('Textannotation erfolgreich erstellt!');
-        this.playerService.pauseAll(false);
         this.showTextAnnotationDialog = false;
         this.newTextAnnotationText = '';
+        if (returnedLayoutId > 0) this.createGrid(returnedLayoutId, false);
+        this.playerService.pauseAll(false);
       } else {
         debugger;
         console.log('Fehler beim Erstellen der Textannotation.');

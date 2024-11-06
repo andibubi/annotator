@@ -44,7 +44,7 @@ export default class YtPlayerComponent extends BaseWidget implements OnInit {
   }
 
   ngOnInit() {
-    if (this.name != 'org') this.renderer.setStyle(this.elementRef.nativeElement.closest('div'), 'z-index', '1000');
+    if (this.name != 'yt1') this.renderer.setStyle(this.elementRef.nativeElement.closest('div'), 'z-index', '1000');
     // TODO mit in createPlayer machen
     this.playerService.registerYtPlayer(this.name, this);
     // TODO Lambda in createPlayer erzeugen
@@ -68,7 +68,6 @@ export default class YtPlayerComponent extends BaseWidget implements OnInit {
 
   floating = false;
   public update(secs: number) {
-    if (this.name == 'org') console.log('updateorg');
     let replayStartSecs = this.prevSecs && this.prevSecs < secs ? this.prevSecs : 0;
     let orgVideoId = this.videoId;
     let videoStartSec = 0;

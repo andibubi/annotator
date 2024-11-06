@@ -70,16 +70,16 @@ export class PlayerService {
     setInterval(this.timerTick.bind(this), 1000);
   }
   timerTick() {
-    let orgPlayer = this.getOrgPlayer();
+    const orgPlayer = this.getOrgPlayer();
     // TODO: orgPlayer.getCurrentTime sollte hier immer definiert sein.
     if (orgPlayer) {
-      let secs = orgPlayer.getCurrentTime ? orgPlayer.getCurrentTime() : 0;
+      const secs = orgPlayer.getCurrentTime ? orgPlayer.getCurrentTime() : 0;
       for (let [name, textout] of this.channel2textout) textout.update(secs);
       for (let [name, ytPlayer] of this.channel2ytPlayer) ytPlayer.update(secs);
     }
   }
   getOrgPlayer() {
-    return this.ytPlayerService.nameSuffix2player.get('org');
+    return this.ytPlayerService.nameSuffix2player.get('yt1');
   }
 
   channel2textout: Map<string, TextoutComponent> = new Map();
@@ -91,40 +91,36 @@ export class PlayerService {
   registerYtPlayer(channel: string, ytPlayer: YtPlayerComponent) {
     this.channel2ytPlayer.set(channel, ytPlayer);
   }
-  createTextAnnotation(text: string): Observable<boolean> {
-    let orgPlayer = this.getOrgPlayer();
+  // result: -1 error, 0 ok, >0 ok:  neuer layoutId
+  createTextAnnotation(text: string): Observable<number> {
+    const orgPlayer = this.getOrgPlayer();
 
-    let channel = 'cmt'; // TODO Param
-    let gridElement = this.channel2gridElement.get(channel)!;
-    let content = JSON.parse(gridElement.content!);
-    content.commands.push({ timeSec: orgPlayer.getCurrentTime(), text: text });
+    const channel = 'cmt'; // TODO Param
+
+    const gridElement = this.channel2gridElement.get(channel)!;
+    const content = JSON.parse(gridElement.content!);
+    const command = { timeSec: orgPlayer.getCurrentTime(), text: text };
+    content.commands.push(command);
     gridElement.content = JSON.stringify(content);
 
-    return this.http.put<IGridElement>('/api/createBlablubb', gridElement, { observe: 'response' }).pipe(
-      map((response: HttpResponse<IGridElement>) => {
+    return this.http.put<number>('/api/createCmt', command, { params: { layoutId: gridElement.layout!.id! }, observe: 'response' }).pipe(
+      map((response: HttpResponse<number>) => {
         // TODO Hack: Wenn das Layout nicht dem User zugeordnet ist, dann enthält response.body
         // ein GridElement dessen Layout neu erstellt wurde (und nun dem Benutzer zugeordnet ist).
-        let newLayoutId = response!.body!.id;
-        if (gridElement.id !== newLayoutId) {
-          this.gridElementService.query({ 'layoutId.equals': newLayoutId }).pipe(
-            map(response => {
-              this.channel2gridElement = new Map();
-              let roots = this.createGridItemTree(response.body!); // GridItemElement[]
-            }),
-          );
-        } else {
+        const returnedLayoutId = response.body!;
+        if (gridElement.layout!.id === returnedLayoutId) {
           let textout = this.channel2textout.get(channel)!;
-          textout.content = JSON.parse(response.body!.content!);
-        }
-        return true;
+          textout.content = text;
+          return 0;
+        } else return returnedLayoutId;
       }),
-      catchError((error: any) => of(false)),
+      catchError((error: any) => of(-1)),
     );
   }
   createVideoAnnotation(videoId: string, startSec: number): Observable<boolean> {
     let orgPlayer = this.getOrgPlayer();
 
-    let channel = 'sec'; // TODO Param
+    let channel = 'yt2'; // TODO Param
     let gridElement = this.channel2gridElement!.get(channel)!;
     let content = JSON.parse(gridElement.content!);
     content.commands.push({ timeSec: orgPlayer.getCurrentTime(), videoId: videoId, videoStartSec: startSec });

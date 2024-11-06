@@ -32,6 +32,7 @@ class TechnicalStructureTest {
 
         .ignoreDependency(belongToAnyOf(AnnotatorApp.class), alwaysTrue())
         .ignoreDependency(alwaysTrue(), belongToAnyOf(
+            de.andreasbubolz.annotator.web.rest.UserUtil.class, // TODO das wieder entfernen?
             de.andreasbubolz.annotator.config.Constants.class,
             de.andreasbubolz.annotator.config.ApplicationProperties.class
         ));

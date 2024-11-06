@@ -1,4 +1,5 @@
-id;layout_id;x;y;w;h;channel;renderer;content;display_after_millis;display_duration_millis;grid_element_id
-1;1;0;12;3;2;sec;app-yt-player;{"videoId":null,"commands":[{"timeSec":0,"x":0,"y":0,"h":50},{"timeSec":10,"videoId":"a5hZstgIiRY"},{"timeSec":20,"videoId":null},{"timeSec":5.8492,"videoId":null,"videoStartSec":0}]};;;
-2;1;0;0;12;6;org;app-yt-player;{"videoId": null, "commands": [{ "timeSec": 0, "videoId": "NsUWXo8M7UA"}]};10000;15000;
-3;1;0;11;12;1;cmt;widget-textout;{"commands":[{"timeSec":0,"x":0,"y":80,"w":100,"h":20},{"timeSec":0,"text":"Hier könnte Ihr Text stehen..."},{"timeSec":3,"text":"Das Gebimmel muss nicht sein, ist nur zur Demo."},{"timeSec":10,"text":"Oben läuft für 10s ein anderes Video."},{"timeSec":20,"text":"Das war es."},{"timeSec":25,"text":null}]};50000;10000;
+id;layout_id;grid_element_id;x;y;w;h;channel;renderer;content;is_createable
+1;1;NULL;0;12;3;2;yt2;app-yt-player;{"videoId":null,"commands":[{"timeSec":0,"x":0,"y":0,"h":50},{"timeSec":10,"videoId":"a5hZstgIiRY"},{"timeSec":20,"videoId":null},{"timeSec":5.8492,"videoId":null,"videoStartSec":0}]};false
+2;1;NULL;0;0;12;6;yt1;app-yt-player;{"videoId": null, "commands": [{ "timeSec": 0, "videoId": "NsUWXo8M7UA"}]};false
+3;1;NULL;0;10;12;1;text1;widget-textout;{"commands":[{"timeSec":0,"x":0,"y":80,"w":100,"h":20},{"timeSec":0,"text":"Hier könnte Ihr Text stehen..."},{"timeSec":3,"text":"Das Gebimmel muss nicht sein, ist nur zur Demo."},{"timeSec":10,"text":"Oben läuft für 10s ein anderes Video."},{"timeSec":20,"text":"Das war es."},{"timeSec":25,"text":null}]};false
+4;1;NULL;0;11;12;1;text2;widget-textout;{"commands":[{"timeSec":0,"x":0,"y":60,"w":100,"h":20}]};true

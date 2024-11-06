@@ -53,11 +53,7 @@ public class GridElementAsserts {
             .satisfies(e -> assertThat(e.getH()).as("check h").isEqualTo(actual.getH()))
             .satisfies(e -> assertThat(e.getChannel()).as("check channel").isEqualTo(actual.getChannel()))
             .satisfies(e -> assertThat(e.getRenderer()).as("check renderer").isEqualTo(actual.getRenderer()))
-            .satisfies(e -> assertThat(e.getContent()).as("check content").isEqualTo(actual.getContent()))
-            .satisfies(e -> assertThat(e.getDisplayAfterMillis()).as("check displayAfterMillis").isEqualTo(actual.getDisplayAfterMillis()))
-            .satisfies(
-                e -> assertThat(e.getDisplayDurationMillis()).as("check displayDurationMillis").isEqualTo(actual.getDisplayDurationMillis())
-            );
+            .satisfies(e -> assertThat(e.getContent()).as("check content").isEqualTo(actual.getContent()));
     }
 
     /**

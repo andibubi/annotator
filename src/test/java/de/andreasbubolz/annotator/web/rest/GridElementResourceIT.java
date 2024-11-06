@@ -107,9 +107,7 @@ class GridElementResourceIT {
             .h(DEFAULT_H)
             .channel(DEFAULT_CHANNEL)
             .renderer(DEFAULT_RENDERER)
-            .content(DEFAULT_CONTENT)
-            .displayAfterMillis(DEFAULT_DISPLAY_AFTER_MILLIS)
-            .displayDurationMillis(DEFAULT_DISPLAY_DURATION_MILLIS);
+            .content(DEFAULT_CONTENT);
         return gridElement;
     }
 
@@ -127,9 +125,7 @@ class GridElementResourceIT {
             .h(UPDATED_H)
             .channel(UPDATED_CHANNEL)
             .renderer(UPDATED_RENDERER)
-            .content(UPDATED_CONTENT)
-            .displayAfterMillis(UPDATED_DISPLAY_AFTER_MILLIS)
-            .displayDurationMillis(UPDATED_DISPLAY_DURATION_MILLIS);
+            .content(UPDATED_CONTENT);
         return gridElement;
     }
 
@@ -976,9 +972,7 @@ class GridElementResourceIT {
             .h(UPDATED_H)
             .channel(UPDATED_CHANNEL)
             .renderer(UPDATED_RENDERER)
-            .content(UPDATED_CONTENT)
-            .displayAfterMillis(UPDATED_DISPLAY_AFTER_MILLIS)
-            .displayDurationMillis(UPDATED_DISPLAY_DURATION_MILLIS);
+            .content(UPDATED_CONTENT);
         GridElementDTO gridElementDTO = gridElementMapper.toDto(updatedGridElement);
 
         restGridElementMockMvc
@@ -1106,9 +1100,7 @@ class GridElementResourceIT {
             .h(UPDATED_H)
             .channel(UPDATED_CHANNEL)
             .renderer(UPDATED_RENDERER)
-            .content(UPDATED_CONTENT)
-            .displayAfterMillis(UPDATED_DISPLAY_AFTER_MILLIS)
-            .displayDurationMillis(UPDATED_DISPLAY_DURATION_MILLIS);
+            .content(UPDATED_CONTENT);
 
         restGridElementMockMvc
             .perform(

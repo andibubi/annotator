@@ -1,5 +1,6 @@
 package de.andreasbubolz.annotator.web.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.zxing.WriterException;
 import de.andreasbubolz.annotator.service.GridElementService;
 import de.andreasbubolz.annotator.service.LayoutService;
@@ -32,9 +33,10 @@ public class PlayerController {
     @Autowired
     private LayoutService layoutService;
 
-    @PutMapping("createBlablubb")
-    public ResponseEntity<GridElementDTO> createGridElement(@RequestBody GridElementDTO gridElementDto) {
-        return new ResponseEntity(layoutService.createOrUpdateGridElement(gridElementDto), HttpStatus.OK);
+    @PutMapping("createCmt")
+    public ResponseEntity<GridElementDTO> createGridElement(@RequestBody String command, @RequestParam Long layoutId)
+        throws JsonProcessingException {
+        return new ResponseEntity(layoutService.createOrUpdateGridElement(command, layoutId), HttpStatus.OK);
     }
 
     //

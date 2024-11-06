@@ -85,6 +85,10 @@ export class AdvancedGrid {
     }, 1000);
   }
 
+  public destroy() {
+    this.outerGrid.destroy(false);
+  }
+
   private startTimer() {
     if (this.log) console.log('startTimer');
     this.timerId = setTimeout(() => {
